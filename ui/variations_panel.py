@@ -2,12 +2,14 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTreeWidget, QTreeWidgetItem,
     QPushButton, QLabel, QDialog, QLineEdit, QTextEdit, QComboBox,
     QSpinBox, QCheckBox, QDialogButtonBox, QMessageBox, QInputDialog,
-    QSplitter, QGroupBox, QFormLayout, QListWidget, QScrollArea, QFrame
+    QSplitter, QGroupBox, QFormLayout, QListWidget, QScrollArea, QFrame,
+    QStyle
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont, QIcon
 from logic.variations_manager import VariationsManager
 from datetime import datetime
+import os
 
 class VariationsPanel(QWidget):
     variation_loaded = pyqtSignal(dict)  # Emite cuando se carga una variación
@@ -93,6 +95,8 @@ class VariationsPanel(QWidget):
         self.variations_tree.setRootIsDecorated(True)
         self.variations_tree.setAlternatingRowColors(True)
         self.variations_tree.itemDoubleClicked.connect(self.load_variation_on_double_click)
+        # Permitir expandir/colapsar con un clic en nodos de personaje
+        self.variations_tree.itemClicked.connect(self.toggle_character_on_click)
         layout.addWidget(self.variations_tree)
         
     def setup_styles(self):
@@ -142,6 +146,14 @@ class VariationsPanel(QWidget):
             if character_name:
                 characters = [character_name] if character_name in characters else []
             
+            # Iconos personalizados para estética (diferentes a Presets)
+            assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'icons')
+            character_icon_path = os.path.join(assets_dir, 'folder.png')
+            variation_icon_path = os.path.join(assets_dir, 'file.png')
+            # Fallbacks si no existen los archivos
+            character_icon = QIcon(character_icon_path) if os.path.exists(character_icon_path) else self.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon)
+            variation_icon = QIcon(variation_icon_path) if os.path.exists(variation_icon_path) else self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight)
+
             for character in characters:
                 # Obtener datos del personaje
                 character_data = self.variations_manager.get_character_variations(character)
@@ -154,12 +166,14 @@ class VariationsPanel(QWidget):
                     character_item = QTreeWidgetItem(self.variations_tree)
                     character_item.setText(0, character)
                     character_item.setText(1, f"{len(variations)} variaciones")
-                    character_item.setExpanded(True)
+                    character_item.setExpanded(False)  # Colapsado por defecto
+                    character_item.setIcon(0, character_icon)
                     
                     # Agregar variaciones como hijos
                     for variation_name, variation_data in variations.items():
                         variation_item = QTreeWidgetItem(character_item)
                         variation_item.setText(0, variation_name)
+                        variation_item.setIcon(0, variation_icon)
                         
                         # Guardar datos para fácil acceso
                         variation_item.setData(0, Qt.ItemDataRole.UserRole, {
@@ -170,6 +184,14 @@ class VariationsPanel(QWidget):
                 
         except Exception as e:
             print(f"Error cargando variaciones: {e}")
+
+    def toggle_character_on_click(self, item, column):
+        """Expande/colapsa con un clic si el item es un personaje (raíz)."""
+        try:
+            if item and item.parent() is None:
+                item.setExpanded(not item.isExpanded())
+        except Exception as e:
+            print(f"Error al alternar expansión: {e}")
 
     def get_variation_description(self, variation_data):
         """Genera una descripción breve de la variación"""

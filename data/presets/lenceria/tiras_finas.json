@@ -1,0 +1,15 @@
+{
+  "presets": {
+    "tiras_finas": {
+      "name": "Tiras finas",
+      "categories": {
+        "Ropa interior inferior": "trappy thong,",
+        "Ropa interior accesorios": "thin garter straps,",
+        "Vestuario general": "Belt,",
+        "Cabello accesorios": ""
+      },
+      "images": [],
+      "created_at": "2025-11-05T17:27:25.665708"
+    }
+  }
+}

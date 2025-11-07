@@ -1,0 +1,18 @@
+{
+  "presets": {
+    "bak_bikin": {
+      "name": "bak bikin",
+      "categories": {
+        "Vestuario general": "underboob, navel, groin, cosplay,bat bikini,",
+        "Vestuario superior": ".",
+        "Vestuario inferior": ".",
+        "Vestuario accesorios": ".",
+        "Ropa interior superior": ".",
+        "Ropa interior inferior": ".",
+        "Ropa interior accesorios": "."
+      },
+      "images": [],
+      "created_at": "2025-10-24T17:28:51.905759"
+    }
+  }
+}

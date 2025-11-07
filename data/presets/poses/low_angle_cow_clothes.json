@@ -1,0 +1,21 @@
+{
+  "presets": {
+    "low_angle_cow_clothes": {
+      "name": "Low angle+ cow clothes",
+      "categories": {
+        "Angulo": "((low angle)),",
+        "Direccion mirada personaje": "looking at view,",
+        "Vestuario general": "cow print microbikini,",
+        "Ropa interior inferior": "micro thong, minithong,panties,",
+        "Rasgo fisico cuerpo": "medium breasts,breasts, curvy, skindentation,large breasts regfit",
+        "Pose actitud global": "wide hips,squatting,kneeling,",
+        "Pose brazos": "hand on hip,",
+        "Pose piernas": "one leg straight, other leg bent, pointed toe, slight arch back,",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "pubic hair, busty,"
+      },
+      "images": [],
+      "created_at": "2025-11-05T16:56:58.464606"
+    }
+  }
+}

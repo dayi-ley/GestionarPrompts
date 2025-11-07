@@ -2,7 +2,7 @@ import os
 import json
 import re
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QLineEdit, QFrame, QPushButton, QToolButton, QSizePolicy)
+                             QLineEdit, QFrame, QPushButton, QToolButton, QSizePolicy, QMenu, QWidgetAction)
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QFont, QPixmap, QIcon
 
@@ -138,32 +138,151 @@ class CategoryCard(QFrame):
         if tags is not None:
             self.tags = tags
             
-        # Recrear los botones de tags
+        # Recrear los controles de tags: botón "All tags" con menú y botón de tuerquita
         self.tag_click_counts = {}
         if self.tags:
-            # Solo muestra los dos primeros tags
-            for tag in self.tags[:2]:
-                btn = TagButton(tag, self)
-                tags_layout.addWidget(btn)
+            # Inicializar contadores de importancia para todos los tags
+            for tag in self.tags:
                 self.tag_click_counts[tag] = 0
-    
-            # Botón "ver tags"
-            view_tags_btn = QPushButton("ver tags")
-            view_tags_btn.setStyleSheet("""
-                QPushButton {
+
+            # Botón "All tags" con menú interactivo
+            all_tags_btn = QToolButton()
+            all_tags_btn.setText("All tags")
+            all_tags_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            all_tags_btn.setToolTip(", ".join(self.tags) if self.tags else "Sin tags")
+            all_tags_btn.setStyleSheet(
+                """
+                QToolButton {
                     background-color: #6366f1;
                     color: #fff;
                     border-radius: 10px;
                     padding: 2px 10px;
                     font-size: 10px;
                 }
-                QPushButton:hover {
+                QToolButton:hover {
                     background-color: #4f46e5;
                 }
-            """)
-            view_tags_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            view_tags_btn.clicked.connect(self.show_tags_dialog)
-            tags_layout.addWidget(view_tags_btn)
+                """
+            )
+
+            menu = QMenu(all_tags_btn)
+            menu.setStyleSheet(
+                """
+                QMenu {
+                    background-color: #2b2b2b;
+                    border: 1px solid #404040;
+                    padding: 4px;
+                }
+                /* Estilo por defecto para items estándar del menú */
+                QMenu::item {
+                    padding: 6px 10px;
+                    color: #e0e0e0;
+                    background-color: transparent;
+                }
+                QMenu::item:selected {
+                    background-color: transparent; /* Evitar gris por defecto */
+                }
+                """
+            )
+
+            # Item de menú personalizado para permitir clic izquierdo/derecho
+            class TagMenuItem(QWidget):
+                def __init__(self, tag_text, parent_card):
+                    super().__init__()
+                    self.tag_text = tag_text
+                    self.parent_card = parent_card
+                    row = QHBoxLayout(self)
+                    row.setContentsMargins(8, 4, 8, 4)
+                    row.setSpacing(8)
+                    label = QLabel(tag_text)
+                    label.setStyleSheet("color: #e0e0e0; font-size: 11px;")
+                    row.addWidget(label)
+                    row.addStretch()
+                    # Estilos visuales (base, hover, pressed)
+                    self._style_base = (
+                        "QWidget { background-color: transparent; } "
+                        "QLabel { color: #e0e0e0; font-size: 11px; }"
+                    )
+                    # Verde jade para hover y click
+                    self._style_hover = (
+                        "QWidget { background-color: #00A36C; border-radius: 6px; } "
+                        "QLabel { color: #ffffff; font-size: 11px; }"
+                    )
+                    self._style_pressed = (
+                        "QWidget { background-color: #008a57; border-radius: 6px; } "
+                        "QLabel { color: #ffffff; font-size: 11px; }"
+                    )
+                    self.setStyleSheet(self._style_base)
+
+                def mousePressEvent(self, event):
+                    if event.button() == Qt.MouseButton.LeftButton:
+                        # Feedback visual de click
+                        self.setStyleSheet(self._style_pressed)
+                        self.parent_card.modify_tag_importance(self.tag_text, increase=True)
+                        from PyQt6.QtCore import QTimer
+                        QTimer.singleShot(120, lambda: self.setStyleSheet(self._style_hover))
+                    elif event.button() == Qt.MouseButton.RightButton:
+                        self.setStyleSheet(self._style_pressed)
+                        self.parent_card.modify_tag_importance(self.tag_text, increase=False)
+                        from PyQt6.QtCore import QTimer
+                        QTimer.singleShot(120, lambda: self.setStyleSheet(self._style_hover))
+                    event.accept()
+
+                def enterEvent(self, event):
+                    self.setStyleSheet(self._style_hover)
+                    super().enterEvent(event)
+
+                def leaveEvent(self, event):
+                    self.setStyleSheet(self._style_base)
+                    super().leaveEvent(event)
+
+            for tag in self.tags:
+                widget = TagMenuItem(tag, self)
+                action = QWidgetAction(menu)
+                action.setDefaultWidget(widget)
+                menu.addAction(action)
+
+            all_tags_btn.setMenu(menu)
+            all_tags_btn.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+            tags_layout.addWidget(all_tags_btn)
+
+            # Botón con icono de tuerquita para abrir el diálogo de tags
+            gear_btn = QToolButton()
+            gear_btn.setText("⚙️")
+            gear_btn.setToolTip("Editar lista de tags")
+            gear_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            gear_btn.setFixedHeight(22)
+            # Estilos jade (base y activo) para feedback visual
+            self._gear_style_base = (
+                "QToolButton {"
+                " background-color: #404040;"
+                " color: #fff;"
+                " border-radius: 10px;"
+                " padding: 0px 8px;"
+                " font-size: 12px;"
+                "}"
+                " QToolButton:hover {"
+                " background-color: #00A36C;"
+                " color: #ffffff;"
+                "}"
+            )
+            self._gear_style_active = (
+                "QToolButton {"
+                " background-color: #008a57;"
+                " color: #ffffff;"
+                " border-radius: 10px;"
+                " padding: 0px 8px;"
+                " font-size: 12px;"
+                "}"
+                " QToolButton:hover {"
+                " background-color: #008a57;"
+                " color: #ffffff;"
+                "}"
+            )
+            gear_btn.setStyleSheet(self._gear_style_base)
+            self.gear_btn = gear_btn
+            gear_btn.clicked.connect(self.show_tags_dialog)
+            tags_layout.addWidget(gear_btn)
     
         tags_layout.addStretch()
         layout.addLayout(tags_layout)
@@ -177,9 +296,16 @@ class CategoryCard(QFrame):
             tags_data = json.load(f)
             tags = tags_data.get(key, [])
         dlg = TagsDialog(self.category_name, tags, self)
+        # Activar resaltado jade mientras el diálogo esté abierto
+        if hasattr(self, "gear_btn") and hasattr(self, "_gear_style_active"):
+            self.gear_btn.setStyleSheet(self._gear_style_active)
         if dlg.exec():
-            # Si el diálogo se cerró con aceptar, actualizar los tags en la UI
-            self.update_tags_ui(tags)
+            # Si el diálogo se cerró con aceptar, actualizar los tags en la UI con los modificados
+            updated_tags = getattr(dlg, "tags", tags)
+            self.update_tags_ui(updated_tags)
+        # Restablecer estilo base al cerrar el diálogo (aceptar o cancelar)
+        if hasattr(self, "gear_btn") and hasattr(self, "_gear_style_base"):
+            self.gear_btn.setStyleSheet(self._gear_style_base)
 
     def setup_styles(self):
         """Configura los estilos de la tarjeta"""
@@ -314,3 +440,10 @@ class CategoryCard(QFrame):
     def get_selected_tags(self):
         """Retorna los tags seleccionados con su importancia"""
         return [tag for tag, count in self.tag_click_counts.items() if count > 0]
+
+    def clear_value(self):
+        """Limpia el valor del input y resetea la importancia de los tags."""
+        # Vaciar el campo de entrada
+        self.input_field.setText("")
+        # Resetear contadores de importancia de tags
+        self.tag_click_counts = {tag: 0 for tag in self.tags}

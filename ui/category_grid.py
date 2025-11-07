@@ -3,7 +3,7 @@ import json
 import re
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, 
-    QLineEdit, QScrollArea, QPushButton, QInputDialog, QMessageBox,
+    QLineEdit, QScrollArea, QPushButton, QToolButton, QInputDialog, QMessageBox,
     QDialog, QLabel, QTextEdit
 )
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -46,21 +46,61 @@ class CategoryGridFrame(QWidget):
         
         # --- Layout horizontal para buscador y botones ---
         search_layout = QHBoxLayout()
-        search_layout.setSpacing(8)
+        search_layout.setSpacing(20)
+
+        # Botón/ícono para limpiar todas las categorías (a la izquierda del filtro)
+        self.clear_btn = QToolButton()
+        self.clear_btn.setText("🧹")
+        self.clear_btn.setToolTip("Limpiar todas las categorías")
+        self.clear_btn.setFixedSize(28, 28)
+        self.clear_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clear_btn.setStyleSheet(
+            """
+            QToolButton {
+                background-color: #404040;
+                color: #ffffff;
+                border-radius: 6px;
+                padding: 2px;
+            }
+            QToolButton:hover {
+                background-color: #6366f1;
+            }
+            """
+        )
+        self.clear_btn.clicked.connect(self.clear_all_values)
+        search_layout.addWidget(self.clear_btn)
+        # Separación extra y stretch para centrar el buscador
+        search_layout.addSpacing(50)
+        search_layout.addStretch(1)
         
         # Buscador
         self.search_box = QLineEdit()
         self.search_box.setPlaceholderText("Buscar categoría...")
+        # Hacer el buscador más ancho pero controlado
+        self.search_box.setMinimumWidth(360)
+        self.search_box.setMaximumWidth(600)
         self.search_box.textChanged.connect(self.filter_cards)
         search_layout.addWidget(self.search_box)
+        # Stretch a la derecha del buscador para mantenerlo centrado
+        search_layout.addStretch(1)
+        # Stretch a la derecha del buscador para mantenerlo centrado
+        search_layout.addStretch(1)
         
         # Botón para importar datos
         self.import_data_btn = QPushButton("Importar Datos")
+        from PyQt6.QtWidgets import QSizePolicy
+        self.import_data_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        from PyQt6.QtWidgets import QSizePolicy
+        self.import_data_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.import_data_btn.clicked.connect(self.validate_and_load)
+        # Reducir padding para que sea más angosto
+        self.import_data_btn.setStyleSheet("QPushButton { padding: 4px 12px; }")
         search_layout.addWidget(self.import_data_btn)
         
         # Nuevo botón para guardar
         self.save_btn = QPushButton("Guardar")
+        self.save_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.save_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.save_btn.clicked.connect(self.show_save_options)
         self.save_btn.setStyleSheet("""
             QPushButton {
@@ -68,7 +108,7 @@ class CategoryGridFrame(QWidget):
                 color: white;
                 border: none;
                 border-radius: 6px;
-                padding: 4px 16px;
+                padding: 4px 12px;
                 font-weight: bold;
             }
             QPushButton:hover {
@@ -211,6 +251,14 @@ class CategoryGridFrame(QWidget):
             if hasattr(card, 'category_name'):
                 visible = text in card.category_name.lower()
                 card.setVisible(visible)
+
+    def clear_all_values(self):
+        """Limpia los valores de todas las tarjetas de categorías."""
+        for card in self.cards:
+            if hasattr(card, 'clear_value'):
+                card.clear_value()
+        # Actualizar prompt y señales tras limpiar
+        self.update_prompt()
 
     def update_prompt(self):
         """Actualiza el prompt cuando cambian los valores de las tarjetas"""
@@ -627,19 +675,53 @@ class CategoryGridFrame(QWidget):
         search_layout = QHBoxLayout()
         search_layout.setSpacing(8)
         
+        # Botón/ícono para limpiar todas las categorías (a la izquierda del filtro)
+        self.clear_btn = QToolButton()
+        self.clear_btn.setText("🧹")
+        self.clear_btn.setToolTip("Limpiar todas las categorías")
+        self.clear_btn.setFixedSize(28, 28)
+        self.clear_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clear_btn.setStyleSheet(
+            """
+            QToolButton {
+                background-color: #404040;
+                color: #ffffff;
+                border-radius: 6px;
+                padding: 2px;
+            }
+            QToolButton:hover {
+                background-color: #6366f1;
+            }
+            """
+        )
+        self.clear_btn.clicked.connect(self.clear_all_values)
+        search_layout.addWidget(self.clear_btn)
+        # Separación extra para evitar clics accidentales entre limpieza y buscador
+        search_layout.addSpacing(20)
+        
         # Buscador
         self.search_box = QLineEdit()
         self.search_box.setPlaceholderText("Buscar categoría...")
+        # Hacer el buscador más ancho pero controlado
+        self.search_box.setMinimumWidth(360)
+        self.search_box.setMaximumWidth(600)
         self.search_box.textChanged.connect(self.filter_cards)
         search_layout.addWidget(self.search_box)
+        # Empujar los botones a la derecha
+        search_layout.addStretch(1)
         
         # Botón para importar datos
         self.import_data_btn = QPushButton("Importar Datos")
+        from PyQt6.QtWidgets import QSizePolicy
+        self.import_data_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.import_data_btn.clicked.connect(self.import_data_dialog)
+        # Reducir padding para que sea más angosto
+        self.import_data_btn.setStyleSheet("QPushButton { padding: 4px 12px; }")
         search_layout.addWidget(self.import_data_btn)
         
         # Nuevo botón para guardar
         self.save_btn = QPushButton("Guardar")
+        self.save_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.save_btn.clicked.connect(self.show_save_options)
         self.save_btn.setStyleSheet("""
             QPushButton {
@@ -647,7 +729,7 @@ class CategoryGridFrame(QWidget):
                 color: white;
                 border: none;
                 border-radius: 6px;
-                padding: 4px 16px;
+                padding: 4px 12px;
                 font-weight: bold;
             }
             QPushButton:hover {
@@ -790,6 +872,14 @@ class CategoryGridFrame(QWidget):
             if hasattr(card, 'category_name'):
                 visible = text in card.category_name.lower()
                 card.setVisible(visible)
+    
+    def clear_all_values(self):
+        """Limpia los valores de todas las tarjetas de categorías."""
+        for card in self.cards:
+            if hasattr(card, 'clear_value'):
+                card.clear_value()
+        # Actualizar prompt y señales tras limpiar
+        self.update_prompt()
 
     def update_prompt(self):
         """Actualiza el prompt cuando cambian los valores de las tarjetas"""

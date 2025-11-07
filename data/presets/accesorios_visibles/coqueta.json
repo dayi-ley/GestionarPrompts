@@ -5,17 +5,13 @@
       "categories": {
         "Expresion facial ojos": "Half-closed eyes with a playful gaze, eyebrows slightly raised with a teasing arch,",
         "Expresion facial mejillas": "cheeks slightly flushed,",
-        "Expresion facial boca": "soft smirk on the lips, open mouth,",
+        "Expresion facial boca": "soft smirk on the lips,open mouth,",
         "Postura cabeza": "head tilted slightly to the side, head tilt,",
-        "Actitud emocion": "overall flirty and confident expression, expression of disgust,"
+        "Actitud emocion": "overall flirty and confident expression, expression of disgust,",
+        "Rostro accesorios": ""
       },
-      "images": [
-        "image_1.png",
-        "image_2.png",
-        "image_3.png",
-        "image_4.png"
-      ],
-      "created_at": "2025-08-04T12:14:06.748774"
+      "images": [],
+      "created_at": "2025-11-05T23:47:42.498259"
     }
   }
 }

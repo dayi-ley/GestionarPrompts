@@ -1,14 +1,14 @@
 {
   "angulo": [
-    "frontal view",
-    "low angle",
-    "high angle",
-    "medium angle",
     "lateral angle",
-    "from above",
-    "from below",
+    "((high angle)),((from above))",
+    "((low angle)),((from below))",
+    "frontal view",
+    "cowboy shot",
+    "medium angle",
     "from behind",
-    "dutch angle"
+    "dutch angle",
+    "Cenital angle"
   ],
   "calidad_tecnica": [
     "newest",
@@ -142,6 +142,7 @@
     "looking down"
   ],
   "vestuario_general": [
+    "lingerie, crotch-less panties, cupless bra, cupless lingerie",
     "swimsuit under clothes",
     "tactical clothes",
     "school swimsuit",
@@ -195,6 +196,7 @@
     "petite female"
   ],
   "rasgo_fisico_cuerpo": [
+    "large breasts,(big breasts), huge breast,",
     "slender body",
     "athletic build",
     "curvy figure",
@@ -208,10 +210,13 @@
   ],
   "pose_actitud_global": [
     "standing",
-    "wide hips",
+    "lying down",
     "sitting",
     "kneeling",
-    "lying down"
+    "squatting",
+    "Crouching",
+    "Reclining",
+    "Leaning"
   ],
   "pose_brazos": [
     "arms crossed",
@@ -251,10 +256,12 @@
     "completely nude"
   ],
   "objetos_interaccion": [
+    "holding a pokeball",
     "holding a book",
     "holding a drink",
     "holding a weapon",
-    "holding a phone"
+    "holding a phone",
+    "sucking popsicle"
   ],
   "objetos_escenario": [
     "chair",

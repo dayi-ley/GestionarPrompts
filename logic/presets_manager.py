@@ -98,21 +98,46 @@ class PresetsManager:
         safe_filename = re.sub(r'[^\w\s-]', '', preset_name).strip()
         safe_filename = re.sub(r'[-\s]+', '_', safe_filename).lower()
         
-        # Crear carpeta de imágenes si hay imágenes
+        # Sincronizar carpeta de imágenes con la selección actual
         images_data = []
-        if preset_data.get('images'):
-            images_dir = os.path.join(category_dir, f"{safe_filename}_images")
+        images_dir = os.path.join(category_dir, f"{safe_filename}_images")
+        selected_images = preset_data.get('images') or []
+
+        if selected_images:
             os.makedirs(images_dir, exist_ok=True)
-            
-            for i, image_path in enumerate(preset_data['images']):
-                if os.path.exists(image_path):
-                    # Copiar imagen a la carpeta del preset
-                    import shutil
-                    file_extension = os.path.splitext(image_path)[1]
-                    new_image_name = f"image_{i+1}{file_extension}"
-                    new_image_path = os.path.join(images_dir, new_image_name)
-                    shutil.copy2(image_path, new_image_path)
-                    images_data.append(new_image_name)
+
+            desired_names = []
+            for i, image_path in enumerate(selected_images):
+                if not os.path.exists(image_path):
+                    continue
+                file_extension = os.path.splitext(image_path)[1]
+                new_image_name = f"image_{i+1}{file_extension}"
+                new_image_path = os.path.join(images_dir, new_image_name)
+
+                # Evitar SameFileError cuando el origen y el destino son iguales
+                try:
+                    if os.path.abspath(image_path) != os.path.abspath(new_image_path):
+                        shutil.copy2(image_path, new_image_path)
+                    # Si son iguales, no copiamos; ya está en el lugar correcto
+                except shutil.SameFileError:
+                    # Ya es el mismo archivo; no hacer nada
+                    pass
+
+                desired_names.append(new_image_name)
+                images_data.append(new_image_name)
+
+            # Eliminar archivos sobrantes que no están en la nueva selección
+            if os.path.isdir(images_dir):
+                for fname in os.listdir(images_dir):
+                    if fname not in set(desired_names):
+                        try:
+                            os.remove(os.path.join(images_dir, fname))
+                        except Exception:
+                            pass
+        else:
+            # No hay imágenes seleccionadas: borrar la carpeta de imágenes si existe
+            if os.path.isdir(images_dir):
+                shutil.rmtree(images_dir, ignore_errors=True)
         
         # Crear estructura del preset
         preset_structure = {
@@ -214,3 +239,86 @@ class PresetsManager:
         except Exception as e:
             print(f"Error al cargar preset: {e}")
             return None
+
+    def delete_preset(self, preset_type: str, preset_name: str) -> bool:
+        """Elimina el archivo JSON del preset y su carpeta de imágenes asociada.
+
+        Args:
+            preset_type: Carpeta/categoría del preset.
+            preset_name: Nombre visible del preset.
+
+        Returns:
+            True si se eliminó alguna pieza relevante; False si no existía nada que eliminar.
+        """
+        try:
+            # Nombre de archivo seguro
+            safe_filename = re.sub(r'[^\w\s-]', '', preset_name).strip()
+            safe_filename = re.sub(r'[-\s]+', '_', safe_filename).lower()
+
+            category_dir = os.path.join(self.presets_dir, preset_type)
+            json_path = os.path.join(category_dir, f"{safe_filename}.json")
+            images_dir = os.path.join(category_dir, f"{safe_filename}_images")
+
+            removed_any = False
+
+            if os.path.exists(json_path):
+                os.remove(json_path)
+                removed_any = True
+
+            if os.path.isdir(images_dir):
+                shutil.rmtree(images_dir, ignore_errors=True)
+                removed_any = True
+
+            return removed_any
+        except Exception as e:
+            print(f"Error eliminando preset '{preset_name}' en '{preset_type}': {e}")
+            return False
+
+    def delete_folder(self, folder_id: str) -> bool:
+        """Elimina por completo una carpeta de presets (incluye JSON e imágenes).
+
+        Args:
+            folder_id: Identificador de la carpeta (nombre de directorio).
+
+        Returns:
+            True si la carpeta existía y fue eliminada; False en caso contrario o error.
+        """
+        try:
+            folder_path = os.path.join(self.presets_dir, folder_id)
+            if os.path.isdir(folder_path):
+                shutil.rmtree(folder_path, ignore_errors=True)
+                return True
+            return False
+        except Exception as e:
+            print(f"Error eliminando carpeta de presets '{folder_id}': {e}")
+            return False
+
+    def rename_folder(self, old_folder_id: str, new_display_name: str) -> tuple[bool, str]:
+        """Renombra una carpeta de presets moviendo el directorio.
+
+        Args:
+            old_folder_id: Nombre actual del directorio.
+            new_display_name: Nuevo nombre visible; se sanitiza a id de carpeta.
+
+        Returns:
+            (success, new_folder_id) donde new_folder_id es el id sanitizado si success.
+        """
+        try:
+            new_folder_id = self.sanitize_folder_name(new_display_name)
+            if not new_folder_id:
+                return (False, "")
+
+            old_path = os.path.join(self.presets_dir, old_folder_id)
+            new_path = os.path.join(self.presets_dir, new_folder_id)
+
+            if not os.path.isdir(old_path):
+                return (False, "")
+            if os.path.exists(new_path):
+                # Ya existe una carpeta con ese nombre
+                return (False, "")
+
+            os.rename(old_path, new_path)
+            return (True, new_folder_id)
+        except Exception as e:
+            print(f"Error renombrando carpeta '{old_folder_id}' a '{new_display_name}': {e}")
+            return (False, "")

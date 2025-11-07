@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "somnolienta": {
+      "name": "somnolienta",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,sleepy eyes,tears from yawning,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "yawning mouth,",
+        "Direccion mirada personaje": " looking away,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:05:01.220775"
+    }
+  }
+}

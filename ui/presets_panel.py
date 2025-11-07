@@ -2,10 +2,11 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTreeWidget, QTreeWidgetItem,
     QPushButton, QLineEdit, QLabel, QMessageBox, QInputDialog,
     QDialog, QComboBox, QCheckBox, QScrollArea, QTextEdit, QFileDialog, QGridLayout,
-    QToolTip, QFrame  # Mantener QToolTip y QFrame
+    QToolTip, QFrame, QMenu  # Mantener QToolTip y QFrame y agregar QMenu
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QBuffer, QPoint  # Remover QTimer
-from PyQt6.QtGui import QFont, QPixmap, QCursor
+from PyQt6.QtGui import QFont, QPixmap, QCursor, QAction
+from ui.edit_preset_dialog import EditPresetDialog
 from logic.presets_manager import PresetsManager
 from datetime import datetime  # ← AGREGAR ESTE IMPORT
 from PIL import Image  # Agregar para redimensionar imágenes
@@ -44,11 +45,13 @@ class PresetsPanel(QWidget):
         # Árbol de presets (organizado por carpetas)
         self.presets_tree = QTreeWidget()
         self.presets_tree.setHeaderHidden(True)
-        # CAMBIO: Configurar para click derecho directo
+        # Configurar clic derecho para menú contextual con opciones
         self.presets_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.presets_tree.customContextMenuRequested.connect(self.show_preset_preview)
+        self.presets_tree.customContextMenuRequested.connect(self.show_context_menu)
         # Conectar doble clic para cargar preset
         self.presets_tree.itemDoubleClicked.connect(self.load_selected_preset)
+        # Conectar clic simple para alternar expansión de carpetas
+        self.presets_tree.itemClicked.connect(self.toggle_folder_on_click)
         layout.addWidget(self.presets_tree)
         
         # Botones
@@ -120,6 +123,8 @@ class PresetsPanel(QWidget):
                 'category_id': folder_id,
                 'is_custom': folder_info.get('is_custom', False)
             })
+            # Tooltip con opciones disponibles
+            category_item.setToolTip(0, "Opciones: Renombrar carpeta • Eliminar carpeta")
             
             # Cargar presets de esta categoría
             presets = self.presets_manager.get_presets_by_category(folder_id)
@@ -133,8 +138,16 @@ class PresetsPanel(QWidget):
                     'preset_data': preset_data
                 })
         
-        # Expandir todos los nodos
-        self.presets_tree.expandAll()
+        # Colapsar todos los nodos por defecto
+        self.presets_tree.collapseAll()
+
+    def toggle_folder_on_click(self, item, column):
+        """Alterna expansión al hacer clic en una carpeta (item raíz)."""
+        if item is None:
+            return
+        item_data = item.data(0, Qt.ItemDataRole.UserRole) or {}
+        if item_data.get('type') == 'category' and item.parent() is None:
+            item.setExpanded(not item.isExpanded())
     
     def load_selected_preset(self, item, column):
         """Carga el preset seleccionado al hacer doble clic con confirmación"""
@@ -194,15 +207,8 @@ class PresetsPanel(QWidget):
             QMessageBox.warning(self, "Error", "No se puede acceder a los valores de categorías.")
             return
         
-        # Obtener todos los valores actuales
+        # Obtener todos los valores actuales (incluye vacíos)
         all_values = main_window.category_grid.get_current_values()
-        
-        # Filtrar solo las categorías que tienen contenido
-        categories_with_content = {k: v for k, v in all_values.items() if v and v.strip()}
-        
-        if not categories_with_content:
-            QMessageBox.warning(self, "Sin contenido", "No hay categorías con valores para guardar.")
-            return
         
         # Crear diálogo personalizado más compacto
         dialog = QDialog(self)
@@ -216,8 +222,8 @@ class PresetsPanel(QWidget):
         # ===== COLUMNA IZQUIERDA: CATEGORÍAS (75% del ancho) =====
         left_section = QVBoxLayout()
         
-        # Título de categorías
-        categories_title = QLabel(f"Seleccionar Categorías ({len(categories_with_content)} disponibles):")
+        # Título de categorías (mostrar todas, incluidas vacías)
+        categories_title = QLabel(f"Seleccionar Categorías ({len(all_values)} disponibles):")
         categories_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 5px;")
         left_section.addWidget(categories_title)
         
@@ -262,9 +268,9 @@ class PresetsPanel(QWidget):
         # Variable para almacenar imagen comprimida
         compressed_image_data = None
         
-        # Crear checkboxes para cada categoría con LETRA MÁS GRANDE Y COLORES
+        # Crear checkboxes para cada categoría (incluye vacías) con LETRA MÁS GRANDE Y COLORES
         checkboxes = {}
-        for category, value in categories_with_content.items():
+        for category, value in all_values.items():
             checkbox = QCheckBox(f"{category}: {value[:45]}{'...' if len(value) > 45 else ''}")
             checkbox.setChecked(True)
             
@@ -517,18 +523,18 @@ class PresetsPanel(QWidget):
             if not selected_folder:
                 QMessageBox.warning(dialog, "Error", "Por favor selecciona una carpeta.")
                 return
-            
-            # Obtener las categorías seleccionadas
+
+            # Obtener las categorías seleccionadas (guardar aunque estén vacías)
             selected_categories = {}
             for category, checkbox in checkboxes.items():
                 if checkbox.isChecked():
-                    if category in categories_with_content:
-                        selected_categories[category] = categories_with_content[category]
-            
+                    if category in all_values:
+                        selected_categories[category] = all_values[category]
+
             if not selected_categories:
                 QMessageBox.warning(dialog, "Error", "Por favor selecciona al menos una categoría.")
                 return
-            
+
             try:
                 # Crear el preset
                 preset_data = {
@@ -559,41 +565,126 @@ class PresetsPanel(QWidget):
         dialog.exec()
 
     def show_context_menu(self, position):
-        """Muestra menú contextual con vista previa de imágenes al hacer click derecho"""
+        """Muestra menú contextual con opciones al hacer clic derecho"""
         item = self.presets_tree.itemAt(position)
-        if not item or item.parent() is None:
-            # Es una carpeta o no hay item, no mostrar menú
+        if not item:
             return
-            
-        # Obtener datos del preset
-        item_data = item.data(0, Qt.ItemDataRole.UserRole)
-        if not item_data or item_data.get('type') != 'preset':
-            return
-        
-        # Crear menú contextual
+
+        item_data = item.data(0, Qt.ItemDataRole.UserRole) or {}
+        item_type = item_data.get('type')
+
         context_menu = QMenu(self)
-        
-        # Acción para cargar preset
-        load_action = QAction("🔄 Cargar Preset", self)
-        load_action.triggered.connect(lambda: self.load_selected_preset(item, 0))
-        context_menu.addAction(load_action)
-        
-        # Separador
-        context_menu.addSeparator()
-        
-        # Acción para vista previa (que mostrará el tooltip)
-        preview_action = QAction("👁️ Vista Previa", self)
-        preview_action.triggered.connect(lambda: self.show_preset_preview(item, position))
-        context_menu.addAction(preview_action)
-        
-        # Mostrar menú en la posición del click
+
+        if item_type == 'preset' and item.parent() is not None:
+            # Menú para presets
+            edit_action = QAction("✏️ Editar Preset", self)
+            edit_action.triggered.connect(lambda: self.open_edit_preset_dialog(item))
+            context_menu.addAction(edit_action)
+
+            preview_action = QAction("👁️ Vista Previa", self)
+            preview_action.triggered.connect(lambda: self.show_preset_preview(position))
+            context_menu.addAction(preview_action)
+
+        elif item_type == 'category' and item.parent() is None:
+            # Menú para carpetas
+            folder_id = item_data.get('category_id')
+
+            rename_action = QAction("✏️ Renombrar Carpeta", self)
+            def do_rename():
+                new_name, ok = QInputDialog.getText(self, "Renombrar Carpeta", "Nuevo nombre:")
+                if not ok:
+                    return
+                success, new_folder_id = self.presets_manager.rename_folder(folder_id, new_name)
+                if not success:
+                    QMessageBox.warning(self, "Error", "No se pudo renombrar la carpeta. Verifica que el nombre no exista y sea válido.")
+                    return
+                # Recargar árbol
+                self.load_presets()
+            rename_action.triggered.connect(do_rename)
+            context_menu.addAction(rename_action)
+
+            delete_action = QAction("🗑️ Eliminar Carpeta", self)
+            def do_delete():
+                confirm = QMessageBox.question(self, "Eliminar Carpeta",
+                                              f"¿Eliminar la carpeta '{item.text(0)}' y todos sus presets?",
+                                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                              QMessageBox.StandardButton.No)
+                if confirm != QMessageBox.StandardButton.Yes:
+                    return
+                if not self.presets_manager.delete_folder(folder_id):
+                    QMessageBox.warning(self, "Error", "No se pudo eliminar la carpeta.")
+                    return
+                self.load_presets()
+            delete_action.triggered.connect(do_delete)
+            context_menu.addAction(delete_action)
+
+        else:
+            return
+
         global_pos = self.presets_tree.mapToGlobal(position)
         context_menu.exec(global_pos)
 
+    def open_edit_preset_dialog(self, item):
+        """Abre el diálogo de edición para el preset seleccionado"""
+        if not item or item.parent() is None:
+            return
+
+        item_data = item.data(0, Qt.ItemDataRole.UserRole)
+        if not item_data or item_data.get('type') != 'preset':
+            return
+
+        category_id = item_data.get('category_id')
+        preset_data = item_data.get('preset_data', {})
+        preset_name = preset_data.get('name', 'Sin nombre')
+
+        # Cargar datos completos (incluye rutas absolutas de imágenes)
+        full_preset_data = self.presets_manager.load_preset(category_id, preset_name) or {}
+        categories = full_preset_data.get('categories', preset_data.get('categories', {}))
+        images = full_preset_data.get('images', [])
+
+        dialog = EditPresetDialog(self)
+        dialog.setWindowTitle(f"Editar Preset - {preset_name}")
+        dialog.set_preset_data(preset_name, category_id, categories, images)
+        if dialog.exec():
+            # Guardar cambios (posible renombre si el nombre cambia)
+            updated_categories = dialog.get_updated_categories()
+            updated_images = dialog.get_selected_images()
+            updated_name = getattr(dialog, 'get_preset_name', lambda: preset_name)()
+
+            new_preset_data = {
+                'name': updated_name,
+                'categories': updated_categories,
+                'images': updated_images,
+                'created_at': datetime.now().isoformat()
+            }
+
+            # Si el nombre cambió, guardar con el nuevo nombre y eliminar el antiguo
+            if updated_name != preset_name:
+                success_new = self.presets_manager.save_preset(category_id, updated_name, new_preset_data)
+                if success_new:
+                    # Eliminar el preset anterior para simular "renombrar"
+                    if hasattr(self.presets_manager, 'delete_preset'):
+                        try:
+                            self.presets_manager.delete_preset(category_id, preset_name)
+                        except Exception as e:
+                            print(f"Advertencia: No se pudo eliminar el preset anterior: {e}")
+                    QMessageBox.information(self, "Éxito", f"Preset renombrado a '{updated_name}' y actualizado correctamente.")
+                    self.load_presets()
+                else:
+                    QMessageBox.warning(self, "Error", "No se pudo guardar el preset con el nuevo nombre.")
+            else:
+                # Nombre no cambió: comportamiento original de actualización
+                success = self.presets_manager.save_preset(category_id, preset_name, new_preset_data)
+                if success:
+                    QMessageBox.information(self, "Éxito", f"Preset '{preset_name}' actualizado correctamente.")
+                    self.load_presets()
+                else:
+                    QMessageBox.warning(self, "Error", "No se pudo actualizar el preset.")
+
     def show_preset_preview(self, position):
-        """Muestra vista previa de imágenes del preset al hacer click derecho"""
+        """Muestra vista previa de imágenes del preset al hacer clic derecho"""
         print(f"DEBUG: show_preset_preview llamado en posición {position}")
-        
+
         item = self.presets_tree.itemAt(position)
         if not item or item.parent() is None:
             print("DEBUG: No es un preset válido")

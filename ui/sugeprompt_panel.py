@@ -6,8 +6,9 @@ from PyQt6.QtCore import Qt, pyqtSignal, QPoint
 from PyQt6.QtGui import QFont, QMouseEvent
 from .sugeprompt.category_section import CategorySection
 from .sugeprompt.config_section import ConfigSection
-from .sugeprompt.analysis_section import AnalysisSection
-from .sugeprompt.results_section import ResultsSection
+# Eliminamos la importación de NodeFlowSection
+# from .sugeprompt.results_section import NodeFlowSection
+from .sugeprompt.column_system import ColumnSystem
 
 class MinimizedBubble(QWidget):
     """Burbuja flotante que aparece cuando se minimiza el diálogo"""
@@ -102,13 +103,13 @@ class SugerenciaPromptDialog(QDialog):
         
         # Variable para controlar el estado minimizado
         self.is_minimized = False
-        self.normal_size = (1300, 600)
+        self.normal_size = (1300, 680)
         self.minimized_size = (200, 50)  # AGREGAR: tamaño minimizado
         self.bubble = None  # Inicializar bubble como None
         
         # Ventana más grande y responsiva
         self.setMinimumSize(200, 50)  # Permitir tamaño mínimo pequeño
-        self.resize(1300, 600)
+        self.resize(1300, 680)
         self.setup_ui()
         self.setup_styles()
         # ELIMINAR: self.center() - no es necesario para el funcionamiento
@@ -136,7 +137,7 @@ class SugerenciaPromptDialog(QDialog):
             self.move(screen.width() - 220, 20)
     
     def setup_ui(self):
-        """Configura la interfaz del diálogo con 5 secciones"""
+        """Configura la interfaz del diálogo con 3 secciones"""
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
@@ -217,8 +218,8 @@ class SugerenciaPromptDialog(QDialog):
         # Contenedor para las secciones (se puede ocultar)
         self.content_widget = QWidget()
         content_layout = QVBoxLayout(self.content_widget)
-        content_layout.setContentsMargins(5, 5, 20, 20)
-        content_layout.setSpacing(15)
+        content_layout.setContentsMargins(5, 3, 20, 15)
+        content_layout.setSpacing(6)
         
         # SECCIÓN 1: Elección de Categoría
         self.category_section = CategorySection()  # Cambiar a self.category_section
@@ -231,26 +232,249 @@ class SugerenciaPromptDialog(QDialog):
         # CONECTAR SEÑALES: Cuando se selecciona una categoría, actualizar configuración
         self.category_section.category_selected.connect(self.config_section.update_category_config)
         
-        # SECCIÓN 3: Procesamiento (dividida horizontalmente)
-        procesamiento_container = QHBoxLayout()
+        # CONECTAR SEÑALES: Cuando se selecciona una opción, activar área de prompt
+        # Cambiar esta línea:
+        # self.config_section.option_selected.connect(self.activate_prompt_area)
+        # Por esta:
+        self.config_section.option_selected.connect(lambda option_id, option_data: self.add_suggestion_to_prompt(option_data.get('prompt', option_id.replace('_', ' '))))
         
-        # Subsección 3.1: Análisis
-        self.analysis_section = AnalysisSection()  # Cambiar a self.analysis_section
-        procesamiento_container.addWidget(self.analysis_section)
+        # En el método setup_ui de SugerenciaPromptDialog, después de crear self.prompt_area
+        # Alrededor de la línea 240
         
-        # Subsección 3.2: Resultados
-        self.results_section = ResultsSection()  # Cambiar a self.results_section
-        procesamiento_container.addWidget(self.results_section)
+        # Área de Prompt
+        self.prompt_area = self.create_prompt_area()
         
-        # Crear un widget contenedor para el layout horizontal
-        procesamiento_widget = QWidget()
-        procesamiento_widget.setLayout(procesamiento_container)
-        content_layout.addWidget(procesamiento_widget)
+        # SECCIÓN 3: Sistema de Columnas
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.setChildrenCollapsible(False)
         
+        # Crear y agregar el sistema de columnas primero (lado izquierdo)
+        self.column_system = ColumnSystem()
+        splitter.addWidget(self.column_system)
+        
+        # Agregar el área de prompt al splitter (lado derecho)
+        splitter.addWidget(self.prompt_area)
+        
+        # Establecer proporciones iniciales (60% columnas, 40% prompt)
+        splitter.setSizes([30, 70])
+        
+        # Agregar el splitter al layout principal en lugar del prompt_area directamente
+        content_layout.addWidget(splitter)
+        
+        # Conectar la señal de opción seleccionada al sistema de columnas
+        self.config_section.option_selected.connect(self.activate_column_system)
+        
+        main_layout.addWidget(self.content_widget)
+
         main_layout.addWidget(self.content_widget)  # CAMBIAR: content_widget → self.content_widget
     
-        # Eliminar completamente la sección de botones de acción
-        # (Se han removido los botones "Generar Sugerencias" y "Cerrar")
+    def activate_node_flow(self, option_id, option_data):
+        """Activa el flujo de nodos cuando se selecciona una opción"""
+        import sys
+        print(f"DEBUG SugePromptPanel: activate_node_flow llamado con option_id={option_id}", flush=True)
+        print(f"DEBUG SugePromptPanel: option_data type: {type(option_data)}", flush=True)
+        
+        # Verificar si es school_uniform y cargar datos específicos
+        if option_id == 'school_uniform':
+            print(f"DEBUG SugePromptPanel: Detectada opción school_uniform, cargando datos específicos", flush=True)
+            sys.stdout.flush()
+            
+            # Cargar datos específicos del archivo JSON
+            import os
+            import json
+            option_file_path = os.path.join('data', 'sugeprompt', 'categories', 'vestuario_general', f"{option_id}.json")
+            
+            if os.path.exists(option_file_path):
+                try:
+                    with open(option_file_path, 'r', encoding='utf-8') as file:
+                        specific_data = json.load(file)
+                        
+                    # Combinar datos específicos con los datos generales
+                    if isinstance(option_data, dict) and isinstance(specific_data, dict):
+                        for key, value in specific_data.items():
+                            if key not in option_data:
+                                option_data[key] = value
+                        
+                    # Eliminamos los print con flush=True
+                except Exception as e:
+                    # Eliminamos los print con flush=True
+                    pass
+        
+        self.node_flow_section.load_option(option_id, option_data)
+    
+    def activate_column_system(self, option_id, option_data):
+        """Activa el sistema de columnas cuando se selecciona una opción"""
+        print(f"DEBUG: activate_column_system llamado con option_id={option_id}")
+        
+        # Verificar si es school_uniform y cargar datos específicos
+        if option_id == 'school_uniform':
+            # Cargar datos específicos del archivo JSON
+            import os
+            import json
+            option_file_path = os.path.join('data', 'sugeprompt', 'categories', 'vestuario_general', f"{option_id}.json")
+            
+            if os.path.exists(option_file_path):
+                try:
+                    with open(option_file_path, 'r', encoding='utf-8') as file:
+                        specific_data = json.load(file)
+                        
+                    # Combinar datos específicos con los datos generales
+                    if isinstance(option_data, dict) and isinstance(specific_data, dict):
+                        for key, value in specific_data.items():
+                            if key not in option_data:
+                                option_data[key] = value
+                except Exception as e:
+                    print(f"Error al cargar datos específicos: {e}")
+        
+        # Pasar los datos al sistema de columnas
+        self.column_system.load_option(option_id, option_data)
+        
+        # También podemos agregar la sugerencia al prompt
+        # Extraer el texto de sugerencia del prompt o usar el option_id como fallback
+        suggestion_text = option_data.get('prompt', option_id.replace('_', ' '))
+        self.add_suggestion_to_prompt(suggestion_text)
+    
+    def on_category_selected(self, category_label):
+        """Maneja la selección de una categoría"""
+        # Limpiar el área de prompt y agregar la categoría
+        self.prompt_text_area.clear()
+        self.prompt_text_area.setPlainText(category_label)
+    
+    def on_item_selected(self, item_label):
+        """Maneja la selección de un item desde la columna Items"""
+        # Agregar el item al prompt existente
+        current_text = self.prompt_text_area.toPlainText().strip()
+        if current_text:
+            new_text = f"{current_text}, {item_label}"
+        else:
+            new_text = item_label
+        self.prompt_text_area.setPlainText(new_text)
+        
+    def add_suggestion_to_prompt(self, suggestion):
+        """Agrega una sugerencia al área de texto del prompt"""
+        current_text = self.prompt_text_area.toPlainText().strip()
+        
+        if current_text:
+            # Si ya hay texto, agregar con coma
+            new_text = f"{current_text}, {suggestion}"
+        else:
+            # Si está vacío, agregar directamente
+            new_text = suggestion
+        
+        self.prompt_text_area.setPlainText(new_text)
+        # Mover cursor al final
+        cursor = self.prompt_text_area.textCursor()
+        cursor.movePosition(cursor.MoveOperation.End)
+        self.prompt_text_area.setTextCursor(cursor)
+    
+    def create_prompt_area(self):
+        """Crea el área de prompt con botones horizontales"""
+        prompt_widget = QWidget()
+        prompt_layout = QVBoxLayout(prompt_widget)
+        prompt_layout.setContentsMargins(10, 5, 10, 5)
+        prompt_layout.setSpacing(8)
+        
+        # Título pequeño
+        title = QLabel("Prompt Generado")
+        title.setStyleSheet("""
+            QLabel {
+                font-size: 12px;
+                font-weight: bold;
+                color: #e0e0e0;
+                margin-bottom: 5px;
+            }
+        """)
+        prompt_layout.addWidget(title)
+        
+        # Área de texto del prompt
+        self.prompt_text_area = QTextEdit()
+        self.prompt_text_area.setPlaceholderText("El prompt generado aparecerá aquí...")
+        self.prompt_text_area.setStyleSheet("""
+            QTextEdit {
+                background-color: #383838;
+                border: 1px solid #555;
+                border-radius: 6px;
+                padding: 10px;
+                color: #e0e0e0;
+                font-size: 11px;
+                line-height: 1.4;
+            }
+        """)
+        prompt_layout.addWidget(self.prompt_text_area)
+        
+        # Botones horizontales
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(5)
+        
+        # Crear botones
+        button_configs = [
+            ("Copiar", "#4a90e2", "#357abd"),
+            ("Guardar", "#27ae60", "#219a52"),
+            ("Limpiar", "#e74c3c", "#c0392b"),
+            ("Generar", "#9b59b6", "#8e44ad"),
+            ("Aplicar Sugerencias", "#3498db", "#2980b9")
+        ]
+        
+        for text, bg_color, hover_color in button_configs:
+            button = QPushButton(text)
+            button.setFixedHeight(28)
+            button.clicked.connect(lambda checked, action=text: self.on_prompt_action(action))
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {bg_color};
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 10px;
+                    font-weight: 600;
+                    padding: 4px 8px;
+                }}
+                QPushButton:hover {{
+                    background-color: {hover_color};
+                }}
+                QPushButton:pressed {{
+                    background-color: {hover_color};
+                    transform: translateY(1px);
+                }}
+            """)
+            buttons_layout.addWidget(button)
+        
+        prompt_layout.addLayout(buttons_layout)
+        
+        return prompt_widget
+    
+    def on_prompt_action(self, action):
+        """Maneja las acciones de los botones del área de prompt"""
+        if action == "Limpiar":
+            self.prompt_text_area.clear()
+        elif action == "Copiar":
+            text = self.prompt_text_area.toPlainText()
+            if text.strip():
+                try:
+                    import pyperclip
+                    pyperclip.copy(text)
+                    print("Prompt copiado al portapapeles")
+                except ImportError:
+                    print("pyperclip no disponible - instalar con: pip install pyperclip")
+        elif action == "Guardar":
+            print("TODO: Guardar prompt en historial")
+        elif action == "Generar":
+            # Generar prompt básico
+            prompt_parts = ["masterpiece, best quality, ultra detailed", "1girl, portrait", "professional photography, cinematic lighting"]
+            generated_prompt = ", ".join(prompt_parts)
+            
+            current_text = self.prompt_text_area.toPlainText().strip()
+            if current_text:
+                final_prompt = f"{current_text}, {generated_prompt}"
+            else:
+                final_prompt = generated_prompt
+            
+            self.prompt_text_area.setPlainText(final_prompt)
+        elif action == "Aplicar Sugerencias":
+            # Aplicar sugerencias seleccionadas
+            print("Sugerencias aplicadas al prompt")
+            # Aquí se podría implementar lógica adicional como guardar el prompt
+            # o enviarlo a otro componente de la aplicación
     
     def create_section_frame(self, min_height):
         """Crea un frame de sección con título y altura mínima"""
@@ -407,7 +631,6 @@ class SugePromptPanel(QWidget):
         
         # Lista compacta de funcionalidades
         todo_description = QLabel(
-            "• Sistema de sugerencias inteligentes\n"
             "• Recomendaciones contextuales\n"
             "• Plantillas predefinidas"
         )
@@ -435,3 +658,44 @@ class SugePromptPanel(QWidget):
                 background: transparent;
             }
         """)
+
+    # Añadir la importación al inicio del archivo (línea 7)
+    from .sugeprompt.column_system import ColumnSystem
+    
+    def activate_prompt_area(self, option_id, option_data):
+        """Activa el área de prompt cuando se selecciona una opción"""
+        # Agregar la opción seleccionada al área de prompt
+        if isinstance(option_data, dict) and 'prompt' in option_data:
+            self.add_suggestion_to_prompt(option_data['prompt'])
+        else:
+            self.add_suggestion_to_prompt(option_id.replace('_', ' '))
+
+    def activate_column_system(self, option_id, option_data):
+        """Activa el sistema de columnas cuando se selecciona una opción"""
+        print(f"DEBUG: activate_column_system llamado con option_id={option_id}")
+        
+        # Verificar si es school_uniform y cargar datos específicos
+        if option_id == 'school_uniform':
+            # Cargar datos específicos del archivo JSON
+            import os
+            import json
+            option_file_path = os.path.join('data', 'sugeprompt', 'categories', 'vestuario_general', f"{option_id}.json")
+            
+            if os.path.exists(option_file_path):
+                try:
+                    with open(option_file_path, 'r', encoding='utf-8') as file:
+                        specific_data = json.load(file)
+                        
+                    # Combinar datos específicos con los datos generales
+                    if isinstance(option_data, dict) and isinstance(specific_data, dict):
+                        for key, value in specific_data.items():
+                            if key not in option_data:
+                                option_data[key] = value
+                except Exception as e:
+                    print(f"Error al cargar datos específicos: {e}")
+        
+        # Pasar los datos al sistema de columnas
+        self.column_system.load_option(option_id, option_data)
+        
+        # También podemos agregar la sugerencia al prompt
+        self.add_suggestion_to_prompt(option_id, option_data)

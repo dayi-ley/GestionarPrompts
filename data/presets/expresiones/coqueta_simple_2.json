@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "coqueta_simple_2": {
+      "name": "coqueta simple 2",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "looking back over shoulder, parted lips, bedroom eyes,",
+        "Direccion mirada personaje": " looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:25:47.683694"
+    }
+  }
+}

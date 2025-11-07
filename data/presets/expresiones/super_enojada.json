@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "super_enojada": {
+      "name": "super enojada",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,angry eyes,heart-shaped pupils,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "angry expression,angry face,clenched teeth,",
+        "Direccion mirada personaje": " looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:51:20.817513"
+    }
+  }
+}

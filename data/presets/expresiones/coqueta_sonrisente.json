@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "coqueta_sonrisente": {
+      "name": "coqueta sonrisente",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,wink,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "kissy face,heart in eye\nside glance,playful smile, teasing expression,",
+        "Direccion mirada personaje": " looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:18:31.421197"
+    }
+  }
+}

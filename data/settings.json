@@ -4,5 +4,5 @@
   "sidebar_width": 280,
   "auto_save": true,
   "max_history": 100,
-  "default_negative_prompt": "lowres,(bad),bad anatomy,bad hands,extra digits,multiple views,fewer,extra,missing,text,error,worst quality,jpeg artifacts,low quality,watermark,unfinished,displeasg,oldest,early,chromatic aberration,signature,artistic error,username,scan,six fingers,animals, gloves, duplicate, ((big body)),((large body)), (adult woman)), ((stature adult)), ((stature young))"
+  "default_negative_prompt": "lowres,(bad),bad anatomy,bad hands,extra digits,multiple views,fewer,extra,missing,text,error,worst quality,jpeg artifacts,low quality,watermark,unfinished,displeasg,oldest,early,chromatic aberration,signature,artistic error,username,scan,six fingers,animals, gloves, duplicate, ((big body)),((large body)), (adult woman)), ((stature adult)), ((stature young)),straight fringem, slim body, long torso, ((long abdomen))"
 }

@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "cat_squatting_back": {
+      "name": "cat squatting back",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Postura cabeza": "head posture back view,",
+        "Direccion mirada personaje": "looking back,",
+        "Pose actitud global": "((squatting pose)),paw pose,submissive, submissive female, ",
+        "Pose piernas": "legs slightly apart,",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "((ass focus)), spread, ass, anus slip, thong,buttplug,cat tail,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T15:42:06.293186"
+    }
+  }
+}

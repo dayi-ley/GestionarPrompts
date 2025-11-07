@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "semi_puchero_coqueta": {
+      "name": "semi puchero coqueta",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "collar pull, seductive pout, half-closed eyes,",
+        "Direccion mirada personaje": " looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:38:12.882180"
+    }
+  }
+}

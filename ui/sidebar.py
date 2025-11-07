@@ -118,14 +118,16 @@ class SidebarFrame(QFrame):
         self.presets_panel = PresetsPanel(self.main_window)  # ← Pasar MainWindow en lugar de self
         self.tab_widget.addTab(self.presets_panel, "Presets")
         
-        # ← NUEVA PESTAÑA SUGEPROMPT
+        # Pestaña de SugePrompt
+        from ui.sugeprompt_panel import SugePromptPanel
         self.sugeprompt_panel = SugePromptPanel(self.main_window)
         self.tab_widget.addTab(self.sugeprompt_panel, "SugePrompt")
         
         # Configurar tooltips para las pestañas
-        self.tab_widget.setTabToolTip(0, "Gestión de Variaciones")
-        self.tab_widget.setTabToolTip(1, "Gestión de Presets")
-        self.tab_widget.setTabToolTip(2, "Sugerencias de Prompts")  # ← TOOLTIP COMPLETO
+        self.tab_widget.setTabToolTip(0, "Gestión de Personajes")
+        self.tab_widget.setTabToolTip(1, "Gestión de Variaciones")
+        self.tab_widget.setTabToolTip(2, "Gestión de Presets")
+        self.tab_widget.setTabToolTip(3, "SugePrompt")
         
         content_layout.addWidget(self.tab_widget)
         layout.addWidget(self.content_widget)

@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QScrollArea, QWidget, QHBoxLayout,
-    QPushButton, QLineEdit, QMessageBox, QFrame
+    QPushButton, QLineEdit, QMessageBox, QFrame, QSizePolicy
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QDrag, QPixmap, QPainter, QColor
@@ -16,21 +16,38 @@ class DraggableTagWidget(QFrame):
         self.tag = tag
         self.parent_dialog = parent
         self.setAcceptDrops(True)
-        self.setStyleSheet("""
-            QFrame {
-                background-color: #404040;
-                border-radius: 8px;
-                padding: 4px;
-            }
-            QFrame:hover {
-                background-color: #505050;
-                border: 1px solid #6366f1;
-            }
-        """)
+        # Estilos (base y durante arrastre) con verde jade
+        self._style_base = (
+            "QFrame {"
+            " background-color: #404040;"
+            " border-radius: 8px;"
+            " padding: 4px;"
+            "}"
+            " QFrame:hover {"
+            " background-color: #505050;"
+            " border: 1px solid #6366f1;"
+            "}"
+        )
+        self._style_drag = (
+            "QFrame {"
+            " background-color: #00A36C;"  # verde jade
+            " border: 1px solid #12b886;"
+            " border-radius: 8px;"
+            " padding: 4px;"
+            "}"
+            " QFrame:hover {"
+            " background-color: #00A36C;"
+            " border: 1px solid #12b886;"
+            "}"
+        )
+        self.setStyleSheet(self._style_base)
+        # Compactar altura y evitar expansión vertical
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setFixedHeight(38)
         
         # Layout horizontal para el contenido del tag
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setContentsMargins(8, 1, 8, 1)
         layout.setSpacing(8)
         
         # Campo de texto para editar el tag
@@ -69,7 +86,9 @@ class DraggableTagWidget(QFrame):
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.drag_start_position = event.position().toPoint()
-    
+            # Feedback inmediato al seleccionar para arrastrar
+            self.setStyleSheet(self._style_drag)
+
     def mouseMoveEvent(self, event):
         if not (event.buttons() & Qt.MouseButton.LeftButton):
             return
@@ -97,8 +116,15 @@ class DraggableTagWidget(QFrame):
         mime_data.setText(self.tag)
         drag.setMimeData(mime_data)
         
-        # Ejecutar el drag
+        # Ejecutar el drag (mantener resaltado mientras se arrastra)
         drag.exec(Qt.DropAction.MoveAction)
+        # Restaurar estilo base al finalizar el arrastre
+        self.setStyleSheet(self._style_base)
+
+    def mouseReleaseEvent(self, event):
+        # Si se suelta sin iniciar arrastre, restaurar estilo
+        self.setStyleSheet(self._style_base)
+        super().mouseReleaseEvent(event)
     
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
@@ -143,29 +169,45 @@ class TagsDialog(QDialog):
         self.scroll_content = QWidget()
         self.scroll_layout = QVBoxLayout(self.scroll_content)
         self.scroll_layout.setSpacing(6)
+        # Alinear arriba para evitar que los tags se estiren verticalmente
+        from PyQt6.QtCore import Qt as _Qt
+        self.scroll_layout.setAlignment(_Qt.AlignmentFlag.AlignTop)
         self.scroll.setWidget(self.scroll_content)
         layout.addWidget(self.scroll)
 
         add_row = QHBoxLayout()
         self.new_tag_edit = QLineEdit()
         self.new_tag_edit.setPlaceholderText("Nuevo tag...")
-        add_btn = QPushButton("Agregar")
+        add_btn = QPushButton("+")
         add_btn.setStyleSheet("background-color: #bbf7d0; color: #065f46; border-radius: 8px; padding: 4px 12px;")
         add_btn.clicked.connect(self.add_tag)
         add_row.addWidget(self.new_tag_edit)
         add_row.addWidget(add_btn)
         layout.addLayout(add_row)
 
-        # Botones guardar y cancelar
+        # Botón Guardar centrado (sin Cancelar, ya existe la X del diálogo)
         btn_row = QHBoxLayout()
         save_btn = QPushButton("Guardar cambios")
-        save_btn.setStyleSheet("background-color: #bbf7d0; color: #065f46; border-radius: 8px; padding: 6px 18px; font-weight: bold;")
+        save_btn.setStyleSheet(
+            "QPushButton {"
+            " background-color: #1e3a8a;"  # azul oscuro
+            " color: white;"
+            " border-radius: 8px;"
+            " padding: 6px 18px;"
+            "}"
+            " QPushButton:hover {"
+            " background-color: #1d4ed8;"  # azul más claro al hover
+            " color: white;"
+            "}"
+            " QPushButton:pressed {"
+            " background-color: #1e40af;"
+            " color: white;"
+            "}"
+        )
         save_btn.clicked.connect(self.save_and_close)
-        cancel_btn = QPushButton("Cancelar")
-        cancel_btn.setStyleSheet("background-color: #fecaca; color: #991b1b; border-radius: 8px; padding: 6px 18px; font-weight: bold;")
-        cancel_btn.clicked.connect(self.reject)
+        btn_row.addStretch(1)
         btn_row.addWidget(save_btn)
-        btn_row.addWidget(cancel_btn)
+        btn_row.addStretch(1)
         layout.addLayout(btn_row)
 
         self.refresh_tags()

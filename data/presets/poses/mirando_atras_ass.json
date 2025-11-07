@@ -1,0 +1,20 @@
+{
+  "presets": {
+    "mirando_atras_ass": {
+      "name": "mirando atras ass",
+      "categories": {
+        "Angulo": "((low angle)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking back,",
+        "Pose actitud global": "standing,",
+        "Pose brazos": "sign of peace with the hand, hands raised,",
+        "Pose piernas": "feet close together, toes turned inward,",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "((ass focus)), spread, ass, anus slip, thong,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "images": [],
+      "created_at": "2025-10-31T16:28:28.495904"
+    }
+  }
+}

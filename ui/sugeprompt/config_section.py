@@ -525,10 +525,19 @@ class OptionsTooltip(QWidget):
     
     def on_option_selected(self, option_id, display_text):
         """Maneja la selección de una opción"""
+        print(f"DEBUG ConfigSection: on_option_selected llamado con option_id={option_id}")
+        
         # Insertar el prompt en inglés en el input
         option_data = self.options_data.get(option_id, {})
+        print(f"DEBUG ConfigSection: option_data encontrada: {bool(option_data)}")
+        print(f"DEBUG ConfigSection: option_data keys: {list(option_data.keys()) if option_data else 'None'}")
+        
         prompt = option_data.get("prompt", option_id)
         self.value_input.setText(prompt)
+        
+        # Emitir señal con los datos de la opción seleccionada
+        print(f"DEBUG ConfigSection: Emitiendo señal option_selected con option_id={option_id}")
+        self.option_selected.emit(option_id, option_data)
     
     def setup_autocomplete(self, options):
         """Configura el autocompletado para el input"""
@@ -554,6 +563,8 @@ class OptionsTooltip(QWidget):
 class ConfigSection(QWidget):
     """Sección de configuración que muestra opciones según la categoría seleccionada"""
     
+    option_selected = pyqtSignal(str, dict)  # option_id, option_data
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_category = None
@@ -577,6 +588,7 @@ class ConfigSection(QWidget):
             # Cargar opciones desde archivos individuales de categorías
             categories_dir = os.path.join("data", "sugeprompt", "categories")
             if os.path.exists(categories_dir):
+                # Buscar archivos JSON en el directorio raíz
                 for filename in os.listdir(categories_dir):
                     if filename.endswith('.json'):
                         category_file_path = os.path.join(categories_dir, filename)
@@ -586,8 +598,30 @@ class ConfigSection(QWidget):
                                 # Agregar las opciones de esta categoría al diccionario global
                                 if 'options' in category_data:
                                     self.options_data.update(category_data['options'])
+                                # También agregar el archivo completo con su ID
+                                if 'id' in category_data:
+                                    self.options_data[category_data['id']] = category_data
                         except Exception as e:
                             print(f"Error cargando archivo de categoría {filename}: {e}")
+                
+                # Buscar archivos JSON en subcarpetas
+                for item in os.listdir(categories_dir):
+                    item_path = os.path.join(categories_dir, item)
+                    if os.path.isdir(item_path):
+                        for filename in os.listdir(item_path):
+                            if filename.endswith('.json'):
+                                category_file_path = os.path.join(item_path, filename)
+                                try:
+                                    with open(category_file_path, 'r', encoding='utf-8') as f:
+                                        category_data = json.load(f)
+                                        # Agregar las opciones de esta categoría al diccionario global
+                                        if 'options' in category_data:
+                                            self.options_data.update(category_data['options'])
+                                        # También agregar el archivo completo con su ID
+                                        if 'id' in category_data:
+                                            self.options_data[category_data['id']] = category_data
+                                except Exception as e:
+                                    print(f"Error cargando archivo de categoría {filename}: {e}")
             
             # Fallback: cargar desde prompt_options.json si existe
             options_path = os.path.join("data", "sugeprompt", "prompt_options.json")
@@ -637,7 +671,7 @@ class ConfigSection(QWidget):
         self.show_default_message()
         
         layout.addWidget(self.config_area)
-        layout.addStretch()
+        
     
     def show_default_message(self):
         """Muestra mensaje por defecto cuando no hay categoría seleccionada"""
@@ -678,7 +712,7 @@ class ConfigSection(QWidget):
         """)
         
         box_layout = QVBoxLayout(config_box)
-        box_layout.setContentsMargins(8, 8, 8, 8)
+        box_layout.setContentsMargins(8, 8, 4, 8)
         box_layout.setSpacing(6)
         
         # Título de la categoría
@@ -689,7 +723,7 @@ class ConfigSection(QWidget):
                 font-size: 11px;
                 font-weight: bold;
                 color: #e0e0e0;
-                margin-bottom: 4px;
+                margin-bottom: 1px;
             }
         """)
         box_layout.addWidget(category_title)
@@ -747,7 +781,6 @@ class ConfigSection(QWidget):
         box_layout.addLayout(input_container)
         
         self.config_layout.addWidget(config_box)
-        self.config_layout.addStretch()
     
     def show_options_tooltip(self):
         """Muestra el tooltip de opciones"""
@@ -768,10 +801,19 @@ class ConfigSection(QWidget):
 
     def on_option_selected(self, option_id, display_text):
         """Maneja la selección de una opción"""
+        print(f"DEBUG ConfigSection: on_option_selected llamado con option_id={option_id}")
+        
         # Insertar el prompt en inglés en el input
         option_data = self.options_data.get(option_id, {})
+        print(f"DEBUG ConfigSection: option_data encontrada: {bool(option_data)}")
+        print(f"DEBUG ConfigSection: option_data keys: {list(option_data.keys()) if option_data else 'None'}")
+        
         prompt = option_data.get("prompt", option_id)
         self.value_input.setText(prompt)
+        
+        # Emitir señal con los datos de la opción seleccionada
+        print(f"DEBUG ConfigSection: Emitiendo señal option_selected con option_id={option_id}")
+        self.option_selected.emit(option_id, option_data)
     
     def setup_autocomplete(self, options):
         """Configura el autocompletado para el input"""

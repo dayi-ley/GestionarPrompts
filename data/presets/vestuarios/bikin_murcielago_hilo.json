@@ -1,0 +1,17 @@
+{
+  "presets": {
+    "bikin_murcielago_hilo": {
+      "name": "bikin murcielago hilo",
+      "categories": {
+        "Vestuario general": "black microbikin,string bikini,",
+        "Vestuario superior": "bat bikini,",
+        "Vestuario accesorios": "white choker,",
+        "Ropa interior superior": ".",
+        "Ropa interior inferior": "micro thong, minithong,panties,",
+        "Ropa interior accesorios": "."
+      },
+      "images": [],
+      "created_at": "2025-10-24T19:02:25.111383"
+    }
+  }
+}

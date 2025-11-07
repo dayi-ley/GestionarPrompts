@@ -1,0 +1,13 @@
+{
+  "presets": {
+    "naughty_face": {
+      "name": "naughty face",
+      "categories": {
+        "Expresion facial ojos": "naughty face,narrowed eyes,",
+        "Expresion facial boca": "smile,open mouth, annoyed, "
+      },
+      "images": [],
+      "created_at": "2025-10-11T11:29:07.814560"
+    }
+  }
+}

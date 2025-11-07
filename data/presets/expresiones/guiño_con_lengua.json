@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "guiño_con_lengua": {
+      "name": "guiño con lengua",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,winking,one eye closed,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "tongue out,",
+        "Direccion mirada personaje": " looking away,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:01:54.671745"
+    }
+  }
+}

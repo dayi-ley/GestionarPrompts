@@ -1,0 +1,16 @@
+{
+  "presets": {
+    "asco_out_tongue": {
+      "name": "asco out tongue",
+      "categories": {
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,light gray eyes, slit pupils",
+        "Expresion facial ojos": "wide circular eyes,squinted eyes,",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "disgusted mouth,tongue out gagging,",
+        "Direccion mirada personaje": " looking away,"
+      },
+      "images": [],
+      "created_at": "2025-10-28T17:10:23.275456"
+    }
+  }
+}
