@@ -1,0 +1,20 @@
+{
+  "presets": {
+    "back_poses": {
+      "name": "back poses",
+      "categories": {
+        "Angulo": "(cowboy shot),",
+        "Postura cabeza": "head posture back view,",
+        "Direccion mirada personaje": "looking back,",
+        "Pose actitud global": "bent over, (kneeling),",
+        "Pose brazos": "hand on face,",
+        "Pose piernas": "((foot focus)), one leg up,",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "((ass focus)), spread,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-07T19:18:47.980741"
+    }
+  }
+}

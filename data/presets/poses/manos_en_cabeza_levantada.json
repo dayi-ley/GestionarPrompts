@@ -1,0 +1,17 @@
+{
+  "presets": {
+    "manos_en_cabeza_levantada": {
+      "name": "manos en cabeza levantada",
+      "categories": {
+        "Postura cabeza": "head tilted forward,",
+        "Pose actitud global": "((sitting)),",
+        "Pose brazos": "showing armpit,arms up,hands up on head,",
+        "Pose piernas": "",
+        "Orientacion personaje": "facing forward,",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-11-07T18:15:55.313681"
+    }
+  }
+}

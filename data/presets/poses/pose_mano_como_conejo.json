@@ -1,0 +1,18 @@
+{
+  "presets": {
+    "pose_mano_como_conejo": {
+      "name": "pose mano como conejo",
+      "categories": {
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "((sitting)),",
+        "Pose brazos": "armpit hair,showing armpit,arms up,rabbit pose with hands,",
+        "Pose piernas": "",
+        "Orientacion personaje": "facing forward,",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-11-07T18:06:39.979369"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "presets": {
+    "mirando_atras_desde_arriba": {
+      "name": "Mirando atras desde arriba",
+      "categories": {
+        "Postura cabeza": "head posture back view,",
+        "Pose actitud global": "sitting, bent over,",
+        "Pose brazos": "hand on face,",
+        "Pose piernas": "",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "((ass focus)), spread,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-07T18:50:48.108681"
+    }
+  }
+}

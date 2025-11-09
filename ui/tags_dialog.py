@@ -1,11 +1,14 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QScrollArea, QWidget, QHBoxLayout,
-    QPushButton, QLineEdit, QMessageBox, QFrame, QSizePolicy
+    QPushButton, QLineEdit, QMessageBox, QFrame, QSizePolicy, QFileDialog,
+    QApplication, QToolButton
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QDrag, QPixmap, QPainter, QColor
+from PyQt6.QtGui import QDrag, QPixmap, QPainter, QColor, QKeySequence, QImage, QShortcut
 import os
 import json
+import shutil
+import re
 
 TAGS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "tags.json")
 
@@ -63,6 +66,14 @@ class DraggableTagWidget(QFrame):
         del_btn.setStyleSheet("background-color: #fecaca; color: #991b1b; border-radius: 8px;")
         del_btn.clicked.connect(self.on_delete_clicked)
         layout.addWidget(del_btn)
+
+        # Botón para cargar/actualizar imagen del tag
+        img_btn = QPushButton("🖼️")
+        img_btn.setFixedWidth(34)
+        img_btn.setToolTip("Asignar imagen de referencia al tag")
+        img_btn.setStyleSheet("background-color: #bbf7d0; color: #065f46; border-radius: 8px;")
+        img_btn.clicked.connect(self.on_image_clicked)
+        layout.addWidget(img_btn)
         
         # Indicador de arrastrar
         drag_indicator = QLabel("≡")
@@ -82,6 +93,10 @@ class DraggableTagWidget(QFrame):
     def on_delete_clicked(self):
         """Cuando se hace clic en eliminar"""
         self.parent_dialog.confirm_delete_tag(self.tag)
+
+    def on_image_clicked(self):
+        """Abre el diálogo avanzado para asignar/gestionar imagen del tag"""
+        self.parent_dialog.open_tag_image_dialog(self.tag)
     
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -147,6 +162,11 @@ class TagsDialog(QDialog):
         self.category_name = category_name
         self.tags = list(tags)
         self.parent_grid = parent.parent() if parent else None  # Para recargar el grid
+        # Rutas para imágenes de tags
+        self.project_root = os.path.dirname(os.path.dirname(__file__))
+        self.tag_images_dir = os.path.join(self.project_root, "data", "tag_images")
+        self.tag_images_index = os.path.join(self.tag_images_dir, "index.json")
+        self._tag_index_cache = None
         self.init_ui()
 
     def init_ui(self):
@@ -232,6 +252,42 @@ class TagsDialog(QDialog):
             tag_widget = DraggableTagWidget(tag, self)
             self.scroll_layout.addWidget(tag_widget)
 
+    # -------------------- Diálogo para imagen por tag --------------------
+    def open_tag_image_dialog(self, tag):
+        dlg = TagImageDialog(self, self.category_name, tag)
+        dlg.exec()
+
+    # Utilidades de imágenes para tags
+    def _category_key(self):
+        return self.category_name.lower().replace(" ", "_")
+
+    def _normalize_tag(self, tag):
+        return re.sub(r"[^a-z0-9_\-]", "", tag.lower().replace(" ", "_"))
+
+    def _load_index(self):
+        if self._tag_index_cache is not None:
+            return self._tag_index_cache
+        try:
+            if os.path.isfile(self.tag_images_index):
+                with open(self.tag_images_index, "r", encoding="utf-8") as f:
+                    self._tag_index_cache = json.load(f)
+            else:
+                self._tag_index_cache = {}
+        except Exception:
+            self._tag_index_cache = {}
+        return self._tag_index_cache
+
+    def _save_index(self, idx):
+        os.makedirs(self.tag_images_dir, exist_ok=True)
+        with open(self.tag_images_index, "w", encoding="utf-8") as f:
+            json.dump(idx, f, ensure_ascii=False, indent=2)
+        self._tag_index_cache = idx
+
+    def choose_tag_image(self, tag):
+        """Abre diálogo de archivo y asigna imagen al tag"""
+        # Mantener para compatibilidad, ahora abre el diálogo avanzado
+        self.open_tag_image_dialog(tag)
+
     def edit_tag(self, old_tag, new_tag):
         """Edita un tag existente"""
         if new_tag and new_tag not in self.tags:
@@ -313,3 +369,252 @@ class TagsDialog(QDialog):
         # if self.parent_grid and hasattr(self.parent_grid, "reload_categories"):
         #     self.parent_grid.reload_categories()
         self.accept()
+
+
+class TagImageDialog(QDialog):
+    """Diálogo para asignar/pegar/quitar imagen de un tag"""
+    def __init__(self, parent_dialog: TagsDialog, category_name: str, tag: str):
+        super().__init__(parent_dialog)
+        self.setWindowTitle(f"Imagen para '{tag}'")
+        self.setMinimumWidth(420)
+        self.parent_dialog = parent_dialog
+        self.category_name = category_name
+        self.tag = tag
+        self._current_pixmap: QPixmap | None = None
+        self._current_ext: str | None = None  # .png/.jpg elegido al guardar
+        self._existing_rel: str | None = None
+        # Reglas de compresión por defecto
+        self.MAX_DIM = 512  # tamaño máximo por lado
+        self.TARGET_MAX_SIZE_KB = 300  # tamaño objetivo máximo en KB
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(10)
+
+        self.preview = QLabel("Sin imagen")
+        self.preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.preview.setStyleSheet("color:#a0a0a0; border:1px dashed #404040; border-radius:8px; padding:8px;")
+        self.preview.setMinimumHeight(180)
+        # Importante: NO deformar la imagen. No usar setScaledContents.
+        # Permitimos que el contenedor se adapte al contenido.
+        layout.addWidget(self.preview)
+
+        hint = QLabel("Puedes seleccionar archivo o pegar con Ctrl+V")
+        hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        hint.setStyleSheet("color:#a0a0a0; font-style:italic;")
+        layout.addWidget(hint)
+
+        btns = QHBoxLayout()
+        select_btn = QToolButton()
+        select_btn.setText("📁")
+        select_btn.setToolTip("Seleccionar archivo…")
+        select_btn.setFixedSize(28, 28)
+        select_btn.clicked.connect(self.select_file)
+        self.remove_btn = QToolButton()
+        self.remove_btn.setText("🗑️")
+        self.remove_btn.setToolTip("Quitar imagen")
+        self.remove_btn.setFixedSize(28, 28)
+        self.remove_btn.setStyleSheet("background-color:#fecaca; color:#991b1b; border-radius:8px;")
+        self.remove_btn.clicked.connect(self.remove_image)
+        self.remove_btn.setEnabled(False)
+        btns.addWidget(select_btn)
+        btns.addStretch(1)
+        btns.addWidget(self.remove_btn)
+        layout.addLayout(btns)
+
+        action_row = QHBoxLayout()
+        save_btn = QPushButton("Guardar")
+        save_btn.setStyleSheet("background-color:#1e3a8a; color:white; border-radius:8px; padding:6px 18px;")
+        save_btn.clicked.connect(self.save_image)
+        action_row.addStretch(1)
+        action_row.addWidget(save_btn)
+        layout.addLayout(action_row)
+
+        # Atajo Ctrl+V
+        self._paste_shortcut = QShortcut(QKeySequence("Ctrl+V"), self)
+        self._paste_shortcut.activated.connect(self.paste_from_clipboard)
+
+        # Cargar existente si hubiera
+        self.load_existing()
+
+    def _category_key(self):
+        return self.parent_dialog._category_key()
+
+    def _normalize_tag(self, tag):
+        return self.parent_dialog._normalize_tag(tag)
+
+    def load_existing(self):
+        idx = self.parent_dialog._load_index()
+        key = f"{self._category_key()}/{self._normalize_tag(self.tag)}"
+        rel = idx.get(key)
+        if rel:
+            abs_path = os.path.join(self.parent_dialog.project_root, "data", rel)
+            if os.path.isfile(abs_path):
+                pix = QPixmap(abs_path)
+                if not pix.isNull():
+                    self._existing_rel = rel
+                    self._current_pixmap = pix
+                    self._current_ext = os.path.splitext(rel)[1].lower()
+                    self._update_preview()
+                    self.remove_btn.setEnabled(True)
+
+    def _update_preview(self):
+        if self._current_pixmap is None:
+            self.preview.setText("Sin imagen")
+            self.preview.setPixmap(QPixmap())
+        else:
+            # Mantener tamaño original si cabe; si no, reducir manteniendo aspecto.
+            pix = self._current_pixmap
+            avail_w = max(240, self.preview.width())
+            avail_h = max(180, self.preview.height())
+            if pix.width() > avail_w or pix.height() > avail_h:
+                scaled = pix.scaled(avail_w, avail_h, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            else:
+                scaled = pix
+            self.preview.setText("")
+            self.preview.setPixmap(scaled)
+            # Adaptar el contenedor al contenido para evitar estirar horizontalmente
+            self.preview.adjustSize()
+
+    def resizeEvent(self, event):
+        # Recalcular solo reducción si el diálogo cambia de tamaño
+        super().resizeEvent(event)
+        if self._current_pixmap:
+            self._update_preview()
+
+    def select_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Seleccionar imagen de referencia",
+            "",
+            "Imágenes (*.png *.jpg *.jpeg)"
+        )
+        if not file_path:
+            return
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext not in [".png", ".jpg", ".jpeg"]:
+            QMessageBox.warning(self, "Formato no soportado", "Usa PNG o JPG/JPEG.")
+            return
+        pix = QPixmap(file_path)
+        if pix.isNull():
+            QMessageBox.warning(self, "Error", "No se pudo cargar la imagen seleccionada.")
+            return
+        self._current_pixmap = pix
+        self._current_ext = ext
+        self._update_preview()
+
+    def paste_from_clipboard(self):
+        cb = QApplication.clipboard()
+        img: QImage = cb.image()
+        pix = None
+        if img and not img.isNull():
+            pix = QPixmap.fromImage(img)
+        else:
+            # Fallback por si el portapapeles expone pixmap directamente
+            pix = cb.pixmap()
+        if not pix or pix.isNull():
+            QMessageBox.warning(self, "Portapapeles vacío", "No hay imagen en el portapapeles.")
+            return
+        self._current_pixmap = pix
+        # Por defecto guardamos como PNG si viene del portapapeles
+        self._current_ext = ".png"
+        self._update_preview()
+
+    def save_image(self):
+        if not self._current_pixmap:
+            QMessageBox.warning(self, "Sin imagen", "Selecciona o pega una imagen antes de guardar.")
+            return
+        try:
+            idx = self.parent_dialog._load_index()
+            category_key = self._category_key()
+            normalized_tag = self._normalize_tag(self.tag)
+            os.makedirs(os.path.join(self.parent_dialog.tag_images_dir, category_key), exist_ok=True)
+
+            # Preparar imagen: escalar y decidir formato según alpha
+            img, fmt, chosen_ext = self._prepare_image_for_save(self._current_pixmap)
+            dest_rel = os.path.join("tag_images", category_key, f"{normalized_tag}{chosen_ext}")
+            dest_abs = os.path.join(self.parent_dialog.project_root, "data", dest_rel)
+
+            # Guardar con calidad/compression y ajustar si excede el tamaño objetivo
+            if fmt == "JPEG":
+                for q in [80, 70, 60, 50]:
+                    if not img.save(dest_abs, fmt, q):
+                        continue
+                    if os.path.isfile(dest_abs) and (os.path.getsize(dest_abs) / 1024.0) <= self.TARGET_MAX_SIZE_KB:
+                        break
+                # Si aún supera, dejar último guardado (50) como fallback
+            elif fmt == "PNG":
+                # Para PNG, el parámetro "quality" es el nivel de compresión (0-9)
+                img.save(dest_abs, fmt, 9)
+            else:
+                # Fallback genérico
+                img.save(dest_abs)
+
+            key = f"{category_key}/{normalized_tag}"
+            idx[key] = dest_rel.replace("\\", "/")
+            self.parent_dialog._save_index(idx)
+            # Invalidar caché de imágenes en la tarjeta de categoría para ver el preview sin reiniciar
+            try:
+                parent_card = self.parent_dialog.parent()
+                if parent_card and hasattr(parent_card, "invalidate_tag_image_cache"):
+                    parent_card.invalidate_tag_image_cache()
+            except Exception:
+                pass
+            QMessageBox.information(self, "Imagen guardada", f"Se guardó y optimizó la imagen para el tag '{self.tag}'.")
+            self.accept()
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo guardar la imagen:\n{e}")
+
+    def remove_image(self):
+        try:
+            # Confirmación antes de quitar
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Quitar imagen")
+            msg.setText("¿Seguro que deseas quitar la imagen del tag?")
+            msg.setIcon(QMessageBox.Icon.Warning)
+            yes_btn = msg.addButton("Sí", QMessageBox.ButtonRole.YesRole)
+            no_btn = msg.addButton("No", QMessageBox.ButtonRole.NoRole)
+            msg.exec()
+            if msg.clickedButton() != yes_btn:
+                return
+            idx = self.parent_dialog._load_index()
+            key = f"{self._category_key()}/{self._normalize_tag(self.tag)}"
+            rel = idx.get(key)
+            if rel:
+                abs_path = os.path.join(self.parent_dialog.project_root, "data", rel)
+                if os.path.isfile(abs_path):
+                    try:
+                        os.remove(abs_path)
+                    except Exception:
+                        pass
+                idx.pop(key, None)
+                self.parent_dialog._save_index(idx)
+            self._current_pixmap = None
+            self._current_ext = None
+            self._existing_rel = None
+            self._update_preview()
+            self.remove_btn.setEnabled(False)
+            # Invalidar caché de imágenes en la tarjeta de categoría
+            try:
+                parent_card = self.parent_dialog.parent()
+                if parent_card and hasattr(parent_card, "invalidate_tag_image_cache"):
+                    parent_card.invalidate_tag_image_cache()
+            except Exception:
+                pass
+            QMessageBox.information(self, "Imagen quitada", "Se quitó la imagen del tag.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo quitar la imagen:\n{e}")
+
+    def _prepare_image_for_save(self, pixmap: QPixmap):
+        """Escala y decide formato/extension según alpha y tamaño."""
+        img = pixmap.toImage()
+        # Escalar si excede MAX_DIM
+        w, h = img.width(), img.height()
+        if max(w, h) > self.MAX_DIM:
+            img = img.scaled(self.MAX_DIM, self.MAX_DIM, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        # Elegir formato por alpha
+        has_alpha = img.hasAlphaChannel()
+        if has_alpha:
+            return img, "PNG", ".png"
+        # Si no tiene alpha, usar JPEG para mejor compresión
+        return img, "JPEG", ".jpg"

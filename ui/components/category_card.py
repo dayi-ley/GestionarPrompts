@@ -2,8 +2,8 @@ import os
 import json
 import re
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QLineEdit, QFrame, QPushButton, QToolButton, QSizePolicy, QMenu, QWidgetAction)
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+                             QLineEdit, QFrame, QPushButton, QToolButton, QSizePolicy, QMenu, QWidgetAction, QApplication)
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QPoint
 from PyQt6.QtGui import QFont, QPixmap, QIcon
 
 # Constantes
@@ -54,6 +54,9 @@ class CategoryCard(QFrame):
         self.setup_ui(name, tags)
         self.setup_styles()
         self.setup_debounce()
+        # Cache para imágenes de tags
+        self._tag_image_index = None
+        self._tag_pixmap_cache = {}
 
     def setup_ui(self, name, tags):
         """Configura la interfaz de la tarjeta"""
@@ -213,6 +216,8 @@ class CategoryCard(QFrame):
                         "QLabel { color: #ffffff; font-size: 11px; }"
                     )
                     self.setStyleSheet(self._style_base)
+                    # Tooltip de imagen (creado bajo demanda)
+                    self._preview = None
 
                 def mousePressEvent(self, event):
                     if event.button() == Qt.MouseButton.LeftButton:
@@ -226,15 +231,74 @@ class CategoryCard(QFrame):
                         self.parent_card.modify_tag_importance(self.tag_text, increase=False)
                         from PyQt6.QtCore import QTimer
                         QTimer.singleShot(120, lambda: self.setStyleSheet(self._style_hover))
+                    # Ocultar preview si estaba visible
+                    self._hide_preview()
                     event.accept()
 
                 def enterEvent(self, event):
                     self.setStyleSheet(self._style_hover)
+                    # Mostrar tooltip de imagen si existe
+                    pix = self.parent_card.get_tag_pixmap(self.tag_text)
+                    if pix is not None:
+                        self._show_preview(pix)
                     super().enterEvent(event)
 
                 def leaveEvent(self, event):
                     self.setStyleSheet(self._style_base)
+                    self._hide_preview()
                     super().leaveEvent(event)
+
+                def _show_preview(self, pixmap):
+                    from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
+                    if self._preview is None:
+                        self._preview = QWidget(None, Qt.WindowType.ToolTip)
+                        self._preview.setStyleSheet("background-color:#1a1a1a; border:1px solid #404040; border-radius:6px;")
+                        lay = QVBoxLayout(self._preview)
+                        lay.setContentsMargins(6, 6, 6, 6)
+                        lay.setSpacing(4)
+                        img_label = QLabel()
+                        img_label.setObjectName("img_label")
+                        # Asegura que el contenido se adapte al tamaño disponible del label
+                        img_label.setScaledContents(True)
+                        lay.addWidget(img_label)
+                    img_label = self._preview.findChild(QLabel, "img_label")
+                    # Mantener tamaño original si es pequeño; si es grande, reducir manteniendo aspecto
+                    max_side = 200
+                    if pixmap.width() > max_side or pixmap.height() > max_side:
+                        scaled = pixmap.scaled(max_side, max_side, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                    else:
+                        scaled = pixmap
+                    img_label.setPixmap(scaled)
+                    # Ajustar el tamaño del tooltip al contenido para evitar recortes o estirar
+                    img_label.adjustSize()
+                    self._preview.adjustSize()
+                    # Calcular posición preferida a la derecha
+                    pos_right = self.mapToGlobal(self.rect().topRight()) + QPoint(10, 0)
+                    # Geometría disponible en pantalla
+                    screen = self._preview.screen() or (QApplication.primaryScreen() if hasattr(QApplication, 'primaryScreen') else None)
+                    avail = screen.availableGeometry() if screen else None
+                    w = self._preview.width()
+                    h = self._preview.height()
+                    final_pos = pos_right
+                    # Si se sale por el borde derecho, posicionar a la izquierda
+                    if avail and (pos_right.x() + w > avail.right() - 8):
+                        pos_left = self.mapToGlobal(self.rect().topLeft()) - QPoint(w + 10, 0)
+                        final_pos = pos_left
+                        # Si también se sale por el borde izquierdo, clavar dentro
+                        if final_pos.x() < avail.left() + 8:
+                            final_pos.setX(avail.left() + 8)
+                    # Ajuste vertical para no salir por abajo
+                    if avail:
+                        y = final_pos.y()
+                        if y + h > avail.bottom() - 8:
+                            y = max(avail.top() + 8, avail.bottom() - h - 8)
+                        final_pos.setY(y)
+                    self._preview.move(final_pos)
+                    self._preview.show()
+
+                def _hide_preview(self):
+                    if self._preview is not None:
+                        self._preview.hide()
 
             for tag in self.tags:
                 widget = TagMenuItem(tag, self)
@@ -244,7 +308,6 @@ class CategoryCard(QFrame):
 
             all_tags_btn.setMenu(menu)
             all_tags_btn.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-            tags_layout.addWidget(all_tags_btn)
 
             # Botón con icono de tuerquita para abrir el diálogo de tags
             gear_btn = QToolButton()
@@ -282,10 +345,69 @@ class CategoryCard(QFrame):
             gear_btn.setStyleSheet(self._gear_style_base)
             self.gear_btn = gear_btn
             gear_btn.clicked.connect(self.show_tags_dialog)
+            # Colocar la tuerquita a la izquierda
             tags_layout.addWidget(gear_btn)
+            # Separar izquierda de derecha
+            tags_layout.addStretch()
+            # Colocar "All tags" a la derecha
+            tags_layout.addWidget(all_tags_btn)
     
-        tags_layout.addStretch()
         layout.addLayout(tags_layout)
+
+    # --- Soporte de imágenes para tooltips de tags ---
+    def _project_root(self):
+        return os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+    def _load_tag_image_index(self):
+        if self._tag_image_index is not None:
+            return self._tag_image_index
+        index_path = os.path.join(self._project_root(), "data", "tag_images", "index.json")
+        try:
+            if os.path.isfile(index_path):
+                with open(index_path, "r", encoding="utf-8") as f:
+                    self._tag_image_index = json.load(f)
+            else:
+                self._tag_image_index = {}
+        except Exception:
+            self._tag_image_index = {}
+        return self._tag_image_index
+
+    def _category_key(self):
+        return self.category_name.lower().replace(" ", "_")
+
+    def _normalize_tag(self, tag):
+        return re.sub(r"[^a-z0-9_\-]", "", tag.lower().replace(" ", "_"))
+
+    def get_tag_pixmap(self, tag):
+        key = f"{self._category_key()}/{self._normalize_tag(tag)}"
+        # Cache primero
+        if key in self._tag_pixmap_cache:
+            return self._tag_pixmap_cache[key]
+        idx = self._load_tag_image_index()
+        rel = idx.get(key)
+        if not rel:
+            return None
+        abs_path = os.path.join(self._project_root(), "data", rel)
+        if not os.path.isfile(abs_path):
+            return None
+        try:
+            pix = QPixmap(abs_path)
+            if pix and not pix.isNull():
+                self._tag_pixmap_cache[key] = pix
+                return pix
+        except Exception:
+            return None
+        return None
+
+    def invalidate_tag_image_cache(self):
+        """Invalidar caches de índice y pixmaps para reflejar imágenes recién guardadas."""
+        try:
+            self._tag_image_index = None
+            if isinstance(self._tag_pixmap_cache, dict):
+                self._tag_pixmap_cache.clear()
+        except Exception:
+            # Fallback silencioso; no debe romper la UI
+            self._tag_image_index = None
 
     def show_tags_dialog(self):
         from ..tags_dialog import TagsDialog

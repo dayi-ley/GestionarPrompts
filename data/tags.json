@@ -31,8 +31,8 @@
     "eye close-up"
   ],
   "atmosfera_vibe": [
-    "very aesthetic",
-    "sexy"
+    "sexy",
+    "very aesthetic"
   ],
   "loras_estilos_artistico": [
     "<lora:odanon-lora-v1-128dim-10ep-novae:0.2>",
@@ -111,13 +111,15 @@
     "brown eyes",
     "almond shaped eyes",
     "heterochromia",
-    "cat eyes"
+    "cat eyes",
+    "tongue out"
   ],
   "expresion_facial_ojos": [
     "half-lidded seductive gaze",
     "sharp sidelong glance",
     "challenging direct stare",
-    "playfully narrowed eyes"
+    "playfully narrowed eyes",
+    "half-closed eyes"
   ],
   "expresion_facial_mejillas": [
     "cheeks slightly flushed"
@@ -127,7 +129,9 @@
     "pouting",
     "serious expression",
     "open mouth",
-    "surprised"
+    "surprised",
+    "blowjob gesture",
+    "seductive smile"
   ],
   "postura_cabeza": [
     "head tilted slightly",
@@ -151,7 +155,8 @@
     "detached collar",
     "wrist cuffs",
     "cleavage",
-    "hoodies"
+    "hoodies",
+    "china dress"
   ],
   "vestuario_superior": [
     "white shirt",
@@ -162,7 +167,13 @@
     "light blue hoodies"
   ],
   "vestuario_inferior": [
-    "silver skirt"
+    "silver skirt",
+    "chelsea boots",
+    "desert boots",
+    "beatle boots",
+    "buttoned boots",
+    "riding boots",
+    "ankle boots"
   ],
   "vestuario_accesorios": [
     "gloves",
@@ -170,10 +181,15 @@
     "choker"
   ],
   "ropa_interior_superior": [
-    "swimsuit under clothes",
     "Eyepatch bikini",
     "white micro swimwear",
-    "string bikini"
+    "string bikini",
+    "covered nipples",
+    "Strapless bra",
+    "triangle bra",
+    "babydoll",
+    "body suit lingerie",
+    "slip lingerie"
   ],
   "ropa_interior_inferior": [
     "micro thong",
@@ -183,11 +199,17 @@
     "string thong",
     "underwear",
     "minithong",
-    "panties"
+    "panties",
+    "thong lingerie",
+    "g-string lingerie",
+    "robe lingerie",
+    "garter belt lingerie"
   ],
   "ropa_interior_accesorios": [
     "swimsuit under clothes",
-    "Eyepatch bikini"
+    "Eyepatch bikini",
+    "ofuda on vagina",
+    "ofuda on nipples"
   ],
   "tipo_de_cuerpo": [
     "wide hips",
@@ -200,7 +222,9 @@
     "slender body",
     "athletic build",
     "curvy figure",
-    "muscular physique"
+    "muscular physique",
+    "sagging breasts",
+    "rounded breasts"
   ],
   "rasgo_fisico_piernas": [
     "long legs",
@@ -244,7 +268,8 @@
     "confident",
     "playful",
     "serious",
-    "relaxed"
+    "relaxed",
+    "seducing viewer"
   ],
   "nsfw": [
     "nudity",
@@ -253,7 +278,8 @@
     "erotic pose",
     "pubic hair",
     "nude",
-    "completely nude"
+    "completely nude",
+    "pussy"
   ],
   "objetos_interaccion": [
     "holding a pokeball",

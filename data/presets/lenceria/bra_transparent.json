@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "bra_transparent": {
+      "name": "bra transparent",
+      "categories": {
+        "Vestuario general": "",
+        "Vestuario superior": "",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "",
+        "Ropa interior superior": "triangle bra,wearing tight bikini,see through clothes,",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Nsfw": "hard nipples,sweating,"
+      },
+      "images": [],
+      "created_at": "2025-11-07T17:56:07.839678"
+    }
+  }
+}
