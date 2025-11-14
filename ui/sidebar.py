@@ -49,7 +49,7 @@ class SidebarFrame(QFrame):
         # Header con botón de colapsar
         header_layout = QHBoxLayout()
         
-        self.header_label = QLabel("AI Prompt Studio")
+        self.header_label = QLabel("Prompt Organizer")
         self.header_label.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
         header_layout.addWidget(self.header_label)
         
@@ -61,7 +61,7 @@ class SidebarFrame(QFrame):
         layout.addLayout(header_layout)
         
         # Subtítulo
-        self.subtitle_label = QLabel("Generador de Prompts IA")
+        self.subtitle_label = QLabel("Gestion de Prompts")
         self.subtitle_label.setFont(QFont("Segoe UI", 10))
         self.subtitle_label.setStyleSheet("color: #a0a0a0;")
         layout.addWidget(self.subtitle_label)

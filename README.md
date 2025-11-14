@@ -1,4 +1,4 @@
-# AI Prompt Studio
+# Gestor de Prompts para imagenes
 
 Generador/organizador de prompts, diseñado específicamente para la generación de imágenes.
 
@@ -6,6 +6,8 @@ Generador/organizador de prompts, diseñado específicamente para la generación
 
 ### Interfaz de Usuario
 - **Layout de tres secciones**: Sidebar izquierda (280px), grid de categorías superior, y sección de prompt inferior
+(assets/screenshots/main_window.png)
+
 - **Grid responsivo** con scroll vertical para las categorías
 - **Efectos hover suaves** y transiciones animadas
 

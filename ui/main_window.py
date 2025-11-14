@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.prompt_generator = PromptGenerator()
         
         # Configurar la ventana
-        self.setWindowTitle("AI Prompt Studio")
+        self.setWindowTitle("Prompt Organizer")
         
         # Crear la interfaz de usuario
         self.setup_ui()
