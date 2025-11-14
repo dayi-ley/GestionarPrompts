@@ -15,7 +15,10 @@ from .utils.category_utils import (
     update_categories_json,
     update_tags_json,
     rename_category_in_files,
-    DEFAULT_CARD_COLOR
+    DEFAULT_CARD_COLOR,
+    save_categories_order,
+    load_category_colors,
+    rename_category_color_key
 )
 from .save_manager import SaveManager
 
@@ -69,9 +72,24 @@ class CategoryGridFrame(QWidget):
         )
         self.clear_btn.clicked.connect(self.clear_all_values)
         search_layout.addWidget(self.clear_btn)
-        # Separación extra y stretch para centrar el buscador
-        search_layout.addSpacing(50)
-        search_layout.addStretch(1)
+        # Botón para activar modo reordenar al lado izquierdo del buscador
+        self.reorder_btn = QToolButton()
+        self.reorder_btn.setText("↕️")
+        self.reorder_btn.setToolTip("Activar modo reordenar categorías")
+        self.reorder_btn.setCheckable(True)
+        self.reorder_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.reorder_btn.setFixedHeight(28)
+        self.reorder_btn.setStyleSheet(
+            """
+            QToolButton { background-color:#404040; color:#fff; border-radius:6px; padding:2px 8px; }
+            QToolButton:hover { background-color:#6366f1; }
+            QToolButton:checked { background-color:#00A36C; }
+            """
+        )
+        self.reorder_btn.toggled.connect(self.toggle_reorder_mode)
+        search_layout.addWidget(self.reorder_btn)
+        # Separación pequeña antes del buscador
+        search_layout.addSpacing(10)
         
         # Buscador
         self.search_box = QLineEdit()
@@ -81,8 +99,6 @@ class CategoryGridFrame(QWidget):
         self.search_box.setMaximumWidth(600)
         self.search_box.textChanged.connect(self.filter_cards)
         search_layout.addWidget(self.search_box)
-        # Stretch a la derecha del buscador para mantenerlo centrado
-        search_layout.addStretch(1)
         # Stretch a la derecha del buscador para mantenerlo centrado
         search_layout.addStretch(1)
         
@@ -174,53 +190,42 @@ class CategoryGridFrame(QWidget):
             }
         """)
     def get_category_group_color(self, category_name):
-        """Retorna el color de grupo basado en el prefijo de la categoría"""
-        color_groups = {
-            'Loras estilos artistico': '#4c0027',        # Gris azulado para Loras
-            'Loras detalles mejoras':'#4c0027',
-            'Loras modelos especificos':'#4c0027',
-            'Loras personaje':'#4c0027',
-            'Personaje':'#d09305',
-            
-            'Cabello forma': '#4e635a',      # Marrón para cabello
-            'Cabello color':'#4e635a',
-            'Cabello accesorios':'#4e635a',
-            #vestuario
-            'Vestuario general': '#553c9a',  
-            'Vestuario superior':'#553c9a', 
-            'Vestuario inferior':'#553c9a',
-            'Vestuario accesorios':'#553c9a',
-            'Ropa interior superior':'#553c9a',
-            'Ropa interior inferior':'#553c9a',
-            'Ropa interior accesorios':'#553c9a',
-              # Púrpura para vestuario
-            'ropa_interior_': '#c53030', # Rojo para ropa interior
-            'expresion_facial_': '#38a169', # Verde para expresiones
-            'pose_': '#38a169',
-            'Pose actitud global': '#38a169',
-            'Pose brazos': '#38a169',
-            'Pose piernas': '#38a169',
-            'Orientacion personaje': '#38a169',
-            
-            # Amarillo para poses
-            'rasgo_fisico_': '#dd6b20',  # Naranja para rasgos físicos
-            'objetos_': '#319795',      # Teal para objetos
-        }
-        
-        for prefix, color in color_groups.items():
-            if category_name.startswith(prefix):
-                return color
-        
-        return "#252525"  # Color por defecto
+        """Determina el color del grupo por palabras clave en el nombre."""
+        name = category_name.lower()
+        # Reglas por palabras clave (más tolerantes a variaciones)
+        rules = [
+            (['loras estilos artistico', 'loras detalles mejoras', 'loras modelos especificos', 'loras personaje', 'loras '], '#4c0027'),
+            (['personaje'], '#d09305'),
+            (['cabello forma', 'cabello color', 'cabello accesorios', 'cabello '], '#4e635a'),
+            # Vestuario y ropa interior (incluye lencería y variantes)
+            (['vestuario', 'ropa interior', 'lenceria', 'lencería', 'prendas superiores', 'prendas inferiores'], '#553c9a'),
+            # Poses y orientación
+            (['pose actitud global', 'pose brazos', 'pose piernas', 'pose ', 'orientacion personaje', 'orientación personaje'], '#38a169'),
+            # Expresión facial
+            (['expresion facial', 'expresión facial'], '#38a169'),
+            # Rasgos físicos
+            (['rasgo fisico', 'rasgo_fisico'], '#dd6b20'),
+            # Objetos
+            (['objetos'], '#319795'),
+        ]
+        for keywords, color in rules:
+            for kw in keywords:
+                if name.startswith(kw) or kw in name:
+                    return color
+        return "#252525"
 
     def create_cards(self):
         """Crea las tarjetas de categorías"""
         categories = load_categories_and_tags()
-        
+        colors_map = load_category_colors()
+
         row, col = 0, 0
+        self.cards = []
         for category in categories:
-            # Obtener color grupal
-            group_color = self.get_category_group_color(category["name"])
+            # Preferir color manual persistido sobre color grupal
+            snake = category["name"].lower().replace(" ", "_")
+            manual_color = colors_map.get(snake)
+            group_color = manual_color or self.get_category_group_color(category["name"]) 
             
             card = CategoryCard(
                 category["name"], 
@@ -231,6 +236,12 @@ class CategoryGridFrame(QWidget):
             )
             card.request_rename.connect(self.handle_category_rename)
             card.value_changed.connect(self.update_prompt)
+            # Conectar señales de reordenar
+            try:
+                card.request_move_up.connect(lambda name=category["name"]: self.move_card(name, -1))
+                card.request_move_down.connect(lambda name=category["name"]: self.move_card(name, 1))
+            except Exception:
+                pass
             
             self.cards.append(card)
             self.grid_layout.addWidget(card, row, col)
@@ -241,8 +252,8 @@ class CategoryGridFrame(QWidget):
                 row += 1
         
         # Tarjeta para añadir nueva categoría
-        add_card = AddCategoryCard(self.add_custom_category)
-        self.grid_layout.addWidget(add_card, row, col)
+        self.add_card = AddCategoryCard(self.add_custom_category)
+        self.grid_layout.addWidget(self.add_card, row, col)
 
     def filter_cards(self, text):
         """Filtra las tarjetas según el texto de búsqueda"""
@@ -259,6 +270,61 @@ class CategoryGridFrame(QWidget):
                 card.clear_value()
         # Actualizar prompt y señales tras limpiar
         self.update_prompt()
+
+    def toggle_reorder_mode(self, enabled: bool):
+        """Activa/desactiva el modo reordenar mostrando controles en cada tarjeta."""
+        for card in self.cards:
+            if hasattr(card, 'set_reorder_mode'):
+                card.set_reorder_mode(enabled)
+
+    def move_card(self, category_display_name: str, delta: int):
+        """Mueve una tarjeta arriba/abajo y refluye el grid. Persiste el orden."""
+        # Buscar índice actual
+        idx = None
+        for i, card in enumerate(self.cards):
+            if getattr(card, 'category_name', '') == category_display_name:
+                idx = i
+                break
+        if idx is None:
+            return
+        new_idx = max(0, min(len(self.cards) - 1, idx + delta))
+        if new_idx == idx:
+            return
+        # Reordenar lista
+        card = self.cards.pop(idx)
+        self.cards.insert(new_idx, card)
+        # Reflujo visual
+        self.reflow_cards()
+        # Persistir nuevo orden en categories.json
+        try:
+            snake_order = [c.category_name.lower().replace(" ", "_") for c in self.cards]
+            save_categories_order(snake_order)
+        except Exception:
+            pass
+
+    def reflow_cards(self):
+        """Reconstruye la cuadrícula según el orden de self.cards."""
+        # Limpiar posiciones del layout
+        try:
+            # Quitar todos los widgets del grid (sin destruirlos)
+            while self.grid_layout.count():
+                item = self.grid_layout.takeAt(0)
+                w = item.widget()
+                if w is not None:
+                    w.setParent(self.grid_widget)
+        except Exception:
+            pass
+        # Reagregar según orden
+        row, col = 0, 0
+        for card in self.cards:
+            self.grid_layout.addWidget(card, row, col)
+            col += 1
+            if col >= 3:
+                col = 0
+                row += 1
+        # Reagregar la tarjeta de añadir al final
+        if hasattr(self, 'add_card') and self.add_card is not None:
+            self.grid_layout.addWidget(self.add_card, row, col)
 
     def update_prompt(self):
         """Actualiza el prompt cuando cambian los valores de las tarjetas"""
@@ -309,6 +375,11 @@ class CategoryGridFrame(QWidget):
         """Maneja el renombrado de categorías"""
         try:
             rename_category_in_files(old_name, new_name)
+            # Migrar color si existe en el almacenamiento
+            try:
+                rename_category_color_key(old_name, new_name)
+            except Exception:
+                pass
             QMessageBox.information(self, "Éxito", f"Categoría renombrada de '{old_name}' a '{new_name}'")
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Error al renombrar categoría: {str(e)}")
@@ -697,7 +768,25 @@ class CategoryGridFrame(QWidget):
         self.clear_btn.clicked.connect(self.clear_all_values)
         search_layout.addWidget(self.clear_btn)
         # Separación extra para evitar clics accidentales entre limpieza y buscador
-        search_layout.addSpacing(20)
+        search_layout.addSpacing(10)
+        
+        # Botón Reordenar al lado izquierdo del buscador
+        self.reorder_btn = QToolButton()
+        self.reorder_btn.setText("↕️")
+        self.reorder_btn.setToolTip("Activar modo reordenar categorías")
+        self.reorder_btn.setCheckable(True)
+        self.reorder_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.reorder_btn.setFixedHeight(28)
+        self.reorder_btn.setStyleSheet(
+            """
+            QToolButton { background-color:#404040; color:#fff; border-radius:6px; padding:2px 8px; }
+            QToolButton:hover { background-color:#6366f1; }
+            QToolButton:checked { background-color:#00A36C; }
+            """
+        )
+        self.reorder_btn.toggled.connect(self.toggle_reorder_mode)
+        search_layout.addWidget(self.reorder_btn)
+        search_layout.addSpacing(10)
         
         # Buscador
         self.search_box = QLineEdit()
@@ -795,53 +884,37 @@ class CategoryGridFrame(QWidget):
             }
         """)
     def get_category_group_color(self, category_name):
-        """Retorna el color de grupo basado en el prefijo de la categoría"""
-        color_groups = {
-            'Loras estilos artistico': '#4c0027',        # Gris azulado para Loras
-            'Loras detalles mejoras':'#4c0027',
-            'Loras modelos especificos':'#4c0027',
-            'Loras personaje':'#4c0027',
-            'Personaje':'#d09305',
-            
-            'Cabello forma': '#4e635a',      # Marrón para cabello
-            'Cabello color':'#4e635a',
-            'Cabello accesorios':'#4e635a',
-            #vestuario
-            'Vestuario general': '#553c9a',  
-            'Vestuario superior':'#553c9a', 
-            'Vestuario inferior':'#553c9a',
-            'Vestuario accesorios':'#553c9a',
-            'Ropa interior superior':'#553c9a',
-            'Ropa interior inferior':'#553c9a',
-            'Ropa interior accesorios':'#553c9a',
-              # Púrpura para vestuario
-            'ropa_interior_': '#c53030', # Rojo para ropa interior
-            'expresion_facial_': '#38a169', # Verde para expresiones
-            'pose_': '#38a169',
-            'Pose actitud global': '#38a169',
-            'Pose brazos': '#38a169',
-            'Pose piernas': '#38a169',
-            'Orientacion personaje': '#38a169',
-            
-            # Amarillo para poses
-            'rasgo_fisico_': '#dd6b20',  # Naranja para rasgos físicos
-            'objetos_': '#319795',      # Teal para objetos
-        }
-        
-        for prefix, color in color_groups.items():
-            if category_name.startswith(prefix):
-                return color
-        
-        return "#252525"  # Color por defecto
+        """Determina el color del grupo por palabras clave en el nombre."""
+        name = category_name.lower()
+        rules = [
+            (['loras estilos artistico', 'loras detalles mejoras', 'loras modelos especificos', 'loras personaje', 'loras '], '#4c0027'),
+            (['personaje'], '#d09305'),
+            (['cabello forma', 'cabello color', 'cabello accesorios', 'cabello '], '#4e635a'),
+            (['vestuario', 'ropa interior', 'lenceria', 'lencería', 'prendas superiores', 'prendas inferiores'], '#553c9a'),
+            (['pose actitud global', 'pose brazos', 'pose piernas', 'pose ', 'orientacion personaje', 'orientación personaje'], '#38a169'),
+            (['expresion facial', 'expresión facial'], '#38a169'),
+            (['rasgo fisico', 'rasgo_fisico'], '#dd6b20'),
+            (['objetos'], '#319795'),
+        ]
+        for keywords, color in rules:
+            for kw in keywords:
+                if name.startswith(kw) or kw in name:
+                    return color
+        return "#252525"
 
     def create_cards(self):
         """Crea las tarjetas de categorías"""
         categories = load_categories_and_tags()
+        colors_map = load_category_colors()
         
         row, col = 0, 0
+        # Reiniciar referencia de tarjetas antes de poblar
+        self.cards = []
         for category in categories:
-            # Obtener color grupal
-            group_color = self.get_category_group_color(category["name"])
+            # Preferir color manual persistido sobre color grupal
+            snake = category["name"].lower().replace(" ", "_")
+            manual_color = colors_map.get(snake)
+            group_color = manual_color or self.get_category_group_color(category["name"]) 
             
             card = CategoryCard(
                 category["name"], 
@@ -852,6 +925,11 @@ class CategoryGridFrame(QWidget):
             )
             card.request_rename.connect(self.handle_category_rename)
             card.value_changed.connect(self.update_prompt)
+            # Conectar señales de reordenar hacia el grid
+            if hasattr(card, 'request_move_up'):
+                card.request_move_up.connect(lambda name=category["name"]: self.move_card(name, -1))
+            if hasattr(card, 'request_move_down'):
+                card.request_move_down.connect(lambda name=category["name"]: self.move_card(name, 1))
             
             self.cards.append(card)
             self.grid_layout.addWidget(card, row, col)
@@ -862,8 +940,8 @@ class CategoryGridFrame(QWidget):
                 row += 1
         
         # Tarjeta para añadir nueva categoría
-        add_card = AddCategoryCard(self.add_custom_category)
-        self.grid_layout.addWidget(add_card, row, col)
+        self.add_card = AddCategoryCard(self.add_custom_category)
+        self.grid_layout.addWidget(self.add_card, row, col)
 
     def filter_cards(self, text):
         """Filtra las tarjetas según el texto de búsqueda"""
@@ -880,6 +958,60 @@ class CategoryGridFrame(QWidget):
                 card.clear_value()
         # Actualizar prompt y señales tras limpiar
         self.update_prompt()
+
+    def toggle_reorder_mode(self, enabled: bool):
+        """Activa o desactiva el modo reordenar mostrando controles en cada tarjeta."""
+        for card in self.cards:
+            if hasattr(card, 'set_reorder_mode'):
+                card.set_reorder_mode(enabled)
+
+    def move_card(self, category_display_name: str, delta: int):
+        """Mueve una tarjeta arriba/abajo y reconstruye el grid. También guarda el nuevo orden."""
+        # Buscar índice actual de la tarjeta
+        idx = None
+        for i, card in enumerate(self.cards):
+            if getattr(card, 'category_name', '') == category_display_name:
+                idx = i
+                break
+        if idx is None:
+            return
+        new_idx = max(0, min(len(self.cards) - 1, idx + delta))
+        if new_idx == idx:
+            return
+        # Reordenar lista interna
+        card = self.cards.pop(idx)
+        self.cards.insert(new_idx, card)
+        # Re-flujo visual del grid
+        self.reflow_cards()
+        # Persistir nuevo orden en categories.json
+        try:
+            snake_order = [c.category_name.lower().replace(" ", "_") for c in self.cards]
+            save_categories_order(snake_order)
+        except Exception:
+            pass
+
+    def reflow_cards(self):
+        """Reconstruye la cuadrícula según el orden actual de self.cards."""
+        # Vaciar el layout sin destruir los widgets
+        try:
+            while self.grid_layout.count():
+                item = self.grid_layout.takeAt(0)
+                w = item.widget()
+                if w is not None:
+                    w.setParent(self.grid_widget)
+        except Exception:
+            pass
+        # Reagregar según orden
+        row, col = 0, 0
+        for card in self.cards:
+            self.grid_layout.addWidget(card, row, col)
+            col += 1
+            if col >= 3:
+                col = 0
+                row += 1
+        # Agregar la tarjeta de añadir al final
+        if hasattr(self, 'add_card') and self.add_card is not None:
+            self.grid_layout.addWidget(self.add_card, row, col)
 
     def update_prompt(self):
         """Actualiza el prompt cuando cambian los valores de las tarjetas"""
@@ -930,6 +1062,11 @@ class CategoryGridFrame(QWidget):
         """Maneja el renombrado de categorías"""
         try:
             rename_category_in_files(old_name, new_name)
+            # Migrar color si existe en el almacenamiento
+            try:
+                rename_category_color_key(old_name, new_name)
+            except Exception:
+                pass
             QMessageBox.information(self, "Éxito", f"Categoría renombrada de '{old_name}' a '{new_name}'")
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Error al renombrar categoría: {str(e)}")
@@ -1367,53 +1504,35 @@ class ImportDataDialog(QDialog):
             }
         """)
     def get_category_group_color(self, category_name):
-        """Retorna el color de grupo basado en el prefijo de la categoría"""
-        color_groups = {
-            'Loras estilos artistico': '#4c0027',        # Gris azulado para Loras
-            'Loras detalles mejoras':'#4c0027',
-            'Loras modelos especificos':'#4c0027',
-            'Loras personaje':'#4c0027',
-            'Personaje':'#d09305',
-            
-            'Cabello forma': '#4e635a',      # Marrón para cabello
-            'Cabello color':'#4e635a',
-            'Cabello accesorios':'#4e635a',
-            #vestuario
-            'Vestuario general': '#553c9a',  
-            'Vestuario superior':'#553c9a', 
-            'Vestuario inferior':'#553c9a',
-            'Vestuario accesorios':'#553c9a',
-            'Ropa interior superior':'#553c9a',
-            'Ropa interior inferior':'#553c9a',
-            'Ropa interior accesorios':'#553c9a',
-              # Púrpura para vestuario
-            'ropa_interior_': '#c53030', # Rojo para ropa interior
-            'expresion_facial_': '#38a169', # Verde para expresiones
-            'pose_': '#38a169',
-            'Pose actitud global': '#38a169',
-            'Pose brazos': '#38a169',
-            'Pose piernas': '#38a169',
-            'Orientacion personaje': '#38a169',
-            
-            # Amarillo para poses
-            'rasgo_fisico_': '#dd6b20',  # Naranja para rasgos físicos
-            'objetos_': '#319795',      # Teal para objetos
-        }
-        
-        for prefix, color in color_groups.items():
-            if category_name.startswith(prefix):
-                return color
-        
-        return "#252525"  # Color por defecto
+        """Determina el color del grupo por palabras clave en el nombre."""
+        name = category_name.lower()
+        rules = [
+            (['loras estilos artistico', 'loras detalles mejoras', 'loras modelos especificos', 'loras personaje', 'loras '], '#4c0027'),
+            (['personaje'], '#d09305'),
+            (['cabello forma', 'cabello color', 'cabello accesorios', 'cabello '], '#4e635a'),
+            (['vestuario', 'ropa interior', 'lenceria', 'lencería', 'prendas superiores', 'prendas inferiores'], '#553c9a'),
+            (['pose actitud global', 'pose brazos', 'pose piernas', 'pose ', 'orientacion personaje', 'orientación personaje'], '#38a169'),
+            (['expresion facial', 'expresión facial'], '#38a169'),
+            (['rasgo fisico', 'rasgo_fisico'], '#dd6b20'),
+            (['objetos'], '#319795'),
+        ]
+        for keywords, color in rules:
+            for kw in keywords:
+                if name.startswith(kw) or kw in name:
+                    return color
+        return "#252525"
 
     def create_cards(self):
         """Crea las tarjetas de categorías"""
         categories = load_categories_and_tags()
+        colors_map = load_category_colors()
         
         row, col = 0, 0
         for category in categories:
-            # Obtener color grupal
-            group_color = self.get_category_group_color(category["name"])
+            # Preferir color manual persistido sobre color grupal
+            snake = category["name"].lower().replace(" ", "_")
+            manual_color = colors_map.get(snake)
+            group_color = manual_color or self.get_category_group_color(category["name"]) 
             
             card = CategoryCard(
                 category["name"], 

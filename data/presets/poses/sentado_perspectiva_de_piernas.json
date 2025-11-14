@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "sentado_perspectiva_de_piernas": {
+      "name": "sentado perspectiva de piernas",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "((sitting)),leaning backwards,",
+        "Pose brazos": "leaning on bed,",
+        "Pose piernas": "(spreading legs),knees bent, pointed toes,((perspective from the feet)),POV from the ground,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "partially visible vulva, cameltoe, anus behind thong, invitation for sex,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-13T17:08:04.607604"
+    }
+  }
+}

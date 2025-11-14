@@ -279,13 +279,13 @@ class PresetsPanel(QWidget):
             if any(word in category_lower for word in ['vestuario', 'ropa', 'outfit', 'clothing']):
                 # Vestuario - Azul
                 checkbox.setStyleSheet("font-size: 12px; padding: 3px; color: #af69cd; font-weight: bold;")
-            elif any(word in category_lower for word in ['pose', 'postura', 'position']):
+            elif any(word in category_lower for word in ['direccion','orientacion','mirada','angulo','pose', 'postura', 'position']):
                 # Poses - Verde
                 checkbox.setStyleSheet("font-size: 12px; padding: 3px; color: #4CAF50; font-weight: bold;")
             elif any(word in category_lower for word in ['expresion', 'expression', 'cara', 'face']):
                 # Expresiones - Naranja
                 checkbox.setStyleSheet("font-size: 12px; padding: 3px; color: #FF9800; font-weight: bold;")
-            elif any(word in category_lower for word in ['angulo', 'angle', 'vista', 'view']):
+            elif any(word in category_lower for word in [ 'angle', 'vista', 'view']):
                 # Ángulos - Púrpura
                 checkbox.setStyleSheet("font-size: 12px; padding: 3px; color: #9C27B0; font-weight: bold;")
             elif any(word in category_lower for word in ['iluminacion', 'lighting', 'luz', 'light']):
@@ -339,7 +339,7 @@ class PresetsPanel(QWidget):
             """Selecciona solo categorías de poses"""
             for category, checkbox in checkboxes.items():
                 category_lower = category.lower()
-                if any(word in category_lower for word in ['pose', 'postura', 'position']):
+                if any(word in category_lower for word in ['direccion','orientacion','mirada','angulo','pose', 'postura', 'position']):
                     checkbox.setChecked(True)
                 else:
                     checkbox.setChecked(False)

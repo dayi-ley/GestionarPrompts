@@ -165,7 +165,10 @@ class TagsDialog(QDialog):
         # Rutas para imágenes de tags
         self.project_root = os.path.dirname(os.path.dirname(__file__))
         self.tag_images_dir = os.path.join(self.project_root, "data", "tag_images")
-        self.tag_images_index = os.path.join(self.tag_images_dir, "index.json")
+        # Nombre representativo del índice de imágenes por tag
+        self.tag_images_index = os.path.join(self.tag_images_dir, "tag_images_index.json")
+        # Compatibilidad con nombre legado
+        self._tag_images_index_legacy = os.path.join(self.tag_images_dir, "index.json")
         self._tag_index_cache = None
         self.init_ui()
 
@@ -271,6 +274,14 @@ class TagsDialog(QDialog):
             if os.path.isfile(self.tag_images_index):
                 with open(self.tag_images_index, "r", encoding="utf-8") as f:
                     self._tag_index_cache = json.load(f)
+            elif os.path.isfile(self._tag_images_index_legacy):
+                # Migración: cargar archivo legado y persistir con el nuevo nombre
+                with open(self._tag_images_index_legacy, "r", encoding="utf-8") as f:
+                    self._tag_index_cache = json.load(f)
+                try:
+                    self._save_index(self._tag_index_cache)
+                except Exception:
+                    pass
             else:
                 self._tag_index_cache = {}
         except Exception:
@@ -291,8 +302,63 @@ class TagsDialog(QDialog):
     def edit_tag(self, old_tag, new_tag):
         """Edita un tag existente"""
         if new_tag and new_tag not in self.tags:
-            idx = self.tags.index(old_tag)
-            self.tags[idx] = new_tag
+            idx_pos = self.tags.index(old_tag)
+            self.tags[idx_pos] = new_tag
+
+            # Preservar imagen asociada al tag si existe
+            try:
+                idx = self._load_index()
+                category_key = self._category_key()
+                old_norm = self._normalize_tag(old_tag)
+                new_norm = self._normalize_tag(new_tag)
+
+                # Si el normalizado no cambia, no hacer nada
+                if old_norm != new_norm:
+                    old_key = f"{category_key}/{old_norm}"
+                    new_key = f"{category_key}/{new_norm}"
+                    rel = idx.get(old_key)
+                    # Solo migrar si había una imagen asociada al antiguo y el nuevo aún no existe
+                    if rel and new_key not in idx:
+                        try:
+                            # Renombrar archivo para mantener consistencia de nombre
+                            abs_old = os.path.join(self.project_root, "data", rel)
+                            ext = os.path.splitext(rel)[1].lower()
+                            new_rel = os.path.join("tag_images", category_key, f"{new_norm}{ext}")
+                            abs_new = os.path.join(self.project_root, "data", new_rel)
+                            os.makedirs(os.path.dirname(abs_new), exist_ok=True)
+                            if os.path.isfile(abs_old):
+                                # Si el destino existe (raro), sobreescribir moviendo
+                                if os.path.isfile(abs_new):
+                                    try:
+                                        os.remove(abs_new)
+                                    except Exception:
+                                        pass
+                                shutil.move(abs_old, abs_new)
+                                idx[new_key] = new_rel.replace("\\", "/")
+                            else:
+                                # Si falta archivo, al menos mantener la referencia antigua
+                                idx[new_key] = rel.replace("\\", "/")
+                            # Eliminar clave antigua para evitar duplicados
+                            try:
+                                del idx[old_key]
+                            except Exception:
+                                pass
+                            self._save_index(idx)
+                            # Invalidar caché en la tarjeta de categoría para refrescar tooltips
+                            try:
+                                parent_card = self.parent()
+                                if parent_card and hasattr(parent_card, "invalidate_tag_image_cache"):
+                                    parent_card.invalidate_tag_image_cache()
+                            except Exception:
+                                pass
+                        except Exception:
+                            # Fallback silencioso: no romper edición por error en migración de imagen
+                            pass
+
+            except Exception:
+                # No bloquear edición por errores de índice
+                pass
+
             self.refresh_tags()
         else:
             QMessageBox.warning(self, "Error", "El tag está vacío o ya existe.")

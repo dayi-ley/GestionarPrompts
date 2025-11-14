@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "sentada_mirando_hacia_arriba": {
+      "name": "sentada mirando hacia arriba",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Rasgo fisico piernas": "white thighhighs,",
+        "Pose actitud global": "((sitting)),",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "nipples,breat focus,close-up,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-13T16:15:46.653976"
+    }
+  }
+}

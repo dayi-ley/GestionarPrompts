@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "squating_bondage": {
+      "name": "squating bondage",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "leaning backwards, ((squatting)),",
+        "Pose brazos": "leaning on bed,",
+        "Pose piernas": "(spreading legs),knees bent, pointed toes,((perspective from the feet)),POV from the ground,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-13T17:33:12.095833"
+    }
+  }
+}

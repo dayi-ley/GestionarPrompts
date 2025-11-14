@@ -3,15 +3,18 @@
     "back_view": {
       "name": "back view",
       "categories": {
-        "Angulo": "((high angle)),rear view, from behind,",
+        "Angulo": "((high angle)),((from above)),",
         "Postura cabeza": "head posture back view,",
         "Direccion mirada personaje": "looking back,",
-        "Rasgo fisico cuerpo": "bare shoulders, armpits, puffy nipples, ass,",
+        "Rasgo fisico cuerpo": "",
         "Pose actitud global": "sitting, bent over,",
-        "Pose piernas": "legs slightly apart,"
+        "Pose piernas": "legs slightly apart,",
+        "Nsfw": "((ass focus)), spread,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person,",
+        "Orientacion personaje": "facing forward,"
       },
       "images": [],
-      "created_at": "2025-08-04T14:35:46.909094"
+      "created_at": "2025-11-11T14:37:12.153748"
     }
   }
 }

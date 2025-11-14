@@ -1,8 +1,8 @@
 # AI Prompt Studio
 
-Un generador/organizador de prompts, diseñado específicamente para Stable Diffusion para la generación de imágenes.
+Generador/organizador de prompts, diseñado específicamente para la generación de imágenes.
 
-## 🎨 Características Principales
+## Características Principales
 
 ### Interfaz de Usuario
 - **Layout de tres secciones**: Sidebar izquierda (280px), grid de categorías superior, y sección de prompt inferior
@@ -93,7 +93,7 @@ AppPrompts/
 ├── logic/                  # Lógica de negocio
 │   └── prompt_generator.py # Generador de prompts
 ├── config/                 # Configuración
-│   └── settings.py         # Gestión de datos y configuraciones
+│   └── settings.py         # Gestión de datos y configuraciones(Implementacion con otro sistema(TODO))
 ├── data/                   # Datos persistentes 
 │   ├── settings.json       # Configuraciones de la app
 │   ├── characters          # Personajes guardados
@@ -101,17 +101,6 @@ AppPrompts/
 │   └── tags.json           # Historial de prompts
 └── assets/                 # Recursos (iconos, imágenes)
 ```
-
-## 🎨 Paleta de Colores
-
-- **Fondo principal**: `#1a1a1a`
-- **Fondo secundario**: `#252525`
-- **Bordes**: `#404040`
-- **Acentos**: `#6366f1`
-- **Hover**: `#4f46e5`
-- **Éxito**: `#10b981`
-- **Error**: `#ef4444`
-
 
 ## 🐛 Reportar Problemas
 
@@ -123,3 +112,38 @@ Si encuentras algún problema o tienes una sugerencia, por favor:
    - Pasos para reproducir
    - Información del sistema
    - Capturas de pantalla (si aplica)
+
+
+## 🛠️ Tecnologías utilizadas
+- Python 3.x
+- PyQt6 (interfaz de usuario)
+- Pillow (carga/gestión de imágenes)
+- pyperclip (portapapeles)
+- JSON (persistencia local en `data/`)
+
+---
+
+## 📦 Instalación y ejecución
+1. Clona el repositorio.
+2. Instala las dependencias.
+3. Ejecuta la aplicación.
+
+```bash
+pip install -r requirements.txt
+```
+
+```bash
+python main.py
+```
+
+---
+
+## Capturas de pantalla
+- Main Window con Sidebar, Grid de Categorías y Prompt Preview.
+- Panel de Variaciones y Presets.
+- Panel de Personajes con defaults.
+
+(Coloca aquí imágenes en `assets/` cuando las tengas.)
+
+---
+

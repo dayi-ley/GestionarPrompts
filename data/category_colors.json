@@ -1,0 +1,13 @@
+{
+  "objetos_interaccion": "#252525",
+  "rasgo_fisico_piernas": "#252525",
+  "rasgo_fisico_cuerpo": "#252525",
+  "orientacion_personaje": "#38a169",
+  "objetos_escenario": "#252525",
+  "expresion_facial_boca": "#252525",
+  "expresion_facial_ojos": "#252525",
+  "expresion_facial_mejillas": "#252525",
+  "pose_actitud_global": "#38a169",
+  "direccion_mirada_personaje": "#38a169",
+  "postura_cabeza": "#38a169"
+}

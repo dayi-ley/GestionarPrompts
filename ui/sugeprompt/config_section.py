@@ -50,6 +50,8 @@ class VisualTooltip(QWidget):
         scroll_area.setWidgetResizable(True)
         scroll_area.setMaximumHeight(300)
         scroll_area.setMaximumWidth(400)
+        # Evitar scroll horizontal para limitar el ancho visual
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll_area.setStyleSheet("""
             QScrollArea {
                 border: none;
@@ -171,6 +173,12 @@ class VisualTooltip(QWidget):
                     padding: 1px 3px;
                 }
             """)
+            # Limitar el ancho visual de cada opción y elidir el texto
+            max_label_width = 100
+            text_label.setFixedWidth(max_label_width)
+            metrics = text_label.fontMetrics()
+            elided = metrics.elidedText(display_text, Qt.TextElideMode.ElideRight, max_label_width - 8)
+            text_label.setText(elided)
             frame_layout.addWidget(text_label)
             
             # Hacer que el frame se ajuste al contenido
@@ -409,6 +417,8 @@ class OptionsTooltip(QWidget):
         scroll_area.setWidgetResizable(True)
         scroll_area.setMaximumHeight(300)
         scroll_area.setMaximumWidth(400)
+        # Evitar scroll horizontal para limitar el ancho visual
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll_area.setStyleSheet("""
             QScrollArea {
                 border: none;
@@ -475,6 +485,10 @@ class OptionsTooltip(QWidget):
                     background-color: #28a745;
                 }
             """)
+            # Elidir texto para que el botón no se expanda y mantener ancho
+            metrics = option_btn.fontMetrics()
+            elided_label = metrics.elidedText(label, Qt.TextElideMode.ElideRight, 80)
+            option_btn.setText(elided_label)
             
             # Conectar click izquierdo para selección
             option_btn.clicked.connect(lambda checked, oid=option_id, lbl=label: self.on_option_clicked(oid, lbl))

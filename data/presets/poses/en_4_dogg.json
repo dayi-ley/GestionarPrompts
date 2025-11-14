@@ -3,16 +3,19 @@
     "en_4_dogg": {
       "name": "en 4 dogg",
       "categories": {
-        "Angulo": "((frontal view)),",
+        "Angulo": "((low angle)),((from below",
         "Postura cabeza": "head tilted forward,",
-        "Direccion mirada personaje": " looking at viewer,looking straight ahead,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
         "Rasgo fisico cuerpo": "sagging breasts, big breasts, breasts, large breasts, nipples, huge breasts,shirt covering the breasts,",
-        "Pose actitud global": "doggy style,sideboob,top down bottom up\n,",
+        "Pose actitud global": "doggy style,sideboob,top down bottom up,",
         "Pose brazos": "on all fours,hands resting on the floor , looking at viewer, kneeling position,",
-        "Orientacion personaje": "facing forward,"
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "",
+        "Pose piernas": "",
+        "Mirada espectador": ""
       },
       "images": [],
-      "created_at": "2025-10-31T17:50:48.292919"
+      "created_at": "2025-11-11T16:10:51.303452"
     }
   }
 }

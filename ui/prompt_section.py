@@ -1,18 +1,79 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QPushButton, QTextEdit, QFrame, QSizePolicy, QFileDialog, QListWidget)
+                             QPushButton, QTextEdit, QFrame, QSizePolicy, QFileDialog, QListWidget, QMenu, QInputDialog, QDialog, QMessageBox)
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QFont, QKeySequence, QShortcut, QIcon
+from PyQt6.QtGui import QFont, QKeySequence, QShortcut, QIcon, QTextOption
 import pyperclip
 import json
 import os
 from datetime import datetime
-from config.settings import AppSettings
+from ui.components.negative_prompt_store import NegativePromptStore
+
+class NegativePromptEditDialog(QDialog):
+    def __init__(self, parent=None, initial_text=""):
+        super().__init__(parent)
+        self.setWindowTitle("Editar Negative Prompt")
+        self.setModal(True)
+        self.setMinimumSize(420, 300)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(8)
+
+        # Editor de texto con ajuste a la ventana
+        self.text_edit = QTextEdit(self)
+        self.text_edit.setPlainText(initial_text)
+        self.text_edit.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
+        # En PyQt6 las enumeraciones están anidadas en WrapMode
+        self.text_edit.setWordWrapMode(QTextOption.WrapMode.WrapAtWordBoundaryOrAnywhere)
+        self.text_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.text_edit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.text_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.text_edit.setFont(QFont("Courier New", 10))
+        layout.addWidget(self.text_edit)
+
+        # Barra de acciones: solo Guardar (sin Cancelar)
+        actions = QHBoxLayout()
+        actions.addStretch()
+        save_btn = QPushButton("Guardar", self)
+        save_btn.setFixedHeight(28)
+        save_btn.clicked.connect(self.accept)
+        actions.addWidget(save_btn)
+        layout.addLayout(actions)
+
+        # Estilo del diálogo
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #2d2d2d;
+            }
+            QTextEdit {
+                background-color: #1a1a1a;
+                border: 1px solid #404040;
+                border-radius: 6px;
+                color: #e0e0e0;
+                padding: 8px;
+            }
+            QPushButton {
+                background-color: #6366f1;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 4px 12px;
+            }
+            QPushButton:hover {
+                background-color: #4f46e5;
+            }
+            QPushButton:pressed {
+                background-color: #3730a3;
+            }
+        """)
 
 class PromptSectionFrame(QFrame):
     def __init__(self, prompt_generator):
         super().__init__()
         self.prompt_generator = prompt_generator
-        self.settings = AppSettings()
+        self.neg_store = NegativePromptStore()
         
         # Inicializar popup de configuración
         self.config_popup = None
@@ -110,6 +171,11 @@ class PromptSectionFrame(QFrame):
         negative_layout.setContentsMargins(0, 0, 0, 0)
         negative_layout.setSpacing(4)  # Reducido de 6 a 4
         
+        # Barra de cabecera: botones guardados (izquierda) + toggle + guardar (derecha)
+        header_bar = QHBoxLayout()
+        header_bar.setContentsMargins(6, 4, 6, 0)
+        header_bar.setSpacing(6)
+
         # Botón para expandir/contraer
         self.negative_toggle = QPushButton("Negative Prompt ►")
         self.negative_toggle.setStyleSheet("""
@@ -128,13 +194,41 @@ class PromptSectionFrame(QFrame):
             }
         """)
         self.negative_toggle.clicked.connect(self.toggle_negative)
-        negative_layout.addWidget(self.negative_toggle)
+        # Colocar el título primero, sin stretch, para que los botones queden justo a su derecha
+        header_bar.addWidget(self.negative_toggle)
+
+        # Contenedor de botones guardados: se coloca a la derecha del título
+        self.saved_neg_container = QWidget()
+        self.saved_neg_layout = QHBoxLayout(self.saved_neg_container)
+        self.saved_neg_layout.setContentsMargins(0, 0, 0, 0)
+        self.saved_neg_layout.setSpacing(4)
+        header_bar.addWidget(self.saved_neg_container)
+
+        # Luego un stretch para empujar el botón de guardar a la esquina derecha
+        header_bar.addStretch()
+
+        # Botón de guardar Negative Prompt (esquina superior derecha)
+        self.negative_save_btn = QPushButton()
+        self.negative_save_btn.setToolTip("Guardar Negative Prompt")
+        self.negative_save_btn.setFixedSize(24, 24)
+        try:
+            icon_path = os.path.join("assets", "icons", "save.png")
+            if os.path.exists(icon_path):
+                self.negative_save_btn.setIcon(QIcon(icon_path))
+            else:
+                self.negative_save_btn.setText("💾")
+        except Exception:
+            self.negative_save_btn.setText("💾")
+        self.negative_save_btn.clicked.connect(self.save_current_negative_prompt)
+        header_bar.addWidget(self.negative_save_btn)
+
+        negative_layout.addLayout(header_bar)
         
         # Textarea para negative prompt - altura reducida
         self.negative_text = QTextEdit()
         self.negative_text.setFixedHeight(60)  # Reducido de 80 a 60
         self.negative_text.setFont(QFont("Courier New", 9))  # Reducido de 10 a 9
-        default_negative = self.settings.get_setting("default_negative_prompt", 
+        default_negative = self.neg_store.get_setting("default_negative_prompt", 
                                                    "blurry, low quality, distorted, deformed, ugly, bad anatomy")
         self.negative_text.setPlainText(default_negative)
         negative_layout.addWidget(self.negative_text)
@@ -143,6 +237,9 @@ class PromptSectionFrame(QFrame):
         self.negative_text.hide()
         self.negative_expanded = False
         
+        # Cargar y renderizar botones guardados
+        self.refresh_saved_negative_buttons()
+
         layout.addWidget(self.negative_frame)
 
     def setup_styles(self):
@@ -313,6 +410,109 @@ class PromptSectionFrame(QFrame):
     def get_negative_prompt(self):
         """Obtiene el contenido del negative prompt"""
         return self.negative_text.toPlainText()
+
+    # -----------------------------
+    # Gestión de Negative Prompts guardados
+    # -----------------------------
+    def refresh_saved_negative_buttons(self):
+        """Reconstruye los botones numerados según los negative prompts guardados."""
+        # Limpiar layout existente
+        while self.saved_neg_layout.count():
+            item = self.saved_neg_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        prompts = self.neg_store.get_saved_negative_prompts()
+        for i, text in enumerate(prompts, start=1):
+            btn = QPushButton(f"({i})")
+            btn.setFixedHeight(22)
+            btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #3a3a3a;
+                    color: #e0e0e0;
+                    border: 1px solid #555;
+                    border-radius: 6px;
+                    font-size: 10px;
+                    padding: 2px 6px;
+                }
+                QPushButton:hover {
+                    background-color: #4a4a4a;
+                }
+                QPushButton:pressed {
+                    background-color: #2a2a2a;
+                }
+            """)
+            # Sin tooltip al pasar el mouse
+            btn.setToolTip("")
+            # Clic izquierdo: cargar prompt
+            btn.clicked.connect(lambda checked=False, idx=i: self.on_saved_button_clicked(idx))
+            # Right-click: menú contextual para editar/eliminar
+            btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            btn.customContextMenuRequested.connect(lambda pos, idx=i, button=btn: self.show_saved_menu(idx, button))
+            self.saved_neg_layout.addWidget(btn)
+
+    def save_current_negative_prompt(self):
+        """Guarda el contenido actual del textarea como nuevo negative prompt."""
+        text = self.get_negative_prompt().strip()
+        if not text:
+            return
+        self.neg_store.add_saved_negative_prompt(text)
+        self.refresh_saved_negative_buttons()
+
+    def on_saved_button_clicked(self, index: int):
+        """Carga el negative prompt guardado en el índice en el textarea."""
+        prompts = self.neg_store.get_saved_negative_prompts()
+        if 1 <= index <= len(prompts):
+            self.negative_text.setPlainText(prompts[index - 1])
+            # Mostrar si estaba oculto
+            if not self.negative_expanded:
+                self.toggle_negative()
+
+    def show_saved_menu(self, index: int, button: QPushButton):
+        """Muestra un menú contextual para editar o eliminar el prompt guardado."""
+        menu = QMenu(self)
+        edit_action = menu.addAction("Editar")
+        delete_action = menu.addAction("Eliminar")
+        action = menu.exec(button.mapToGlobal(button.rect().bottomLeft()))
+        if action == edit_action:
+            self.edit_saved_negative_prompt(index)
+        elif action == delete_action:
+            self.delete_saved_negative_prompt(index)
+
+    def edit_saved_negative_prompt(self, index: int):
+        prompts = self.neg_store.get_saved_negative_prompts()
+        if 1 <= index <= len(prompts):
+            current = prompts[index - 1]
+            dlg = NegativePromptEditDialog(self, current)
+            if dlg.exec():
+                new_text = dlg.text_edit.toPlainText().strip()
+                if new_text:
+                    self.neg_store.update_saved_negative_prompt(index, new_text)
+                    self.refresh_saved_negative_buttons()
+
+    def delete_saved_negative_prompt(self, index: int):
+        prompts = self.neg_store.get_saved_negative_prompts()
+        if not (1 <= index <= len(prompts)):
+            return
+
+        confirm = QMessageBox(self)
+        confirm.setWindowTitle("Confirmar eliminación")
+        confirm.setText("¿Eliminar este Negative Prompt guardado?")
+        confirm.setInformativeText("Esta acción no se puede deshacer.")
+        confirm.setIcon(QMessageBox.Icon.Warning)
+        # Solo botón de confirmación, cancelar con la "X" de la ventana
+        confirm.setStandardButtons(QMessageBox.StandardButton.Yes)
+        # Localizar el texto del botón
+        try:
+            confirm.setButtonText(QMessageBox.StandardButton.Yes, "Sí")
+        except Exception:
+            pass
+        confirm.setDefaultButton(QMessageBox.StandardButton.Yes)
+
+        result = confirm.exec()
+        if result == QMessageBox.StandardButton.Yes:
+            self.neg_store.delete_saved_negative_prompt(index)
+            self.refresh_saved_negative_buttons()
 
     def open_config(self):
         """Abre el popup de configuración al lado del botón"""

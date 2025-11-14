@@ -17,21 +17,6 @@ class PresetsManager:
         """Asegura que existe el directorio base de presets"""
         # Solo crear el directorio base, no las subcarpetas
         os.makedirs(self.presets_dir, exist_ok=True)
-        # Eliminar completamente cualquier creación automática de carpetas
-    
-    # Eliminar completamente este método comentado
-    # def ensure_presets_structure(self):
-    #     """Asegura que existe la estructura de carpetas de presets"""
-    #     categories = ["vestuarios", "expresiones", "poses", "iluminacion", "angulos"]
-    #     
-    #     for category in categories:
-    #         category_dir = os.path.join(self.presets_dir, category)
-    #         os.makedirs(category_dir, exist_ok=True)
-    #         
-    #         # Crear archivo de ejemplo si no existe
-    #         example_file = os.path.join(category_dir, "ejemplos.json")
-    #         if not os.path.exists(example_file):
-    #             self.create_example_preset(category, example_file)
     
     def create_example_preset(self, category, file_path):
         """Crea un preset de ejemplo para cada categoría"""

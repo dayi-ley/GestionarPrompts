@@ -1,0 +1,62 @@
+{
+  "character_name": "original_character",
+  "variations": {
+    "original_character_var1": {
+      "name": "original_character_var1",
+      "description": "Variación original_character_var1 para original_character",
+      "tags": [],
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Calidad tecnica": "masterpiece, best quality, amazing quality, absurdres, newest,",
+        "Estilo artistico": "Pachu illustration Style, realistic:0.3,",
+        "Composicion": "posing, scenery, face focus shot, eye close-up, face highlight view, focused gaze, face centered shot,",
+        "Atmosfera vibe": "very aesthetic, sexy, sharp lineart,((oily shine skin)),",
+        "Loras estilos artistico": "<lora:WagashiDagashiyaきしわがし_Style_LoRA__SDXL__Pony__v2:1>,<lora:odanon-lora-v1-128dim-10ep-novae:0.2>, <lora:LFashionIXL:0.2>, <lora:saegarantr:0.45>, <lora:flat_sdxl:0.5>,<lora:mamimi_mamamimi_style_illustrious_goofy:0.3>,",
+        "Loras detalles mejoras": "<lora:add_detail:1>, <lora:DetailedEyes_XL:1>,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,",
+        "Loras personaje": "",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), indoor soft focus,",
+        "Personaje": "1girl,goth lolita,",
+        "Cabello forma": "cute goth girl, short black bob haircut, straight black bangs,",
+        "Cabello color": "black hair,",
+        "Cabello accesorios": "large red bow on the head,",
+        "Rostro accesorios": "ear piercing,earrings,jewelry,",
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,gray eyes, slit pupils",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "cheeks slightly flushed,",
+        "Expresion facial boca": "seductive face, blowjob gesture, open mouth, tongue out,",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Vestuario general": "open clothes,sleeveless, sleeveless dress,cleavage,",
+        "Vestuario superior": "",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Tipo de cuerpo": "loli, young girl, ((dwarfs body)), ((young dwarfs body)),",
+        "Rasgo fisico cuerpo": "",
+        "Rasgo fisico piernas": "white thighhighs,",
+        "Pose actitud global": "wide hips, ((sitting)),",
+        "Pose brazos": "holding a pacifier,",
+        "Pose piernas": "one leg straight, other leg bent, pointed toe, slight arch back,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "(pubic hair), busty, pussy naked,cleft of venus pussy,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "negative_prompt": "",
+      "created_date": "2025-11-13T19:39:50.296106",
+      "rating": 0,
+      "notes": "Creada desde la aplicación"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-11-13T19:39:48.370942",
+    "last_modified": "2025-11-13T19:39:50.296106"
+  }
+}

@@ -3,7 +3,7 @@ import os
 from typing import Dict, List, Any
 from datetime import datetime
 
-class AppSettings:
+class NegativePromptStore:
     """Maneja la configuración y persistencia de datos de la aplicación."""
     
     def __init__(self):
@@ -23,7 +23,8 @@ class AppSettings:
             "sidebar_width": 280,
             "auto_save": True,
             "max_history": 100,
-            "default_negative_prompt": "blurry, low quality, distorted, deformed, ugly, bad anatomy"
+            "default_negative_prompt": "blurry, low quality, distorted, deformed, ugly, bad anatomy",
+            "saved_negative_prompts": []
         }
         
         # Cargar configuraciones
@@ -164,3 +165,31 @@ class AppSettings:
             raise ValueError(f"Formato no soportado: {format}")
         
         return filename 
+
+    # -----------------------------
+    # Negative Prompt guardados
+    # -----------------------------
+    def get_saved_negative_prompts(self) -> List[str]:
+        """Obtiene la lista de negative prompts guardados."""
+        return self.settings.get("saved_negative_prompts", [])
+
+    def add_saved_negative_prompt(self, text: str) -> int:
+        """Agrega un negative prompt a la lista y devuelve su índice (1-based)."""
+        prompts = self.get_saved_negative_prompts()
+        prompts.append(text)
+        self.set_setting("saved_negative_prompts", prompts)
+        return len(prompts)  # índice 1-based
+
+    def update_saved_negative_prompt(self, index: int, new_text: str):
+        """Actualiza el negative prompt en el índice dado (1-based)."""
+        prompts = self.get_saved_negative_prompts()
+        if 1 <= index <= len(prompts):
+            prompts[index - 1] = new_text
+            self.set_setting("saved_negative_prompts", prompts)
+
+    def delete_saved_negative_prompt(self, index: int):
+        """Elimina el negative prompt en el índice dado (1-based)."""
+        prompts = self.get_saved_negative_prompts()
+        if 1 <= index <= len(prompts):
+            del prompts[index - 1]
+            self.set_setting("saved_negative_prompts", prompts)

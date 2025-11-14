@@ -8,7 +8,12 @@
     "medium angle",
     "from behind",
     "dutch angle",
-    "Cenital angle"
+    "Cenital angle",
+    "((cowboy shot)),((medium angle))",
+    "low-angle shot",
+    "extreme low-angle shot",
+    "worm's-eye view",
+    "eye-level shot"
   ],
   "calidad_tecnica": [
     "newest",
@@ -19,7 +24,8 @@
   ],
   "estilo_artistico": [
     "Pachu illustration Style",
-    "realistic:0.3"
+    "realistic:0.3",
+    "cinematic lighting"
   ],
   "composicion": [
     "posing",
@@ -82,7 +88,9 @@
     "straight hair",
     "waist-length",
     "pointed bangs",
-    "side-swept bangs"
+    "side-swept bangs",
+    "bangs, hair between eyes",
+    "cute goth girl, short black bob haircut, straight black bangs"
   ],
   "cabello_color": [
     "white hair",
@@ -94,7 +102,9 @@
   ],
   "cabello_accesorios": [
     "bunny bow headband",
-    "rabbit ear bow"
+    "rabbit ear bow",
+    "butterfly hair orname",
+    "hairclip"
   ],
   "rostro_accesorios": [
     "glasses",
@@ -131,7 +141,8 @@
     "open mouth",
     "surprised",
     "blowjob gesture",
-    "seductive smile"
+    "seductive smile",
+    "tongue out"
   ],
   "postura_cabeza": [
     "head tilted slightly",
@@ -148,15 +159,52 @@
   "vestuario_general": [
     "lingerie, crotch-less panties, cupless bra, cupless lingerie",
     "swimsuit under clothes",
-    "tactical clothes",
     "school swimsuit",
-    "blue leotard",
     "playboy bunny",
-    "detached collar",
-    "wrist cuffs",
-    "cleavage",
-    "hoodies",
-    "china dress"
+    "china dress,china clothes",
+    "latex dress",
+    "latex nun cosplay",
+    "Maid Lingerie Costume",
+    "Fishnet Crotchless Bodysuit",
+    "Lingerie Butterfly Bodysuit",
+    "Nightdress with thin straps, V-neck, smooth lace insert, thong",
+    "Halter Deep Plunge Plain Ruffle Cutout, Crotchless Lace Bodysuit",
+    "Secretary Lingerie Costume",
+    "latex catsuit",
+    "latex skirt",
+    "latex skirt with long shirt",
+    "Office Secretary Top and Skirt Set",
+    "Black and White Secretary Bodycon Dress",
+    "Sexy Secretary Cosplay Lingerie",
+    "sexy secretary costume, black babydoll lingerie, button-down shirt, open front, garter belt, stockings,",
+    "Transparent mesh bodysuit, short sleeves with red ties, round neckline, yellow band at the waist, and blue briefs",
+    "ballet leotard with tutu and tights",
+    "flight attendant uniform, deep navy blue, deep v-neckline, large open back, sheer mesh panels on hips, slim-fit dress, striped necktie, stewardess hat, embroidered patch on skirt",
+    "bunny girl costume, black faux leather bodysuit, deep v-neck, rabbit ear headband, puff cuff bracelet",
+    "maid costume, black and white lingerie, lace apron, frilly headband, sweetheart neckline,Lace Costume,apron Lingerie,Teddy Bodysuit",
+    "swimsuit, blue cutout bodysuit, high neck, long sleeves, high leg cut",
+    "black lingerie set, fishnet bodysuit, garter stockings",
+    "black fishnet lingerie set, garter belt, sheer mesh bodysuit",
+    "black fishnet lingerie set, garter belt, fishnet stockings, strappy harness bra",
+    "cow print lingerie set, bandeau bra, garter belt, thigh high socks",
+    "monokini swimsuit, black sheer mesh, deep v-front, open back, extreme cutout",
+    "monokini swimsuit, extreme cutouts, front lace-up, high leg cut",
+    "sexy schoolgirl costume, blue mini dress, white collar, ribbon tie, thigh high socks",
+    "sexy schoolgirl outfit, black crop top, light gray plaid mini skirt, pasties, choker necklace",
+    "Rib Knit Cut Out BunnyCostume",
+    "nun outfit",
+    "china dress,china clothes,dragon print,sleeveless dress",
+    "Sexy lingerie, open crotch transparent lace bodystocking",
+    "fishnet bodysuit,mesh panties,nude lingerie",
+    "zipper, thigh strap, skindentation, black pasties, highleg, black high heels, breastless clothes, black thighhighs, black leotard, belt, see-through, bare shoulders",
+    "swimsuit,brown swimsuit,chain belt,denim shorts,short shorts",
+    "open clothes,sleeveless, sleeveless dress,cleavage,long sleeves,bare shoulders,jacket",
+    "open clothes,sleeveless, sleeveless dress,cleavage",
+    "black trench coatt, black suit, pinstripe suit, cleavage",
+    "sexy wedding dress",
+    "bondage lingerie,white thighhighs,fishnet pantyhose",
+    "black rabbit ears,rabbit tail, tail,leotard,strapless leotard,black leotard,strapless,covered navel,cleavage",
+    "Uniform,Tie, Bow, Crop, Top, Mini Skirt With Thong, Sexy Erotic Lingerie"
   ],
   "vestuario_superior": [
     "white shirt",
@@ -164,21 +212,76 @@
     "blue neckerchief",
     "short sleeve shirt",
     "sailor shirt",
-    "light blue hoodies"
+    "light blue hoodies",
+    "latex top",
+    "latex off-shoulder top",
+    "latex crop top",
+    "latex tube top",
+    "latex corset",
+    "ballet leotard",
+    "halter dress",
+    "red sports lingerie top",
+    "long-sleeved lingerie top",
+    "lace crop top, bralette style",
+    "lace longline lingerie top",
+    "balconette bustier top,balcony bustier",
+    "red deep V lingerie top, plunging neckline",
+    "strapless lingerie top",
+    "nipple covers with push-up",
+    "convertible lingerie top",
+    "adjustable strap bralette",
+    "open black lingerie, sheer lingeries, cupless lingerie, open bra, no cup bra, cupless bra",
+    "triangle lingerie, triangle bralette, triangular cup lingerie, triangle shaped top, triangle bra",
+    "bodycon puff sleeve crop top, form-fitting torso with short puffed sleeves, square neckline, white semi-transparent fabric with red trim edges, waist-length tight top",
+    "camisole top"
   ],
   "vestuario_inferior": [
     "silver skirt",
-    "chelsea boots",
-    "desert boots",
-    "beatle boots",
-    "buttoned boots",
-    "riding boots",
-    "ankle boots"
+    "latex skirt",
+    "latex pants",
+    "latex mini skirt",
+    "sheer hosiery,stockings that are thin\nand see through, with low\ndeniers",
+    "fishnet hosiery, hosiery with a diamond shaped, open knit resembling the pattern on a fishnet",
+    "fencenet hosiery",
+    "stay ups hosiery, holdups, stockings with a lace band",
+    "knee-highs hosiery",
+    "thigh-highs hosiery",
+    "garterbelts hosiery,stockings with suspenders",
+    "full blue brief",
+    "g-string"
   ],
   "vestuario_accesorios": [
     "gloves",
     "fingerless gloves",
-    "choker"
+    "choker",
+    "tie",
+    "bow tie",
+    "scarf",
+    "vest",
+    "suspenders",
+    "Hand Bracelets",
+    "Wrist Cuffs Ruffled Floral Black Lace Elastic Bracelet",
+    "evenign glove",
+    "arm glove",
+    "driving glove",
+    "bridal glove",
+    "half glove",
+    "drawing glove",
+    "archery glove",
+    "gauntlet glove",
+    "Wrist length gloves",
+    "short gloves",
+    "chelsea collar",
+    "jabot collar",
+    "notched collar",
+    "shawl collar",
+    "puritan collar",
+    "sailor collar",
+    "wings collar",
+    "peter pan collar",
+    "mandarin collar",
+    "Handbag",
+    "Purse"
   ],
   "ropa_interior_superior": [
     "Eyepatch bikini",
@@ -189,7 +292,9 @@
     "triangle bra",
     "babydoll",
     "body suit lingerie",
-    "slip lingerie"
+    "slip lingerie",
+    "Nun Lingerie Costume",
+    "latex bra"
   ],
   "ropa_interior_inferior": [
     "micro thong",
@@ -203,13 +308,18 @@
     "thong lingerie",
     "g-string lingerie",
     "robe lingerie",
-    "garter belt lingerie"
+    "garter belt lingerie",
+    "latex shorts",
+    "pelvic curtain",
+    "c-string panty",
+    "garter panty, thigh suspender belt"
   ],
   "ropa_interior_accesorios": [
     "swimsuit under clothes",
     "Eyepatch bikini",
     "ofuda on vagina",
-    "ofuda on nipples"
+    "ofuda on nipples",
+    "latex harness"
   ],
   "tipo_de_cuerpo": [
     "wide hips",
@@ -240,21 +350,28 @@
     "squatting",
     "Crouching",
     "Reclining",
-    "Leaning"
+    "Leaning",
+    "bent over",
+    "sitting, squatting"
   ],
   "pose_brazos": [
     "arms crossed",
     "hands on hips",
     "arms raised",
     "arms relaxed at sides",
-    "bare hands"
+    "bare hands",
+    "leaning on bed",
+    "hand in the face"
   ],
   "pose_piernas": [
     "open legs",
     "legs crossed",
     "legs apart",
     "one leg raised",
-    "knees together"
+    "knees together",
+    "legs slightly apart",
+    "spreading legs",
+    "(spreading legs),knees bent, pointed toes,((perspective from the feet)),POV from the ground,"
   ],
   "orientacion_personaje": [
     "facing forward",
@@ -269,7 +386,8 @@
     "playful",
     "serious",
     "relaxed",
-    "seducing viewer"
+    "seducing viewer",
+    "Pelvic tilt backward"
   ],
   "nsfw": [
     "nudity",
@@ -279,7 +397,8 @@
     "pubic hair",
     "nude",
     "completely nude",
-    "pussy"
+    "pussy",
+    "tight clothing"
   ],
   "objetos_interaccion": [
     "holding a pokeball",
@@ -301,7 +420,12 @@
     "looking down",
     "looking up",
     "from view",
-    "from below"
+    "from below",
+    "view from behind,back view,rear view,rear view of a person"
   ],
-  "aaa": []
+  "aaa": [],
+  "vestuariospies": [
+    "boots",
+    "high heels"
+  ]
 }

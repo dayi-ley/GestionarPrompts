@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "acostada_enfocada_desde_abajo": {
+      "name": "Acostada enfocada desde abajo",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "child's pose, ((lying down)),",
+        "Pose brazos": "hand in the face,",
+        "Pose piernas": "knees bent, pointed toes,((perspective from the feet)),POV from the ground,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-11-13T18:30:14.132680"
+    }
+  }
+}
