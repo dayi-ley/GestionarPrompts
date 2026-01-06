@@ -20,10 +20,10 @@ Generador/organizador de prompts, diseñado específicamente para la generación
 - **Orden logico General** →Calidad y estilo(tecnica) → Rasgos Fisicos→ vestuarios→ Poses → Expresiones → Complementos(loras/LyCORIS/StyleReferences)
 ![vista de Logica de medio o tecnica](assets/screenshots/medio_tecnica.png)
 ![vista de Logica de idioma visual](assets/screenshots/medio_fisico.png)
-![vista de Logica de vestuarios](assets/screenshots/medio_vestuario.png)
-![vista de Logica de poses](assets/screenshots/medio_poses.png)
-![vista de Logica de expresiones](assets/screenshots/medio_expresiones.png)
-![vista de Logica de complementos](assets/screenshots/medio_complementos.png)
+![vista de Logica de vestuarios](assets/screenshots/Logica_vestuario.png)
+![vista de Logica de poses](assets/screenshots/Logica_poses.png)
+![vista de Logica de rasgos fisicos](assets/screenshots/Logica_rasgos.png)
+
 - **Validación de inputs** y limpieza automática
 
 ### PromptCapture
