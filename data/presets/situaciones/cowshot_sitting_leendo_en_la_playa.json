@@ -1,0 +1,33 @@
+{
+  "presets": {
+    "cowshot_sitting_leendo_en_la_playa": {
+      "name": "cowShot sitting leendo en la playa",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Fondo": "sky background, clouds, upward view,",
+        "Expresion facial ojos": "focused eyes, squinting slightly,",
+        "Expresion facial mejillas": "sun-kissed cheeks,",
+        "Expresion facial boca": "relaxed mouth, slight smile,",
+        "Postura cabeza": "head bowed reading,",
+        "Direccion mirada personaje": "looking down at viewer,",
+        "Vestuario general": "",
+        "Vestuario superior": "triangle bra,",
+        "Vestuario inferior": "White an blue striped panties, white and blue striped thighhighs,",
+        "Vestuario accesorios": "white choker,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Pose actitud global": "sitting,",
+        "Pose brazos": "holding book open, elbows resting,",
+        "Pose piernas": "legs crossed,",
+        "Orientacion personaje": "viewed from above,",
+        "Objetos interaccion": "holding book, reading book,",
+        "Objetos escenario": "sand grains foreground, distant horizon,umbrella shadow,white beach chair,",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-18T17:21:34.433542"
+    }
+  }
+}

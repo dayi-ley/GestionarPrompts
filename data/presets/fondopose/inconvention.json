@@ -1,0 +1,26 @@
+{
+  "presets": {
+    "inconvention": {
+      "name": "InConvention",
+      "categories": {
+        "Angulo": "viewer as photographer, (((frontal view))), (Wide angle lens),",
+        "Fondo": "crowded convention hall, blurred crowd of people in background, booths and signs blurred,",
+        "Postura cabeza": "head slightly tilted, looking forward,",
+        "Direccion mirada personaje": "looking directly at viewer with intense seductive desire,",
+        "Pose actitud global": "secretive public exhibitionism, highly provocative, aroused, teasing secretly in crowd,",
+        "Pose brazos": "one hand lifting blouse to expose breasts, other hand lifting skirt to expose pussy,",
+        "Pose piernas": "standing with legs slightly apart,",
+        "Orientacion personaje": "facing directly toward viewer,",
+        "Actitud emocion": "",
+        "Nsfw": "highly explicit, public flashing,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "convention crowd blurred, people unaware in background,",
+        "Mirada espectador": "intense direct seductive eye contact, lustful and inviting secretly,"
+      },
+      "images": [
+        "image_1.png"
+      ],
+      "created_at": "2026-01-05T00:25:53.240669"
+    }
+  }
+}

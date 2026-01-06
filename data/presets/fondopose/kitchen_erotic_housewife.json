@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "kitchen_erotic_housewife": {
+      "name": "Kitchen erotic housewife",
+      "categories": {
+        "Angulo": "(frontal view), (Wide angle lens),",
+        "Fondo": "simple kitchen interior, blurred counter and appliances,",
+        "Postura cabeza": "head tilted slightly back, looking down at viewer,",
+        "Direccion mirada personaje": "looking directly at viewer with lustful invitation,",
+        "Pose actitud global": "erotic housewife, teasing seductively in kitchen, aroused and offering,",
+        "Pose brazos": "hand touching breast,",
+        "Pose piernas": "standing with legs spread, one leg slightly raised on stool or counter edge,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "highly explicit, aroused state,",
+        "Objetos interaccion": "kitchen counter or sink edge for support,",
+        "Objetos escenario": "kitchen background blurred, stove, fridge, utensils,",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-05T11:23:05.942725"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "character_name": "gwen_tennyson",
+  "variations": {
+    "gwen_tennyson_var1": {
+      "name": "gwen_tennyson_var1",
+      "description": "Variación gwen_tennyson_var1 para gwen_tennyson",
+      "tags": [],
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Calidad tecnica": "masterpiece, best quality, amazing quality, absurdres, newest,",
+        "Estilo artistico": "Pachu illustration Style, realistic:0.3,",
+        "Composicion": "posing, scenery, face focus shot, eye close-up, face highlight view, focused gaze, face centered shot,",
+        "Atmosfera vibe": "very aesthetic, sexy, sharp lineart,((oily shine skin)),",
+        "Loras estilos artistico": "<lora:WagashiDagashiyaきしわがし_Style_LoRA__SDXL__Pony__v2:1>,<lora:odanon-lora-v1-128dim-10ep-novae:0.2>, <lora:LFashionIXL:0.2>, <lora:saegarantr:0.45>, <lora:flat_sdxl:0.5>,<lora:mamimi_mamamimi_style_illustrious_goofy:0.5>,",
+        "Loras detalles mejoras": "<lora:add_detail:1>, <lora:DetailedEyes_XL:1>,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,",
+        "Loras personaje": "<lora:GwenT4:1>,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), (white room), indoor soft focus,",
+        "Personaje": "1girl,Gwen_Tennyson,",
+        "Cabello forma": "bangs, short hair,swept bangs,",
+        "Cabello color": "orange hair,",
+        "Cabello accesorios": "blue hairclip, hairclip,",
+        "Rostro accesorios": "glasses, ",
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,blue eyes, slit pupils",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "((shy)),",
+        "Expresion facial boca": "((smile)),embarrassed,",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Vestuario general": "",
+        "Vestuario superior": "blue shirt, crop top, cropped shirt, long sleeves, raglan sleeves, shirt, twotone shirt,tight sleeves,",
+        "Vestuario inferior": "white pantyhose,chubby pussy,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "covered nipples,",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Tipo de cuerpo": "shortstack,loli, young girl, ((dwarfs body)), ((young dwarfs body)),",
+        "Rasgo fisico cuerpo": "wide hips,",
+        "Rasgo fisico piernas": "",
+        "Pose actitud global": "((sitting)), sitting on chair,",
+        "Pose brazos": "clenched hands, hands up,",
+        "Pose piernas": "crossed legs,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "clothes hanger,",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "negative_prompt": "",
+      "created_date": "2025-12-12T17:30:46.131536",
+      "rating": 0,
+      "notes": "Creada desde la aplicación"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-12T17:29:00.930131",
+    "last_modified": "2025-12-12T17:30:46.131536"
+  }
+}

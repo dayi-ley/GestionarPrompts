@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "sttingback_bathroom": {
+      "name": "sttingBack bathroom",
+      "categories": {
+        "Angulo": "from behind, from above,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), indoor soft focus,(white room), Sheer white curtains,",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "sitting on lap, sitting,from behind, back view, facing away,,",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "single sidelock,",
+        "Actitud emocion": "",
+        "Nsfw": "nude,handjob,pov, ass focus,",
+        "Objetos interaccion": "on couch,",
+        "Objetos escenario": "indoors, room, bathroom, bathtub, bath, water, tiles, petals,",
+        "Mirada espectador": "looking back,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2025-12-30T18:16:16.371726"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "kindergarten_uniform18": {
+      "name": "kindergarten_uniform(+18)",
+      "categories": {
+        "Vestuario general": "kindergarten uniform, partially clothed, small clothes,",
+        "Vestuario superior": "partially clothed female, school hat, blue shirt lifted, short sleeves,",
+        "Vestuario inferior": "dark blue microskirt, miniskirt, school skirt,",
+        "Vestuario accesorios": "yellow hat,red Japanese garden backpack,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2025-12-26T19:05:21.212799"
+    }
+  }
+}

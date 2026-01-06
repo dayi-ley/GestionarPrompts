@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "transparent_babydoll_18": {
+      "name": "transparent babydoll +18",
+      "categories": {
+        "Vestuario general": "transparent babydoll, sheer lingerie,",
+        "Vestuario superior": "see-through top, ruffles on chest, deep cleavage,",
+        "Vestuario inferior": "matching sheer panties, micro length, ruffles on hem,",
+        "Vestuario accesorios": "ruffle choker, ribbon bows,",
+        "Vestuariospies": "thighhigh stockings with ruffles, barefoot optional,",
+        "Ropa interior superior": "no bra, nipples fully visible,",
+        "Ropa interior inferior": "sheer thong or crotchless panties,",
+        "Ropa interior accesorios": "garter straps with bows,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2026-01-03T11:27:35.837538"
+    }
+  }
+}

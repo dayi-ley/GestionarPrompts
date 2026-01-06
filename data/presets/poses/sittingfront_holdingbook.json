@@ -1,0 +1,26 @@
+{
+  "presets": {
+    "sittingfront_holdingbook": {
+      "name": "sittingFront holdingBook",
+      "categories": {
+        "Angulo": "((low angle)),((from below)), Wide angle lens,",
+        "Postura cabeza": "head tilted down,",
+        "Direccion mirada personaje": "looking at book,",
+        "Rasgo fisico cuerpo": "",
+        "Pose actitud global": "sitting,reading, (one-handed book grip:1.2),",
+        "Pose brazos": "holding a clipboard with one hand,",
+        "Pose piernas": "feet together,",
+        "Orientacion personaje": "facing viewer,",
+        "Objetos interaccion": "(small open book:1.2), visible pages, (pocketbook:1.1),",
+        "Objetos escenario": "(small open book:1.2), visible pages, (pocketbook:1.1),",
+        "Nsfw": "",
+        "Actitud emocion": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png"
+      ],
+      "created_at": "2026-01-01T19:44:19.899571"
+    }
+  }
+}

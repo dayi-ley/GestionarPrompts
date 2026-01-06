@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "nun_costume_kneeling": {
+      "name": "nun costume kneeling",
+      "categories": {
+        "Angulo": "((Wide angle lens)), ((high angle)),((from above)),",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, soft room background,(white room), indoor soft focus,",
+        "Postura cabeza": "head bowed slightly then raised,",
+        "Direccion mirada personaje": "looking up pleadingly at viewer,",
+        "Pose actitud global": "kneeling prayer turned filthy submission, religious taboo eroticism,",
+        "Pose brazos": "hands clasped in prayer pose but pulling habit open,",
+        "Pose piernas": "kneeling with knees wide apart on floor,",
+        "Orientacion personaje": "facing viewer upward,",
+        "Actitud emocion": "",
+        "Nsfw": "ultra explicit, breasts fully exposed, skirt revealing genitals,",
+        "Objetos interaccion": "rosary beads or habit fabric,",
+        "Objetos escenario": "prayer kneeler blurred, cross on wall,",
+        "Mirada espectador": "upward submissive gaze, divine lust,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T15:51:39.999556"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "presets": {
+    "uniform_umamusume": {
+      "name": "uniform umaMusume",
+      "categories": {
+        "Vestuario general": "tracen school uniform, summer uniform,",
+        "Vestuario superior": "frilled shirt collar, shirt, shirt tucked in, short sleeves, plaid, puffy sleeves, frilled sailor shirt, purple shirt, puffy short sleeves, puffy sleeves, puffy short sleeves,",
+        "Vestuario inferior": "white skirt, pleated skirt, miniskirt,",
+        "Vestuario accesorios": "earrings, single earring, jewelry, sailor collar, purple bowtie, horseshoe ornament,",
+        "Vestuariospies": "brown footwear, shoes,",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Rasgo fisico piernas": "white thighhighs, thick thighs,"
+      },
+      "images": [],
+      "created_at": "2025-12-08T15:48:11.978707"
+    }
+  }
+}

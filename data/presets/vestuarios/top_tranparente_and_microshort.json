@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "top_tranparente_and_microshort": {
+      "name": "top tranparente and Microshort",
+      "categories": {
+        "Vestuario general": "sheer tube top with ruffles, micro denim hotpants,",
+        "Vestuario superior": "transparent tube top, strapless band, sheer fabric, ruffle trim top and bottom,",
+        "Vestuario inferior": "micro jeans shorts, low rise, extremely short, ass cheeks visible,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "no bra, nipples fully visible through sheer top,",
+        "Ropa interior inferior": "thong visible above waistband, or no panties,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2026-01-03T12:33:44.258967"
+    }
+  }
+}

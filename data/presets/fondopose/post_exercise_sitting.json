@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "post_exercise_sitting": {
+      "name": "Post-Exercise Sitting",
+      "categories": {
+        "Angulo": "((low angle)),((from below)), ((Wide angle lens)),",
+        "Fondo": "school gymnasium bench blurred, volleyball court and players in distant background blurred,",
+        "Postura cabeza": "head slightly tilted down, resting,",
+        "Direccion mirada personaje": "looking directly at viewer tiredly,",
+        "Pose actitud global": "exhausted after sports, sitting recovering breath, relaxed and sensual,",
+        "Pose brazos": "hands resting on thighs or one hand wiping sweat,",
+        "Pose piernas": "sitting on bench, legs slightly spread or crossed loosely,",
+        "Orientacion personaje": "facing viewer directly,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "bench or water bottle on lap optional,",
+        "Objetos escenario": "gym bench blurred, sports equipment scattered,",
+        "Mirada espectador": "soft tired direct eye contact, subtly inviting,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T12:34:13.170585"
+    }
+  }
+}

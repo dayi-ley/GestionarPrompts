@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "post_exercise_standing_stretch": {
+      "name": "Post-Exercise Standing Stretch",
+      "categories": {
+        "Angulo": "side three-quarter view,",
+        "Fondo": "school gym interior blurred, volleyball court lines visible,",
+        "Postura cabeza": "head tilted back slightly,",
+        "Direccion mirada personaje": "eyes closed or soft glance sideways,",
+        "Pose actitud global": "stretching after game, relaxed and glistening with sweat,",
+        "Pose brazos": "arms raised overhead or one arm across body,",
+        "Pose piernas": "standing with legs apart, one knee slightly bent,",
+        "Orientacion personaje": "side profile to viewer,",
+        "Actitud emocion": "",
+        "Nsfw": "suggestive, sweat making clothes transparent and clinging,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "relaxed side glance if open, serene,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T12:45:37.523132"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "virgin_killer_sweater": {
+      "name": "virgin killer sweater",
+      "categories": {
+        "Vestuario general": "((virgin killer sweater)),white sweater,",
+        "Vestuario superior": "",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T18:21:29.759813"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "presets": {
+    "smug_smirk": {
+      "name": "smug smirk",
+      "categories": {
+        "Ojos": "blue eyes,half-closed eyes,raised eyebrows,",
+        "Expresion facial ojos": "smirking eyes, sharp gaze,",
+        "Expresion facial mejillas": "light blush, confident flush,",
+        "Expresion facial boca": "smug smirk, tongue teasing corner of mouth,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-03T13:55:05.993754"
+    }
+  }
+}

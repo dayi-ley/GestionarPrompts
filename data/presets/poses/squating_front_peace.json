@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "squating_front_peace": {
+      "name": "squating front peace",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
+        "Pose actitud global": "((kneeling)), (squatting),",
+        "Pose brazos": "hand peace sign, arms up,",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "facing viewer, face focus, face front, ((front view)),",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T18:25:53.723293"
+    }
+  }
+}

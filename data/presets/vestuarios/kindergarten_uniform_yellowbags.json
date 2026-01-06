@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "kindergarten_uniform_yellowbags": {
+      "name": "kindergarten_uniform_Yellowbags",
+      "categories": {
+        "Vestuario general": "kindergarten uniform, collared shirt,partially clothed, small clothes,",
+        "Vestuario superior": "long sleeves, pink shirt, shirt,",
+        "Vestuario inferior": "((black microthong)),",
+        "Vestuario accesorios": "yellow hat,school hat,yellow shoulder bag,small shoulder bags,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "panties, panties around one leg, underwear, white pantie,"
+      },
+      "images": [],
+      "created_at": "2025-12-25T17:41:15.579199"
+    }
+  }
+}

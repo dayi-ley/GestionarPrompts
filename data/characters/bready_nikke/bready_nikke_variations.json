@@ -1,0 +1,62 @@
+{
+  "character_name": "bready_nikke",
+  "variations": {
+    "bready_nikke_var1": {
+      "name": "bready_nikke_var1",
+      "description": "Variación bready_nikke_var1 para bready_nikke",
+      "tags": [],
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Calidad tecnica": "masterpiece, best quality, amazing quality, absurdres, newest,",
+        "Estilo artistico": "Pachu illustration Style, realistic:0.3,",
+        "Composicion": "posing, scenery, face focus shot, eye close-up, face highlight view, focused gaze, face centered shot,",
+        "Atmosfera vibe": "very aesthetic, sexy, sharp lineart,((oily shine skin)),",
+        "Loras estilos artistico": "<lora:WagashiDagashiyaきしわがし_Style_LoRA__SDXL__Pony__v2:1>,<lora:odanon-lora-v1-128dim-10ep-novae:0.2>, <lora:LFashionIXL:0.2>, <lora:saegarantr:0.45>, <lora:flat_sdxl:0.5>,<lora:mamimi_mamamimi_style_illustrious_goofy:0.5>,",
+        "Loras detalles mejoras": "<lora:add_detail:1>, <lora:DetailedEyes_XL:1>,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,",
+        "Loras personaje": " <lora:bready-nikke-richy-v1_ixl:1,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), indoor soft focus,",
+        "Personaje": "1girl,bready_nikke,",
+        "Cabello forma": "low twintails,hair over shoulder, long hair,hair ribbon,",
+        "Cabello color": "light brown hair,",
+        "Cabello accesorios": "white beret,hair ribbon,",
+        "Rostro accesorios": "",
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,brown eyes, slit pupils",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "((shy)),",
+        "Expresion facial boca": "mouth open in shock,surprised,",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking up, looking at viewer,",
+        "Vestuario general": "",
+        "Vestuario superior": "crop top, white shirt, long sleeves, midriff,",
+        "Vestuario inferior": "(pleated skirt), miniskirt,",
+        "Vestuario accesorios": "black choker, sailor collar, black neckerchief,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "black thighhighs, thick thighs,",
+        "Ropa interior accesorios": "waist apron,white apron,",
+        "Tipo de cuerpo": "loli, young girl, ((dwarfs body)), ((young dwarfs body)),",
+        "Rasgo fisico cuerpo": "large breasts,(big breasts), huge breast,flattened breasts,",
+        "Rasgo fisico piernas": "",
+        "Pose actitud global": "((standing)),",
+        "Pose brazos": "pizza in mouth, pizza to mouth, drooling, hand to mouth, holding pizza slice, eating pizza,",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "doggystyle curving backwards, from behind,",
+        "Actitud emocion": "",
+        "Nsfw": "((embarrassed)),solo focus, focus ass, bottomless,sex, male pov, focus pov, ((focus back)),",
+        "Objetos interaccion": "kitchen, countertop, food,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "negative_prompt": "",
+      "created_date": "2025-12-04T18:16:54.109367",
+      "rating": 0,
+      "notes": "Creada desde la aplicación"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-04T18:16:52.582590",
+    "last_modified": "2025-12-04T18:16:54.109367"
+  }
+}

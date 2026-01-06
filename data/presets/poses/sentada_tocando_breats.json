@@ -5,11 +5,22 @@
       "categories": {
         "Angulo": "((high angle)),",
         "Pose actitud global": "sitting, leaning forward,",
-        "Pose brazos": "breast grab, ",
-        "Pose piernas": "open legs,"
+        "Pose brazos": "breast grab,",
+        "Pose piernas": "open legs,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Orientacion personaje": "((facing forward)),",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "((close-up)),",
+        "Postura cabeza": "head tilted forward,"
       },
-      "images": [],
-      "created_at": "2025-08-04T17:04:18.674245"
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2025-12-30T17:33:53.458688"
     }
   }
 }

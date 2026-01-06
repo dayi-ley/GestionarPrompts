@@ -5,6 +5,7 @@ from PyQt6.QtGui import QFont, QKeySequence, QShortcut, QIcon, QTextOption
 import pyperclip
 import json
 import os
+import re
 from datetime import datetime
 from ui.components.negative_prompt_store import NegativePromptStore
 
@@ -90,50 +91,69 @@ class PromptSectionFrame(QFrame):
         layout.setContentsMargins(16, 12, 16, 12)  # Reducido de 16 a 12
         layout.setSpacing(8)  # Reducido de 10 a 8
         
-        # Título - tamaño reducido
-        title_label = QLabel("Prompt generado")
-        title_label.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))  # Reducido de 14 a 12
-        layout.addWidget(title_label)
+        # === SECCIÓN POSITIVE PROMPT ===
+        self.positive_frame = QFrame()
+        positive_layout = QVBoxLayout(self.positive_frame)
+        positive_layout.setContentsMargins(0, 0, 0, 0)
+        positive_layout.setSpacing(4)
+
+        # Header: Toggle a la izquierda, Botones a la derecha
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 6, 0)
+        header_layout.setSpacing(8)
+
+        # Botón toggle para positive prompt
+        self.positive_toggle = QPushButton("Prompt generado ▼")
+        self.positive_toggle.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                color: #e0e0e0;
+                font-weight: bold;
+                font-size: 12px;
+                text-align: left;
+                padding: 6px;
+            }
+            QPushButton:hover {
+                background-color: #252525;
+                border-radius: 6px;
+            }
+        """)
+        self.positive_toggle.clicked.connect(self.toggle_positive)
+        header_layout.addWidget(self.positive_toggle)
         
-        # Textarea para el prompt - altura y fuente reducidas
-        self.prompt_text = QTextEdit()
-        self.prompt_text.setFixedHeight(80)  # Reducido de 120 a 80
-        self.prompt_text.setFont(QFont("Courier New", 10))  # Reducido de 11 a 10
-        self.prompt_text.setPlaceholderText("Aquí aparecerá el prompt generado...")
-        self.prompt_text.setReadOnly(False)  # Permitir edición manual
-        layout.addWidget(self.prompt_text)
-        
-        # Botones de acción
-        buttons_layout = QHBoxLayout()
-        buttons_layout.setSpacing(8)  # Reducido de 10 a 8
+        header_layout.addStretch()
+
+        # Botones de acción (ahora en el header)
+        self.positive_buttons_container = QWidget()
+        buttons_layout = QHBoxLayout(self.positive_buttons_container)
+        buttons_layout.setContentsMargins(0, 0, 0, 0)
+        buttons_layout.setSpacing(8)
         
         self.copy_btn = QPushButton("Copiar")
-        self.copy_btn.setFixedSize(100, 32)
+        self.copy_btn.setFixedSize(100, 28)
         self.copy_btn.clicked.connect(self.copy_prompt)
+        # Configurar menú contextual para opciones avanzadas de copia
+        self.copy_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.copy_btn.customContextMenuRequested.connect(self.show_copy_menu)
+        self.copy_btn.setToolTip("Click para copiar todo\nClick derecho para más opciones")
         buttons_layout.addWidget(self.copy_btn)
         
         self.export_btn = QPushButton("Exportar")
-        self.export_btn.setFixedSize(100, 32)
+        self.export_btn.setFixedSize(100, 28)
         self.export_btn.clicked.connect(self.export_prompt)
         buttons_layout.addWidget(self.export_btn)
         
-        # Espacio flexible para empujar el botón de configuración a la derecha
-        buttons_layout.addStretch()
-        
-        # Botón de configuración (solo ícono)
+        # Botón de configuración
         self.config_btn = QPushButton()
-        self.config_btn.setFixedSize(32, 32)  # Botón cuadrado más pequeño
+        self.config_btn.setFixedSize(28, 28)
         self.config_btn.setToolTip("Configuración")
         self.config_btn.clicked.connect(self.open_config)
-        
-        # Configurar ícono de tuerca (usando texto Unicode como fallback)
         try:
-            # Intentar cargar ícono desde archivo si existe
             icon_path = "assets/icons/config.png"
             if os.path.exists(icon_path):
                 self.config_btn.setIcon(QIcon(icon_path))
             else:
-                # Usar símbolo Unicode de tuerca como fallback
                 self.config_btn.setText("⚙")
                 self.config_btn.setStyleSheet("""
                     QPushButton {
@@ -153,15 +173,36 @@ class PromptSectionFrame(QFrame):
                     }
                 """)
         except Exception:
-            # Fallback final: texto simple
             self.config_btn.setText("⚙")
         
         buttons_layout.addWidget(self.config_btn)
         
-        layout.addLayout(buttons_layout)
+        header_layout.addWidget(self.positive_buttons_container)
+        positive_layout.addLayout(header_layout)
+
+        # Textarea para el prompt
+        self.prompt_text = QTextEdit()
+        self.prompt_text.setFixedHeight(80)  # Reducido de 120 a 80
+        self.prompt_text.setFont(QFont("Courier New", 10))  # Reducido de 11 a 10
+        self.prompt_text.setPlaceholderText("Aquí aparecerá el prompt generado...")
+        self.prompt_text.setReadOnly(False)  # Permitir edición manual
+        positive_layout.addWidget(self.prompt_text)
+        
+        self.positive_expanded = True  # Estado inicial
+        
+        layout.addWidget(self.positive_frame)
         
         # Sección de negative prompt
         self.setup_negative_prompt(layout)
+
+    def toggle_positive(self):
+        """Alterna la visibilidad del prompt positivo"""
+        self.positive_expanded = not self.positive_expanded
+        self.prompt_text.setVisible(self.positive_expanded)
+        # Los botones se mantienen visibles en el header
+        
+        arrow = "▼" if self.positive_expanded else "▶"
+        self.positive_toggle.setText(f"Prompt generado {arrow}")
 
     def setup_negative_prompt(self, layout):
         """Configura la sección de negative prompt colapsable"""
@@ -307,6 +348,138 @@ class PromptSectionFrame(QFrame):
         if prompt_content and prompt_content != "Aquí aparecerá el prompt generado...":
             pyperclip.copy(prompt_content)
             self.show_feedback(self.copy_btn, "¡Copiado!")
+
+    def show_copy_menu(self, pos):
+        """Muestra el menú contextual con opciones de copiado"""
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+                border: 1px solid #555;
+            }
+            QMenu::item {
+                padding: 6px 20px;
+            }
+            QMenu::item:selected {
+                background-color: #3d3d3d;
+            }
+        """)
+
+        action_no_lora = menu.addAction("Copiar Sin Loras")
+        menu.addSeparator()
+        action_traits = menu.addAction("Copiar Rasgos")
+        action_outfit = menu.addAction("Copiar Vestuario")
+
+        action = menu.exec(self.copy_btn.mapToGlobal(pos))
+
+        if action == action_no_lora:
+            self.copy_prompt_no_lora()
+        elif action == action_traits:
+            self.copy_traits()
+        elif action == action_outfit:
+            self.copy_outfit()
+
+    def copy_prompt_no_lora(self):
+        """Copia el prompt al portapapeles excluyendo los Loras"""
+        prompt_content = self.prompt_text.toPlainText()
+        if prompt_content and prompt_content != "Aquí aparecerá el prompt generado...":
+            # 1. Eliminar bloques <lora:...>
+            text_no_lora = re.sub(r'<lora:[^>]+>', '', prompt_content)
+            
+            # 2. Dividir por comas y limpiar espacios
+            parts = [p.strip() for p in text_no_lora.split(',')]
+            
+            # 3. Filtrar partes vacías
+            clean_parts = [p for p in parts if p]
+            
+            # 4. Unir con coma y espacio
+            clean_text = ', '.join(clean_parts)
+            
+            pyperclip.copy(clean_text)
+            self.show_feedback(self.copy_btn, "¡Copiado S/Lora!")
+
+    def copy_traits(self):
+        """Copia solo las categorías de rasgos físicos"""
+        traits_categories = [
+            "personaje", "cabello forma", "cabello color", "cabello accesorios",
+            "rostro accesorios", "ojos", "expresion facial ojos", 
+            "expresion facial mejillas", "expresion facial boca", "tipo de cuerpo",
+            "rasgo fisico cuerpo", "rasgo fisico piernas", "actitud emocion", "nsfw"
+        ]
+        self._copy_specific_categories(traits_categories, "¡Rasgos Copiados!")
+
+    def copy_outfit(self):
+        """Copia solo las categorías de vestuario"""
+        # Palabras clave para identificar vestuario
+        outfit_keywords = [
+            "vestuario", "ropa", "lenceria", "lencería", 
+            "prendas", "calzado", "medias", "zapatos", "botas"
+        ]
+        
+        # Obtener todas las categorías disponibles para filtrar
+        target_categories = []
+        main_window = self.window()
+        if hasattr(main_window, 'category_grid'):
+            all_values = main_window.category_grid.get_current_values()
+            for cat_name in all_values.keys():
+                lower_name = cat_name.lower()
+                if any(kw in lower_name for kw in outfit_keywords):
+                    target_categories.append(lower_name)
+        
+        self._copy_specific_categories(target_categories, "¡Vestuario Copiado!", exact_match=False)
+
+    def _copy_specific_categories(self, target_categories, feedback_text, exact_match=True):
+        """Helper para copiar categorías específicas"""
+        main_window = self.window()
+        if not hasattr(main_window, 'category_grid'):
+            return
+
+        current_values = main_window.category_grid.get_current_values()
+        collected_values = []
+
+        # Normalizar targets para comparación
+        targets_normalized = [t.lower() for t in target_categories]
+
+        for cat_name, value in current_values.items():
+            if not value.strip():
+                continue
+            
+            # Limpiar valor individual de comas extra al inicio/final si las tuviera
+            cleaned_value = value.strip().strip(',')
+            if not cleaned_value:
+                continue
+                
+            cat_lower = cat_name.lower()
+            
+            should_include = False
+            if exact_match:
+                if cat_lower in targets_normalized:
+                    should_include = True
+            else:
+                if cat_lower in targets_normalized:
+                    should_include = True
+
+            if should_include:
+                collected_values.append(cleaned_value)
+
+        if collected_values:
+            # Unir con coma y espacio, asegurando limpieza
+            final_text = ", ".join(collected_values)
+            
+            # Limpieza final extra por seguridad (como en copy_prompt_no_lora)
+            # 1. Dividir por comas
+            parts = [p.strip() for p in final_text.split(',')]
+            # 2. Filtrar vacíos
+            clean_parts = [p for p in parts if p]
+            # 3. Unir
+            final_clean_text = ', '.join(clean_parts)
+            
+            pyperclip.copy(final_clean_text)
+            self.show_feedback(self.copy_btn, feedback_text)
+        else:
+            self.show_feedback(self.copy_btn, "Sin datos", error=True)
+
 
 
     def export_prompt(self):
@@ -469,15 +642,60 @@ class PromptSectionFrame(QFrame):
                 self.toggle_negative()
 
     def show_saved_menu(self, index: int, button: QPushButton):
-        """Muestra un menú contextual para editar o eliminar el prompt guardado."""
+        """Muestra un menú contextual para editar, copiar o eliminar el prompt guardado."""
         menu = QMenu(self)
+        copy_action = menu.addAction("Copiar")
         edit_action = menu.addAction("Editar")
         delete_action = menu.addAction("Eliminar")
+        
+        # Estilo para el menú
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+                border: 1px solid #555;
+            }
+            QMenu::item {
+                padding: 4px 20px;
+            }
+            QMenu::item:selected {
+                background-color: #3d3d3d;
+            }
+        """)
+        
         action = menu.exec(button.mapToGlobal(button.rect().bottomLeft()))
-        if action == edit_action:
+        
+        if action == copy_action:
+            self.copy_saved_negative_prompt(index, button)
+        elif action == edit_action:
             self.edit_saved_negative_prompt(index)
         elif action == delete_action:
             self.delete_saved_negative_prompt(index)
+
+    def copy_saved_negative_prompt(self, index: int, button: QPushButton):
+        """Copia el negative prompt guardado al portapapeles."""
+        prompts = self.neg_store.get_saved_negative_prompts()
+        if 1 <= index <= len(prompts):
+            text = prompts[index - 1]
+            pyperclip.copy(text)
+            
+            # Feedback visual en el botón
+            original_text = button.text()
+            original_style = button.styleSheet()
+            
+            button.setText("¡Copiado!")
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #10b981;
+                    color: white;
+                    border: 1px solid #10b981;
+                    border-radius: 6px;
+                    font-size: 10px;
+                    padding: 2px 6px;
+                }
+            """)
+            
+            QTimer.singleShot(1000, lambda: self.restore_button(button, original_text, original_style))
 
     def edit_saved_negative_prompt(self, index: int):
         prompts = self.neg_store.get_saved_negative_prompts()
@@ -554,7 +772,13 @@ class PromptSectionFrame(QFrame):
         self.config_list.setMaximumHeight(100)
         
         # Agregar opciones
-        options = ["CopyCategories", "Opción 2 (por implementar)", "Opción 3 (por implementar)", "Opción 4 (por implementar)", "Opción 5 (por implementar)"]
+        options = [
+            "Copiar Categorías",
+            "Copiar Vestuario",
+            "Copiar Poses",
+            "Copiar Expresiones",
+            "Copiar Todo con Valores"
+        ]
         for option in options:
             self.config_list.addItem(option)
         
@@ -649,6 +873,144 @@ class PromptSectionFrame(QFrame):
             print(f"Error al copiar categorías: {e}")
             self.show_feedback(self.config_btn, "Error", error=True)
 
+    def copy_outfit_categories(self):
+        """Copia solo las categorías de vestuario"""
+        try:
+            # Lista EXACTA de categorías para vestuario según usuario
+            outfit_targets = [
+                "cabello accesorios",
+                "rostro accesorios",
+                "vestuario_general",
+                "vestuario_superior",
+                "vestuario_inferior",
+                "vestuario_accesorios",
+                "vestuariospies",
+                "ropa_interior_superior",
+                "ropa_interior_inferior",
+                "ropa_interior_accesorios"
+            ]
+            
+            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
+            outfit_targets_norm = [t.lower().replace(" ", "_").strip() for t in outfit_targets]
+            
+            all_categories = self.load_categories_from_json()
+            outfit_categories = []
+            
+            for cat in all_categories:
+                # Normalizar categoría del JSON
+                cat_clean = cat.lower().replace(" ", "_").strip()
+                if cat_clean in outfit_targets_norm:
+                    outfit_categories.append(cat)
+            
+            if outfit_categories:
+                formatted_text = self.format_categories_for_copy(outfit_categories)
+                pyperclip.copy(formatted_text)
+                self.show_feedback(self.config_btn, "¡Copiado!", error=False)
+            else:
+                self.show_feedback(self.config_btn, "Sin datos", error=True)
+                
+        except Exception as e:
+            print(f"Error al copiar categorías de vestuario: {e}")
+            self.show_feedback(self.config_btn, "Error", error=True)
+
+    def copy_pose_categories(self):
+        """Copia solo las categorías de poses"""
+        try:
+            # Lista EXACTA de categorías para poses según usuario
+            pose_targets = [
+                "angulo",
+                "postura_cabeza",
+                "direccion mirada personaje",
+                "vestuariospies", # Usuario lo incluyó en poses también
+                "pose_actitud_global",
+                "pose_brazos",
+                "pose_piernas",
+                "orientación personaje",
+                "mirada espectador"
+            ]
+            
+            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
+            pose_targets_norm = [t.lower().replace(" ", "_").strip() for t in pose_targets]
+            
+            all_categories = self.load_categories_from_json()
+            pose_categories = []
+            
+            for cat in all_categories:
+                cat_clean = cat.lower().replace(" ", "_").strip()
+                if cat_clean in pose_targets_norm:
+                    pose_categories.append(cat)
+            
+            if pose_categories:
+                formatted_text = self.format_categories_for_copy(pose_categories)
+                pyperclip.copy(formatted_text)
+                self.show_feedback(self.config_btn, "¡Copiado!", error=False)
+            else:
+                self.show_feedback(self.config_btn, "Sin datos", error=True)
+
+        except Exception as e:
+            print(f"Error al copiar categorías de poses: {e}")
+            self.show_feedback(self.config_btn, "Error", error=True)
+
+    def copy_expression_categories(self):
+        """Copia solo las categorías de expresiones"""
+        try:
+            # Lista EXACTA de categorías para expresiones según usuario
+            expression_targets = [
+                "expresion_facial_ojos",
+                "expresion_facial_mejillas",
+                "expresion_facial_boca",
+                "actitud emoción"
+            ]
+            
+            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
+            expression_targets_norm = [t.lower().replace(" ", "_").strip() for t in expression_targets]
+            
+            all_categories = self.load_categories_from_json()
+            expression_categories = []
+            
+            for cat in all_categories:
+                cat_clean = cat.lower().replace(" ", "_").strip()
+                if cat_clean in expression_targets_norm:
+                    expression_categories.append(cat)
+            
+            if expression_categories:
+                formatted_text = self.format_categories_for_copy(expression_categories)
+                pyperclip.copy(formatted_text)
+                self.show_feedback(self.config_btn, "¡Copiado!", error=False)
+            else:
+                self.show_feedback(self.config_btn, "Sin datos", error=True)
+
+        except Exception as e:
+            print(f"Error al copiar categorías de expresiones: {e}")
+            self.show_feedback(self.config_btn, "Error", error=True)
+
+    def copy_all_categories_with_values(self):
+        """Copia todas las categorías con sus valores actuales"""
+        try:
+            main_window = self.window()
+            if not hasattr(main_window, 'category_grid'):
+                self.show_feedback(self.config_btn, "Error", error=True)
+                return
+
+            current_values = main_window.category_grid.get_current_values()
+            formatted_lines = []
+
+            # Ordenar por nombre de categoría para consistencia
+            for category, value in sorted(current_values.items()):
+                clean_value = value.strip().strip(',')
+                formatted_lines.append(f"{category}: {clean_value}")
+
+            if formatted_lines:
+                final_text = "\n".join(formatted_lines)
+                pyperclip.copy(final_text)
+                self.show_feedback(self.config_btn, "¡Copiado!", error=False)
+            else:
+                self.show_feedback(self.config_btn, "Vacío", error=True)
+
+        except Exception as e:
+            print(f"Error al copiar todo con valores: {e}")
+            self.show_feedback(self.config_btn, "Error", error=True)
+
     def on_config_option_selected(self, item):
         """Maneja la selección de una opción de configuración"""
         option_text = item.text()
@@ -658,13 +1020,17 @@ class PromptSectionFrame(QFrame):
         self.config_popup.hide()
         
         # Implementar acciones específicas para cada opción
-        if option_text == "CopyCategories":
+        if option_text == "Copiar Categorías":
             self.copy_categories()
-        elif "por implementar" in option_text:
-            self.show_feedback(self.config_btn, "Pendiente", error=False)
-            print(f"Funcionalidad pendiente: {option_text}")
+        elif option_text == "Copiar Vestuario":
+            self.copy_outfit_categories()
+        elif option_text == "Copiar Poses":
+            self.copy_pose_categories()
+        elif option_text == "Copiar Expresiones":
+            self.copy_expression_categories()
+        elif option_text == "Copiar Todo con Valores":
+            self.copy_all_categories_with_values()
         else:
-            # Mostrar feedback genérico para otras opciones
             self.show_feedback(self.config_btn, "✓", error=False)
 
         # Aquí se implementará la lógica específica para cada opción

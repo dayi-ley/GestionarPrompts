@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "lyinglow_embarrased": {
+      "name": "lyingLow embarrased",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "(lying), lying on bed,",
+        "Pose brazos": "hands in the face,",
+        "Pose piernas": "pointed toes,((perspective from the feet)),POV from the ground,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "clitoris, pussy, rubbing clitoris, rubbing pussy, spread pussy,focus pussy, finger pussy",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-12-10T17:38:41.568590"
+    }
+  }
+}

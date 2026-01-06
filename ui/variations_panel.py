@@ -135,53 +135,58 @@ class VariationsPanel(QWidget):
         """)
 
     def load_variations(self, character_name=None):
-        """Carga todas las variaciones en el árbol, opcionalmente filtrando por personaje"""
         self.variations_tree.clear()
-        
         try:
-            # Obtener todos los personajes que tienen variaciones
             characters = self.variations_manager.get_all_characters_with_variations()
-            
-            # Si se especifica un personaje, filtrar solo ese
             if character_name:
                 characters = [character_name] if character_name in characters else []
-            
-            # Iconos personalizados para estética (diferentes a Presets)
             assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'icons')
             character_icon_path = os.path.join(assets_dir, 'folder.png')
             variation_icon_path = os.path.join(assets_dir, 'file.png')
-            # Fallbacks si no existen los archivos
             character_icon = QIcon(character_icon_path) if os.path.exists(character_icon_path) else self.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon)
             variation_icon = QIcon(variation_icon_path) if os.path.exists(variation_icon_path) else self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight)
 
+            enriched = []
             for character in characters:
-                # Obtener datos del personaje
-                character_data = self.variations_manager.get_character_variations(character)
-                
-                # Acceder específicamente a las variaciones
-                variations = character_data.get("variations", {})
-                
-                if variations:  # Solo mostrar si tiene variaciones
-                    # Crear nodo padre para el personaje
-                    character_item = QTreeWidgetItem(self.variations_tree)
-                    character_item.setText(0, character)
-                    character_item.setText(1, f"{len(variations)} variaciones")
-                    character_item.setExpanded(False)  # Colapsado por defecto
-                    character_item.setIcon(0, character_icon)
-                    
-                    # Agregar variaciones como hijos
-                    for variation_name, variation_data in variations.items():
-                        variation_item = QTreeWidgetItem(character_item)
-                        variation_item.setText(0, variation_name)
-                        variation_item.setIcon(0, variation_icon)
-                        
-                        # Guardar datos para fácil acceso
-                        variation_item.setData(0, Qt.ItemDataRole.UserRole, {
-                            'character': character,
-                            'variation_name': variation_name,
-                            'data': variation_data
-                        })
-                
+                data = self.variations_manager.get_character_variations(character)
+                variations = data.get("variations", {})
+                if not variations:
+                    continue
+                var_list = []
+                for variation_name, variation_data in variations.items():
+                    created_str = variation_data.get("created_date")
+                    ts = 0
+                    if created_str:
+                        try:
+                            dt = datetime.fromisoformat(created_str.replace('Z', '+00:00'))
+                            ts = int(dt.timestamp())
+                        except Exception:
+                            ts = 0
+                    if ts == 0:
+                        vf = self.variations_manager.get_character_variations_file(character)
+                        ts = int(os.path.getmtime(vf)) if os.path.exists(vf) else 0
+                    var_list.append((variation_name, variation_data, ts))
+                var_list.sort(key=lambda x: (x[2], x[0].lower()), reverse=True)
+                latest_ts = var_list[0][2] if var_list else 0
+                enriched.append({"character": character, "variations": var_list, "latest_ts": latest_ts})
+
+            enriched.sort(key=lambda x: (x["latest_ts"], x["character"].lower()), reverse=True)
+
+            for entry in enriched:
+                character_item = QTreeWidgetItem(self.variations_tree)
+                character_item.setText(0, entry["character"])
+                character_item.setText(1, f"{len(entry['variations'])} variaciones")
+                character_item.setExpanded(False)
+                character_item.setIcon(0, character_icon)
+                for variation_name, variation_data, _ts in entry["variations"]:
+                    variation_item = QTreeWidgetItem(character_item)
+                    variation_item.setText(0, variation_name)
+                    variation_item.setIcon(0, variation_icon)
+                    variation_item.setData(0, Qt.ItemDataRole.UserRole, {
+                        'character': entry["character"],
+                        'variation_name': variation_name,
+                        'data': variation_data
+                    })
         except Exception as e:
             print(f"Error cargando variaciones: {e}")
 

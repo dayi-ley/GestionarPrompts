@@ -56,6 +56,7 @@ class CategoryCard(QFrame):
         self.icon = icon
         self.is_editing = False
         self.unsaved_changes = False
+        self.is_locked = False  # Estado de bloqueo
         self.tags = tags or []
         self.setup_ui(name, tags)
         self.setup_styles()
@@ -179,6 +180,49 @@ class CategoryCard(QFrame):
         else:
             self.move_up_btn.hide()
             self.move_down_btn.hide()
+
+    def toggle_lock(self):
+        """Alterna el estado de bloqueo de la tarjeta"""
+        self.is_locked = not self.is_locked
+        self.update_lock_style()
+        
+    def update_lock_style(self):
+        """Actualiza el estilo del botón de bloqueo según su estado"""
+        # Actualizar estilo de la tarjeta (borde rojo si está bloqueada)
+        self.setup_styles()
+        
+        if hasattr(self, 'lock_btn'):
+            if self.is_locked:
+                self.lock_btn.setText("🔒")
+                self.lock_btn.setToolTip("Categoría bloqueada (no se modificará automáticamente)")
+                self.lock_btn.setStyleSheet("""
+                    QToolButton {
+                        background-color: #d32f2f;
+                        color: white;
+                        border-radius: 10px;
+                        padding: 2px 6px;
+                        font-size: 12px;
+                    }
+                    QToolButton:hover {
+                        background-color: #b71c1c;
+                    }
+                """)
+            else:
+                self.lock_btn.setText("🔓")
+                self.lock_btn.setToolTip("Bloquear categoría (evitar cambios automáticos)")
+                self.lock_btn.setStyleSheet("""
+                    QToolButton {
+                        background-color: #404040;
+                        color: #aaaaaa;
+                        border-radius: 10px;
+                        padding: 2px 6px;
+                        font-size: 12px;
+                    }
+                    QToolButton:hover {
+                        background-color: #6366f1;
+                        color: white;
+                    }
+                """)
 
     def update_tags_ui(self, tags=None):
         """Actualiza la interfaz de los tags en la tarjeta"""
@@ -527,8 +571,17 @@ class CategoryCard(QFrame):
             tags_layout.addWidget(color_btn)
             # Separar izquierda de derecha
             tags_layout.addStretch()
+            # Botón de bloqueo (antes de All tags)
+            self.lock_btn = QToolButton()
+            self.lock_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            self.lock_btn.setFixedSize(28, 22)
+            self.lock_btn.clicked.connect(self.toggle_lock)
+            self.update_lock_style()
+            tags_layout.addWidget(self.lock_btn)
+
             # Colocar "All tags" a la derecha
             tags_layout.addWidget(all_tags_btn)
+
         else:
             # Sin tags: mostrar siempre la tuerquita y un botón All tags deshabilitado
             gear_btn = QToolButton()
@@ -584,7 +637,16 @@ class CategoryCard(QFrame):
                 }
                 """
             )
+            # Botón de bloqueo (antes de All tags)
+            self.lock_btn = QToolButton()
+            self.lock_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            self.lock_btn.setFixedSize(28, 22)
+            self.lock_btn.clicked.connect(self.toggle_lock)
+            self.update_lock_style()
+            tags_layout.addWidget(self.lock_btn)
+
             tags_layout.addWidget(all_tags_btn)
+
 
         layout.addLayout(tags_layout)
 
@@ -690,10 +752,13 @@ class CategoryCard(QFrame):
 
     def setup_styles(self):
         """Configura los estilos de la tarjeta"""
+        border_color = "#d32f2f" if self.is_locked else "#404040"
+        border_width = "2px" if self.is_locked else "1px"
+        
         self.setStyleSheet(f"""
             QFrame {{
                 background-color: {self.bg_color};
-                border: 1px solid #404040;
+                border: {border_width} solid {border_color};
                 border-radius: 8px;
             }}
             QLineEdit {{
@@ -830,6 +895,9 @@ class CategoryCard(QFrame):
 
     def clear_value(self):
         """Limpia el valor del input y resetea la importancia de los tags."""
+        if self.is_locked:
+            return
+
         # Vaciar el campo de entrada
         self.input_field.setText("")
         # Resetear contadores de importancia de tags

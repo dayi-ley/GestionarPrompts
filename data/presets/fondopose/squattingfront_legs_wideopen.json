@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "squattingfront_legs_wideopen": {
+      "name": "squattingFront legs wideOpen",
+      "categories": {
+        "Angulo": "extreme low angle, worm's eye view, POV selfie angle,",
+        "Postura cabeza": "looking down at camera slightly,",
+        "Direccion mirada personaje": "looking directly at viewer, direct POV eye contact,",
+        "Pose actitud global": "squatting low, legs wide open, selfie pose,",
+        "Pose brazos": "both arms extended forward toward camera, hands close to lens, palms facing viewer, fingers spread wide,",
+        "Pose piernas": "knees wide apart, pussy toward camera,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "depth of field, extreme foreground hands, hands oversized and slightly blurred, sharp focus on face and pussy, bokeh background,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2026-01-03T14:46:00.814479"
+    }
+  }
+}

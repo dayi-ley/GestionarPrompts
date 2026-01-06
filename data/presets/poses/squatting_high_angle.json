@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "squatting_high_angle": {
+      "name": "squatting high angle",
+      "categories": {
+        "Angulo": "extreme high angle, bird's eye view, POV from above,",
+        "Postura cabeza": "tilted head,",
+        "Direccion mirada personaje": "looking up at viewer, direct POV eye contact,",
+        "Pose actitud global": "squatting low, legs wide open, selfie pose from above,",
+        "Pose brazos": "both arms raised upward toward camera, hands close to lens, palms facing down or toward viewer, fingers spread,",
+        "Pose piernas": "knees wide apart, pussy directly below camera,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "depth of field, extreme foreground hands oversized and slightly blurred, sharp focus on face and pussy, bokeh background,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-03T14:56:28.907295"
+    }
+  }
+}

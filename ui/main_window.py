@@ -54,11 +54,11 @@ class MainWindow(QMainWindow):
         
         # Sección de categorías
         self.category_grid = CategoryGridFrame(self.prompt_generator, self)
-        container_layout.addWidget(self.category_grid, 2)  # 2 = más espacio para categorías
+        container_layout.addWidget(self.category_grid, 1)  # 1 = ocupa todo el espacio disponible
         
         # Sección de prompt
         self.prompt_section = PromptSectionFrame(self.prompt_generator)
-        container_layout.addWidget(self.prompt_section, 1)  # 1 = menos espacio para prompt
+        container_layout.addWidget(self.prompt_section, 0)  # 0 = altura ajustada al contenido
 
     def setup_responsive_size(self):
         """Configura el tamaño de la ventana de manera responsiva"""

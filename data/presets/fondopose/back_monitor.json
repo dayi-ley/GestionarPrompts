@@ -1,0 +1,26 @@
+{
+  "presets": {
+    "back_monitor": {
+      "name": "back Monitor",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,<lora:pov_sitting_on_lap_ilxl:0.8>,",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "from behind, back view, facing away,,",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "nude,pov, ass focus,",
+        "Objetos interaccion": "sitting on wooden chair,game controller,",
+        "Objetos escenario": "indoors, room, screen, screen light, monitor, table,",
+        "Mirada espectador": "looking back,"
+      },
+      "images": [
+        "image_1.png"
+      ],
+      "created_at": "2025-12-30T18:47:20.164521"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "squatting_lying_back": {
+      "name": "squatting lying back",
+      "categories": {
+        "Angulo": "(((waist back view))), (((frontal view))),",
+        "Postura cabeza": "back of head visible, facing away from camera, looking ahead, looking at the horizon,",
+        "Direccion mirada personaje": "",
+        "Pose actitud global": "squatting, ((lying)),",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "from behind, back view, rear view, facing away,Centered back view,",
+        "Actitud emocion": "",
+        "Nsfw": "ass,",
+        "Objetos interaccion": "bed, on bed,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-29T17:06:49.130050"
+    }
+  }
+}

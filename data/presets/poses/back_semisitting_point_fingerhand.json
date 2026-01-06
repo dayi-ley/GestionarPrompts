@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "back_semisitting_point_fingerhand": {
+      "name": "Back SemiSitting point fingerHand",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "",
+        "Pose actitud global": "sitting,",
+        "Pose brazos": "pointing pussy,pointing at something off-screen,",
+        "Pose piernas": " one leg slightly extended,",
+        "Orientacion personaje": "from behind, back view, rear view, facing away,Centered back view,",
+        "Actitud emocion": "",
+        "Nsfw": "ass,",
+        "Objetos interaccion": "on bed, bed,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2025-12-30T15:28:39.064658"
+    }
+  }
+}

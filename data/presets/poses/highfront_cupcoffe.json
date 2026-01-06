@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "highfront_cupcoffe": {
+      "name": "highFront cupCoffe",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "(looking down),",
+        "Pose actitud global": "((sitting)), sitting on chair,",
+        "Pose brazos": "cup of coffee in hand,holding cup of coffee,",
+        "Pose piernas": "((foot focus)), one leg up,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "coffe,cup of coffee,",
+        "Objetos escenario": "",
+        "Mirada espectador": "from above,"
+      },
+      "images": [],
+      "created_at": "2025-12-10T16:15:57.379127"
+    }
+  }
+}

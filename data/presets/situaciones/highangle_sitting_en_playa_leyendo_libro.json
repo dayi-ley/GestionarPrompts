@@ -1,0 +1,33 @@
+{
+  "presets": {
+    "highangle_sitting_en_playa_leyendo_libro": {
+      "name": "HighAngle sitting en playa leyendo libro",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Fondo": "aerial beach view, sand patterns, ocean from above,",
+        "Expresion facial ojos": "focused eyes, squinting slightly,",
+        "Expresion facial mejillas": "sun-kissed cheeks,",
+        "Expresion facial boca": "relaxed mouth, slight smile,",
+        "Postura cabeza": "head bowed reading,",
+        "Direccion mirada personaje": "looking down at book,",
+        "Vestuario general": "",
+        "Vestuario superior": "triangle bra,",
+        "Vestuario inferior": "White an blue striped panties, white and blue striped thighhighs,",
+        "Vestuario accesorios": "white choker,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Pose actitud global": "sitting on sand, relaxed beach sitting,",
+        "Pose brazos": "holding book open, elbows resting,",
+        "Pose piernas": "legs crossed, feet in sand,",
+        "Orientacion personaje": "viewed from above,",
+        "Objetos interaccion": "holding book, reading book,",
+        "Objetos escenario": "beach towel, umbrella shadow, sand texture,white beach chair,",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-18T17:15:37.208567"
+    }
+  }
+}

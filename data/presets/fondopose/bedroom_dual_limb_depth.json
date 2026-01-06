@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "bedroom_dual_limb_depth": {
+      "name": "Bedroom Dual Limb Depth",
+      "categories": {
+        "Angulo": "low angle from side-front, emphasizing layers,",
+        "Fondo": "bedroom interior blurred, white curtains bright morning sun filtering,",
+        "Postura cabeza": "head turned toward viewer,",
+        "Direccion mirada personaje": "looking at viewer with wild lust,",
+        "Pose actitud global": "highly interactive with limbs forward, dynamic porn depth effect,",
+        "Pose brazos": "one arm reaching out close to camera, fingers beckoning,",
+        "Pose piernas": "both legs elevated partially in front, one foot nearer to spectator for dynamism,",
+        "Orientacion personaje": "reclining on bed, body angled toward viewer with extensions,",
+        "Actitud emocion": "",
+        "Nsfw": "ultra explicit, full exposure with layered depth from limbs,",
+        "Objetos interaccion": "arm and legs extended toward spectator, creating immersion,",
+        "Objetos escenario": "pillows scattered, white curtains morning light rays,",
+        "Mirada espectador": "lustful direct contact, depraved and engaging pull,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-05T13:44:50.209750"
+    }
+  }
+}

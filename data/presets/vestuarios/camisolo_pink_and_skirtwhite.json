@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "camisolo_pink_and_skirtwhite": {
+      "name": "camisolo pink and skirtWhite",
+      "categories": {
+        "Vestuario general": "((sleeveless)),handkerchief top,",
+        "Vestuario superior": "ruffled and fitted camisole, pink crop top, sleeveless top, off shoulder, thin straps,  bare midriff,",
+        "Vestuario inferior": "white straight mini skirt, mini skirt with red strap,",
+        "Vestuario accesorios": "red belt, red hair bow,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-02T00:00:11.163030"
+    }
+  }
+}

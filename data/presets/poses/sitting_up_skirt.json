@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "sitting_up_skirt": {
+      "name": "sitting, up skirt",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "((sitting)), sitting on chair,",
+        "Pose brazos": "skirt hold,bent over,",
+        "Pose piernas": "legs apart,",
+        "Orientacion personaje": "leaning back,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-12-02T18:01:22.314327"
+    }
+  }
+}

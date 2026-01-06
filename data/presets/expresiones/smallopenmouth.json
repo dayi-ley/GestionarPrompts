@@ -1,0 +1,18 @@
+{
+  "presets": {
+    "smallopenmouth": {
+      "name": "smallOpenMouth",
+      "categories": {
+        "Ojos": "blue eyes,half-closed eyes,raised eyebrows,",
+        "Expresion facial ojos": "wide eyes, teary eyes, pleading look,",
+        "Expresion facial mejillas": "intense blush, embarrassed flush,",
+        "Expresion facial boca": "small open mouth, soft moaning, lower lip trembling,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-03T13:44:16.756059"
+    }
+  }
+}

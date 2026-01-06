@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "pose18": {
+      "name": "Pose+18",
+      "categories": {
+        "Angulo": "low angle from behind, worm's eye view,",
+        "Postura cabeza": "head turned back, looking over shoulder,",
+        "Direccion mirada personaje": "looking back at viewer, direct eye contact,",
+        "Pose actitud global": "doggystyle, face down ass up, bent over,",
+        "Pose brazos": "hands on bed, or one hand spreading ass,",
+        "Pose piernas": "knees apart, legs spread, ass up,",
+        "Orientacion personaje": "rear view, from behind,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-03T10:19:27.718043"
+    }
+  }
+}

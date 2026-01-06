@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit,
     QScrollArea, QWidget, QInputDialog, QFileDialog, QFrame, QGridLayout, QSizePolicy, QLineEdit,
-    QComboBox, QCheckBox, QMessageBox
+    QComboBox, QCheckBox, QMessageBox, QToolButton
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
@@ -13,7 +13,8 @@ class EditPresetDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setModal(True)
+        self.setModal(False)
+        self.setWindowModality(Qt.WindowModality.NonModal)
         self.resize(700, 600)
 
         self.preset_name = ""
@@ -210,38 +211,73 @@ class EditPresetDialog(QDialog):
     def _add_category_editor(self, category_name, initial_text=""):
         color = self._group_color_for_category(category_name)
 
-        # Contenedor compacto por categoría
         frame = QFrame()
-        frame.setStyleSheet(f"""
-            QFrame {{
-                background-color: #2c2c2c;
-                border: 1px solid #444;
-                border-left: 4px solid {color};
-                border-radius: 6px;
-                margin: 2px 0;
-            }}
-        """)
-        # Evitar que el contenedor se expanda verticalmente
+        frame.setStyleSheet(f"QFrame {{ background-color: #2c2c2c; border: 1px solid #444; border-left: 4px solid {color}; border-radius: 6px; margin: 2px 0; }}")
         frame.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
         v = QVBoxLayout(frame)
         v.setContentsMargins(8, 6, 8, 6)
         v.setSpacing(4)
 
-        # Etiqueta coloreada por grupo
+        row = QHBoxLayout()
         label = QLabel(category_name)
         label.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 11px;")
-        v.addWidget(label)
+        row.addWidget(label)
+        row.addStretch()
+        jump_btn = QToolButton()
+        jump_btn.setText("→")
+        jump_btn.setFixedSize(20, 20)
+        jump_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        jump_btn.setStyleSheet("QToolButton { background-color: #404040; color: #fff; border-radius: 4px; } QToolButton:hover { background-color: #6366f1; }")
+        jump_btn.clicked.connect(lambda: self._jump_to_category(category_name, editor.toPlainText().strip()))
+        row.addWidget(jump_btn)
+        v.addLayout(row)
 
-        # Editor más angosto verticalmente
         editor = QTextEdit()
         editor.setPlainText(initial_text or "")
-        # Fijar altura y evitar expansión vertical
         editor.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         editor.setFixedHeight(35)
         v.addWidget(editor)
 
         self.categories_layout.addWidget(frame)
         self.category_editors[category_name] = editor
+
+    def _jump_to_category(self, category_name: str, value: str):
+        print(f"DEBUG EditPresetDialog: jump requested -> category='{category_name}', value_len={len(value or '')}")
+        parent = self.parent()
+        main_window = None
+        while parent:
+            if hasattr(parent, 'category_grid'):
+                main_window = parent
+                break
+            parent = parent.parent() if hasattr(parent, 'parent') else None
+        if main_window and hasattr(main_window, 'category_grid'):
+            print("DEBUG EditPresetDialog: main_window found, focusing and setting value")
+            try:
+                grid = main_window.category_grid
+                if hasattr(grid, 'set_category_value'):
+                    grid.set_category_value(category_name, value)
+                else:
+                    print("DEBUG EditPresetDialog: set_category_value not found, using fallback")
+                    target = None
+                    for card in getattr(grid, 'cards', []):
+                        if getattr(card, 'category_name', '') == category_name:
+                            target = card
+                            break
+                    if target and hasattr(target, 'input_field'):
+                        if hasattr(target, 'is_locked') and target.is_locked:
+                            print(f"DEBUG EditPresetDialog: Card '{category_name}' is locked. Skipping update.")
+                            return
+                        target.input_field.setText(value or "")
+                        try:
+                            grid.focus_category(category_name)
+                        except Exception:
+                            print("DEBUG EditPresetDialog: fallback focus failed")
+                    else:
+                        print("DEBUG EditPresetDialog: fallback target not found or no input_field")
+            except Exception as e:
+                print(f"DEBUG EditPresetDialog: error calling set_category_value -> {e}")
+        else:
+            print("DEBUG EditPresetDialog: main_window with category_grid not found")
 
     def _add_category_interactive(self):
         name, ok = QInputDialog.getText(self, "Nueva categoría", "Nombre de la categoría:")

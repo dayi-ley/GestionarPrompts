@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "front_standing_gesture": {
+      "name": "front standing gesture",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Expresion facial boca": "tongue out, ((smile)),handjob gesture,",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
+        "Pose actitud global": "((Leaning)),",
+        "Pose brazos": "",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "bikini top aside,bent over,forward bent,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "taking picture, selfie,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T19:49:51.415211"
+    }
+  }
+}

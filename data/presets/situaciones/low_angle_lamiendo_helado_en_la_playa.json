@@ -1,0 +1,33 @@
+{
+  "presets": {
+    "low_angle_lamiendo_helado_en_la_playa": {
+      "name": "low_Angle lamiendo helado en la playa",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Fondo": "sky background, clouds, bright blue sky, sunny day, \nsand at bottom edge, upward perspective,",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "((shy)),",
+        "Expresion facial boca": "smiling mouth, sticking out tongue,",
+        "Postura cabeza": "head tilted down slightly, chin down,",
+        "Direccion mirada personaje": "looking down at viewer, downward gaze,",
+        "Vestuario general": "",
+        "Vestuario superior": "triangle bra,",
+        "Vestuario inferior": "White an blue striped panties, white and blue striped thighhighs,",
+        "Vestuario accesorios": "white choker,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Pose actitud global": "standing tall, dominant stance, powerful pose,",
+        "Pose brazos": "arm raised holding ice cream, dramatic gesture,",
+        "Pose piernas": "feet planted firmly, wide stance, legs apart,",
+        "Orientacion personaje": "facing slightly down, looking down at viewer,",
+        "Objetos interaccion": "holding ice cream cone, licking ice cream, vanilla ice cream,",
+        "Objetos escenario": "distant horizon line, sky view, atmospheric perspective,",
+        "Mirada espectador": "powerful view, dominant perspective, viewer looks up,"
+      },
+      "images": [],
+      "created_at": "2025-12-18T16:21:39.885553"
+    }
+  }
+}

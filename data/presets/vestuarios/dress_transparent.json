@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "dress_transparent": {
+      "name": "dress transparent",
+      "categories": {
+        "Vestuario general": "tight bodycon dress with ruffles,frilly ruffles, layered ruffles on hem and chest,",
+        "Vestuario superior": "strapless or thin straps, ruffle trim on cleavage, breasts pushed up,",
+        "Vestuario inferior": "micro length, ruffle hem barely covering ass,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "no bra, nipples visible through thin fabric,",
+        "Ropa interior inferior": "no panties or thong line visible,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2026-01-03T12:08:43.946032"
+    }
+  }
+}

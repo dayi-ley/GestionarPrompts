@@ -3,17 +3,23 @@
     "arrodillada_view_desde_arriba": {
       "name": "arrodillada view desde arriba",
       "categories": {
-        "Angulo": "((high angle)),",
-        "Ropa interior inferior": "micro thong, minithong,panties,",
+        "Angulo": "((high angle)),((from above)),",
+        "Ropa interior inferior": "",
         "Tipo de cuerpo": "loli, young girl, ((dwarfs body)), ((young dwarfs body)),",
-        "Rasgo fisico cuerpo": "medium breasts,breasts,",
-        "Rasgo fisico piernas": "black thighhighs, thick thighs,",
+        "Rasgo fisico cuerpo": "",
+        "Rasgo fisico piernas": "",
         "Pose actitud global": "((kneeling)),",
-        "Nsfw": "((ass focus)), spread, ass, anus slip, thong,",
-        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+        "Nsfw": "((ass focus)), spread, ass, thong,",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,",
+        "Orientacion personaje": "",
+        "Pose piernas": "",
+        "Pose brazos": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Postura cabeza": "head tilted forward,",
+        "Objetos interaccion": ""
       },
       "images": [],
-      "created_at": "2025-11-05T16:31:10.038863"
+      "created_at": "2025-12-25T18:12:28.439224"
     }
   }
 }

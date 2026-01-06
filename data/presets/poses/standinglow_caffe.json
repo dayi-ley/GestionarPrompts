@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "standinglow_caffe": {
+      "name": "standingLow caffe",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking back,",
+        "Pose actitud global": "standing, (Leaning),",
+        "Pose brazos": "coffe in hand,holding coffe,",
+        "Pose piernas": "((foot focus)), one leg up,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "((ass focus)), spread,",
+        "Objetos interaccion": "coffe,cup of coffee,",
+        "Objetos escenario": "",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "images": [],
+      "created_at": "2025-12-10T16:07:38.909813"
+    }
+  }
+}

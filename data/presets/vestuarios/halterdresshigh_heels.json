@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "halterdresshigh_heels": {
+      "name": "HalterDress+high heels",
+      "categories": {
+        "Vestuario general": "",
+        "Vestuario superior": "loincloth,halter dress, white dress transparent,clothing cut on the leg,",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "high heels,",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2025-12-11T17:31:19.816693"
+    }
+  }
+}

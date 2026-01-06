@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "on_side_lying": {
+      "name": "on side, lying",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking back,",
+        "Pose actitud global": "((lying)),",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "from behind,on side,",
+        "Actitud emocion": "",
+        "Nsfw": "anus, ass, clitoris, lying, pussy, spread ass, spread pussy,",
+        "Objetos interaccion": "bed,  on bed,",
+        "Objetos escenario": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-12-02T16:19:53.165396"
+    }
+  }
+}

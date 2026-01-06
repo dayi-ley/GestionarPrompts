@@ -118,16 +118,16 @@ class SidebarFrame(QFrame):
         self.presets_panel = PresetsPanel(self.main_window)  # ← Pasar MainWindow en lugar de self
         self.tab_widget.addTab(self.presets_panel, "Presets")
         
-        # Pestaña de SugePrompt
+        # Pestaña de PromptCapture (antes SugePrompt)
         from ui.sugeprompt_panel import SugePromptPanel
         self.sugeprompt_panel = SugePromptPanel(self.main_window)
-        self.tab_widget.addTab(self.sugeprompt_panel, "SugePrompt")
+        self.tab_widget.addTab(self.sugeprompt_panel, "PromptCapture")
         
         # Configurar tooltips para las pestañas
         self.tab_widget.setTabToolTip(0, "Gestión de Personajes")
         self.tab_widget.setTabToolTip(1, "Gestión de Variaciones")
         self.tab_widget.setTabToolTip(2, "Gestión de Presets")
-        self.tab_widget.setTabToolTip(3, "SugePrompt")
+        self.tab_widget.setTabToolTip(3, "PromptCapture")
         
         content_layout.addWidget(self.tab_widget)
         layout.addWidget(self.content_widget)
@@ -392,28 +392,47 @@ class SidebarFrame(QFrame):
                                     created_date = datetime.fromisoformat(created_date_str.replace('Z', '+00:00'))
                                     formatted_date = created_date.strftime("%d/%m/%Y")
                                     display_text = f"{character_name} - {formatted_date}"
+                                    created_ts = int(created_date.timestamp())
                                 except ValueError:
                                     display_text = f"{character_name} - Fecha inválida"
+                                    try:
+                                        created_ts = int(os.path.getmtime(json_path))
+                                    except Exception:
+                                        created_ts = 0
                             else:
                                 display_text = f"{character_name} - Sin fecha"
+                                try:
+                                    created_ts = int(os.path.getmtime(json_path))
+                                except Exception:
+                                    created_ts = 0
                         else:
                             # Fallback al nombre de la carpeta
                             character_name = item.replace('_', ' ').title()
                             display_text = f"{character_name} - Sin metadatos"
+                            try:
+                                created_ts = int(os.path.getmtime(json_path))
+                            except Exception:
+                                created_ts = 0
                         
                         # Agregar al array de personajes
                         self.all_characters.append({
                             'name': character_name,
-                            'display_text': display_text
+                            'display_text': display_text,
+                            'created_ts': created_ts
                         })
                         
                     except (json.JSONDecodeError, FileNotFoundError) as e:
                         # En caso de error, usar el nombre de la carpeta
                         character_name = item.replace('_', ' ').title()
                         display_text = f"{character_name} - Error al cargar"
+                        try:
+                            created_ts = int(os.path.getmtime(json_path))
+                        except Exception:
+                            created_ts = 0
                         self.all_characters.append({
                             'name': character_name,
-                            'display_text': display_text
+                            'display_text': display_text,
+                            'created_ts': created_ts
                         })
             
             # También manejar archivos JSON directos (estructura antigua)
@@ -425,17 +444,22 @@ class SidebarFrame(QFrame):
                     
                     character_name = item[:-5].replace('_', ' ').title()
                     display_text = f"{character_name} - Formato antiguo"
+                    try:
+                        created_ts = int(os.path.getmtime(json_path))
+                    except Exception:
+                        created_ts = 0
                     
                     self.all_characters.append({
                         'name': character_name,
-                        'display_text': display_text
+                        'display_text': display_text,
+                        'created_ts': created_ts
                     })
                     
                 except (json.JSONDecodeError, FileNotFoundError):
                     pass
         
-        # Ordenar personajes alfabéticamente
-        self.all_characters.sort(key=lambda x: x['name'])
+        # Ordenar por fecha (más reciente primero), luego por nombre
+        self.all_characters.sort(key=lambda x: (x.get('created_ts', 0), x['name'].lower()), reverse=True)
         
         # Mostrar todos los personajes inicialmente
         self.filter_characters("")

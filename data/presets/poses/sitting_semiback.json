@@ -1,0 +1,30 @@
+{
+  "presets": {
+    "sitting_semiback": {
+      "name": "sitting SemiBack",
+      "categories": {
+        "Angulo": "from behind, from above,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,<lora:pov_sitting_on_lap_ilxl:1>,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), indoor soft focus,(white room), Sheer white curtains,",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "sitting on lap, sitting,from behind, back view, facing away,,",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "single sidelock,",
+        "Actitud emocion": "",
+        "Nsfw": "nude,handjob,pov, ass focus,",
+        "Objetos interaccion": "on couch,",
+        "Objetos escenario": "indoors, room, table, potted plant,",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-30T18:07:26.813378"
+    }
+  }
+}

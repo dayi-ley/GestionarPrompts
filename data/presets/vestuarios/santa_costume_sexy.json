@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "santa_costume_sexy": {
+      "name": "santa costume sexy",
+      "categories": {
+        "Vestuario general": "off shoulder dress,santa costume,santa girl,",
+        "Vestuario superior": "santa hat,",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "(red string bikini),",
+        "Ropa interior inferior": "red thong lingerie,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [],
+      "created_at": "2025-12-08T19:23:47.971294"
+    }
+  }
+}

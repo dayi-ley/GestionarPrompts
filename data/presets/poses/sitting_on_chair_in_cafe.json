@@ -1,0 +1,26 @@
+{
+  "presets": {
+    "sitting_on_chair_in_cafe": {
+      "name": "sitting on chair in cafe",
+      "categories": {
+        "Angulo": "frontal view, ((high angle)),((from above)),",
+        "Postura cabeza": "head slightly tilted, looking directly at viewer,",
+        "Direccion mirada personaje": "direct eye contact, seductive sexual gaze,",
+        "Pose actitud global": "sitting sideways on cafe chair, body turned toward viewer, relaxed teasing pose,",
+        "Pose brazos": "one arm resting elbow on small round cafe table, hand near face or holding coffee cup, other arm on lap or thigh,",
+        "Pose piernas": "legs crossed sideways, micro skirt riding up high on thighs,",
+        "Orientacion personaje": "three-quarter view facing viewer, body slightly sideways,",
+        "Actitud emocion": "",
+        "Nsfw": "upskirt from side, thong visible, micro skirt riding up, subtle arousal,",
+        "Objetos interaccion": "small coffee cup and saucer resting on small round cafe table, steam rising,",
+        "Objetos escenario": "small round cafe table in front with coffee cup on it, wicker or metal outdoor cafe chair, outdoor city terrace cafe, umbrellas, urban street background, natural daylight,",
+        "Mirada espectador": "looking over shoulder at viewer, seductive sexual gaze, subtle teasing smile, bedroom eyes,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-03T16:57:51.273664"
+    }
+  }
+}

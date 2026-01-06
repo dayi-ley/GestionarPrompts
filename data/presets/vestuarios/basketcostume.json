@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "basketcostume": {
+      "name": "basketCostume",
+      "categories": {
+        "Vestuario general": " basket costume,",
+        "Vestuario superior": "short top,",
+        "Vestuario inferior": "pleated skirt, mini skirt, pulling skirt,panties, pulling panties,",
+        "Vestuario accesorios": "pulling clothes,cheerleader, arms tied, rope,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2025-12-12T15:35:16.718955"
+    }
+  }
+}

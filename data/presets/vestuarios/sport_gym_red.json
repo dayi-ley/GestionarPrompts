@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "sport_gym_red": {
+      "name": "Sport Gym red",
+      "categories": {
+        "Vestuario general": "gym uniform, PE school uniform, bloomers style,",
+        "Vestuario superior": "white short sleeve gym shirt, red trim collar and sleeves, tight fitted, see-through sweat wet fabric, nipples faintly visible,",
+        "Vestuario inferior": "red gym shorts, bloomers, very short dolphin shorts, white side stripes, tight on thighs,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "no bra, nipples poking through wet shirt,",
+        "Ropa interior inferior": "white panties optional, or no panties cameltoe visible,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T12:11:09.817257"
+    }
+  }
+}

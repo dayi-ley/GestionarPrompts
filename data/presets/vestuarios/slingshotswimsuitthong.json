@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "slingshotswimsuitthong": {
+      "name": "SlingshotSwimsuitThong",
+      "categories": {
+        "Vestuario general": "((y-string)),exposed navel,Slingshot swimsuit,",
+        "Vestuario superior": "",
+        "Vestuario inferior": " thong, y-string thong,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-11T19:52:43.618832"
+    }
+  }
+}

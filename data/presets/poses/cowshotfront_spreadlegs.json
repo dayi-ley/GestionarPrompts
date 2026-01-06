@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "cowshotfront_spreadlegs": {
+      "name": "CowshotFront spreadLegs",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "((lying)),lying supine on bed, (Reclining),",
+        "Pose brazos": "bottle in hand,holding bottle,hand on the bottle, water dripping,",
+        "Pose piernas": "pouring water from bottle onto own stomach,wet fabric on stomach,crotch focus, spread one's legs,",
+        "Orientacion personaje": "bikini top,bent over,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "bottle,water bottle,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-10T15:35:29.932543"
+    }
+  }
+}

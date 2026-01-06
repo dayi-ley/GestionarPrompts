@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "sittinglow_winesexy": {
+      "name": "sittingLow wineSexy",
+      "categories": {
+        "Angulo": "frontal view, ((low angle)),((from below)), ((Wide angle lens)),",
+        "Postura cabeza": "head slightly tilted, looking directly at viewer,",
+        "Direccion mirada personaje": "direct eye contact, seductive sexual gaze,",
+        "Pose actitud global": "sitting on luxury sofa, elegant dominant pose,",
+        "Pose brazos": "one hand holding red wine glass near chest, other hand on thigh lifting micro skirt slightly,",
+        "Pose piernas": "legs crossed high, one thigh over the other, micro skirt riding up,",
+        "Orientacion personaje": "facing viewer directly,",
+        "Actitud emocion": "",
+        "Nsfw": "upskirt, thong visible, micro skirt lifted slightly by hand, subtle arousal,",
+        "Objetos interaccion": "holding elegant red wine glass in one hand, stem between fingers,",
+        "Objetos escenario": "luxury velvet sofa, elegant living room, side table with wine bottle, carpet floor,Daylight,Morning light,",
+        "Mirada espectador": "seductive dominant gaze direct at viewer, subtle knowing smile, bedroom eyes,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-03T17:30:26.294176"
+    }
+  }
+}

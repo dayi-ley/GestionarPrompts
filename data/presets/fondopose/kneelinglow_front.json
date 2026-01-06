@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "kneelinglow_front": {
+      "name": "kneelingLow Front",
+      "categories": {
+        "Angulo": "extreme low angle, worm's eye view,",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "",
+        "Pose actitud global": "squatting very low, ass almost on floor,",
+        "Pose brazos": "hands resting on knees,",
+        "Pose piernas": "knees wide apart, feet pointed toward camera, toes spread,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "feet in extreme foreground oversized, slight foot blur, depth of field, sharp focus on pussy and face,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-03T15:07:26.409224"
+    }
+  }
+}

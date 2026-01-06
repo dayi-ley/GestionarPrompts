@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "leaning_on_stomach": {
+      "name": "leaning on stomach",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "hands resting on the bed The head is tilted slightly forward,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
+        "Pose actitud global": "((Leaning)),",
+        "Pose brazos": "arms crossed,",
+        "Pose piernas": "all fours, Legs apart, knees bent,",
+        "Orientacion personaje": "bikini top aside,bent over,forward bent,",
+        "Actitud emocion": "smile, and the face looks at the camera with a slight smile Frontal angle,",
+        "Nsfw": "bubble butt, lying, ass up, ass,",
+        "Objetos interaccion": "two side up, bottoms up face down, front view, side view,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-05T16:23:32.704410"
+    }
+  }
+}

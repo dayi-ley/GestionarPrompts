@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "morning_bedroom_foot_forward_interaction": {
+      "name": "Morning Bedroom Foot Forward Interaction",
+      "categories": {
+        "Angulo": "high angle slight frontal, with foreground emphasis,",
+        "Fondo": "bed and white curtains, soft morning sunlight illuminating,",
+        "Postura cabeza": "head back slightly, eyes on viewer,",
+        "Direccion mirada personaje": "gazing at viewer teasingly,",
+        "Pose actitud global": "foot-forward provocative play, interactive and dynamic tease,",
+        "Pose brazos": "hands pulling knees or touching self,",
+        "Pose piernas": "legs raised high, one foot extended close to camera for depth,",
+        "Orientacion personaje": "supine on bed, facing upward with leg projection,",
+        "Actitud emocion": "",
+        "Nsfw": "extremely explicit, genitals visible behind extended foot,",
+        "Objetos interaccion": "foot in foreground toward spectator for dynamism,",
+        "Objetos escenario": "rumpled sheets, white curtains blurred with sun,",
+        "Mirada espectador": "teasing direct eye contact, slutty and immersive,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-05T13:51:44.031157"
+    }
+  }
+}

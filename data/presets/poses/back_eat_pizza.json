@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "back_eat_pizza": {
+      "name": "back eat pizza",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking up, looking at viewer,",
+        "Pose actitud global": "((standing)),",
+        "Pose brazos": "pizza in mouth, pizza to mouth, drooling, hand to mouth, holding pizza slice, eating pizza,",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "doggystyle curving backwards, from behind,",
+        "Actitud emocion": "",
+        "Nsfw": "((embarrassed)),solo focus, focus ass, bottomless,sex, male pov, focus pov, ((focus back)),",
+        "Objetos interaccion": "kitchen, countertop, food,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-04T18:17:51.947389"
+    }
+  }
+}

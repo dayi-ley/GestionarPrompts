@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "squating_front_hand_legs": {
+      "name": "squating front hand legs",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
+        "Pose actitud global": "((kneeling)), (squatting),",
+        "Pose brazos": "bare arms, hands on own knees, hands up,",
+        "Pose piernas": "spread legs,",
+        "Orientacion personaje": "facing viewer, face focus, face front, ((front view)),",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T18:35:20.220046"
+    }
+  }
+}

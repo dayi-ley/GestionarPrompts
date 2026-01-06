@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "selfie_back_2": {
+      "name": "selfie back 2",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer, looking back,",
+        "Pose actitud global": "((standing)),",
+        "Pose brazos": "holding, holding phone,",
+        "Pose piernas": "",
+        "Orientacion personaje": "from behind, mirror selfie, selfie,",
+        "Actitud emocion": "",
+        "Nsfw": "big ass,wide hips, large hips, huge ass, sagging ass, big buttock,",
+        "Objetos interaccion": "cellphone, mirror, phone,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T20:15:38.662207"
+    }
+  }
+}

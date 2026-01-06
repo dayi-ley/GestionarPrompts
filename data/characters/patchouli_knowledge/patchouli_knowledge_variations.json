@@ -1,0 +1,62 @@
+{
+  "character_name": "Patchouli Knowledge",
+  "variations": {
+    "Patchouli_Knowledge_var1": {
+      "name": "Patchouli_Knowledge_var1",
+      "description": "Variación Patchouli_Knowledge_var1 para Patchouli Knowledge",
+      "tags": [],
+      "categories": {
+        "Angulo": "((low angle)),((from below)), Wide angle lens,",
+        "Calidad tecnica": "masterpiece, best quality, amazing quality, absurdres, newest,",
+        "Estilo artistico": "Pachu illustration Style, realistic:0.3,",
+        "Composicion": "posing, scenery, face focus shot, eye close-up, face highlight view, focused gaze, face centered shot,",
+        "Atmosfera vibe": "very aesthetic, sexy, sharp lineart,((oily shine skin)),",
+        "Loras estilos artistico": "<lora:WagashiDagashiyaきしわがし_Style_LoRA__SDXL__Pony__v2:1>,<lora:odanon-lora-v1-128dim-10ep-novae:0.2>, <lora:LFashionIXL:0.2>, <lora:saegarantr:0.45>, <lora:flat_sdxl:0.5>,<lora:mamimi_mamamimi_style_illustrious_goofy:0.8>,",
+        "Loras detalles mejoras": "<lora:add_detail:1>, <lora:DetailedEyes_XL:1>,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.8>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,",
+        "Loras personaje": "<lora:patchouli:0.2>,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background),((white room)), indoor soft focus,",
+        "Personaje": "1girl,patchouli knowledge,",
+        "Cabello forma": "long hair,",
+        "Cabello color": "dark purple hair,",
+        "Cabello accesorios": "long lavender hair, hair ribbons, blunt bangs,",
+        "Rostro accesorios": "mob cap,",
+        "Ojos": "blue eyes,half-closed eyes,raised eyebrows,",
+        "Expresion facial ojos": "wide eyes, sparkling eyes, flushed cheeks,",
+        "Expresion facial mejillas": "",
+        "Expresion facial boca": "(pout:1.3), small closed mouth,",
+        "Postura cabeza": "head tilted down,",
+        "Direccion mirada personaje": "looking at book,",
+        "Vestuario general": "(lavender striped dress:1.3), vertical stripes, nightgown,",
+        "Vestuario superior": "puffy sleeves, (red chest bow:1.2),",
+        "Vestuario inferior": "long skirt,",
+        "Vestuario accesorios": "(pink mob cap:1.2), (gold crescent moon hat ornament:1.3),",
+        "Vestuariospies": "slippers,",
+        "Ropa interior superior": "thong, microthong, black thong,",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Tipo de cuerpo": "shortstack,petite, ((loli)), young girl, ((dwarfs body)), ((young dwarfs body)),",
+        "Rasgo fisico cuerpo": "wide hips, thick thighs,fat thighs, sagging breasts, big breasts, breasts, large breasts, huge breasts,shirt covering the breasts,",
+        "Rasgo fisico piernas": "",
+        "Pose actitud global": "sitting,reading, (one-handed book grip:1.2), ",
+        "Pose brazos": "(holding open small book with one hand:1.3), (lifting skirt with other hand:1.2),one hand lifting skirt,",
+        "Pose piernas": "feet together,",
+        "Orientacion personaje": "facing viewer,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "(small open book:1.2), visible pages, (pocketbook:1.1),",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "negative_prompt": "",
+      "created_date": "2026-01-01T19:52:22.445090",
+      "rating": 0,
+      "notes": "Creada desde la aplicación"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-01T19:52:13.124412",
+    "last_modified": "2026-01-01T19:52:22.445090"
+  }
+}

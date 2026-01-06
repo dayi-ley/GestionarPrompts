@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "costume_tsukiuzaki": {
+      "name": "Costume TsukiUzaki",
+      "categories": {
+        "Vestuario general": "casual mature clothing,",
+        "Vestuario superior": "white blouse, white long-sleeve v-neck blouse,",
+        "Vestuario inferior": "skirt beige, long straight mustard beige skirt with brown buttons down front,",
+        "Vestuario accesorios": "",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "black thong, microthong,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T11:38:01.909903"
+    }
+  }
+}

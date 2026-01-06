@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "baño": {
+      "name": "Baño",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), (white room), indoor soft focus,bath, bathtub, onsen, steam, water,",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "(sitting),",
+        "Pose brazos": "",
+        "Pose piernas": "",
+        "Orientacion personaje": "back,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2025-12-12T15:52:03.678850"
+    }
+  }
+}

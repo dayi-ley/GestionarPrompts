@@ -8,10 +8,20 @@
         "Pose brazos": "elbows on knees, hands dangling,",
         "Pose piernas": "legs slightly apart,",
         "Objetos interaccion": "holding a book with both hands,",
-        "Mirada espectador": "front view,"
+        "Mirada espectador": "front view,",
+        "Angulo": "(((Front view))),straight-on shot,",
+        "Orientacion personaje": "facing forward,",
+        "Nsfw": "",
+        "Objetos escenario": "",
+        "Actitud emocion": ""
       },
-      "images": [],
-      "created_at": "2025-08-04T15:37:25.015232"
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-30T15:20:14.380703"
     }
   }
 }

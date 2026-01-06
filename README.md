@@ -17,8 +17,20 @@ Generador/organizador de prompts, diseñado específicamente para la generación
 ### Generación de Prompts
 - **Combinación automática** de todas las categorías activas
 - **Eliminación de duplicados** automática
-- **Orden lógico** de términos (Calidad → Estilo → Sujeto → cabello → vestuarios → poses → complementos)
+- **Orden logico General** →Calidad y estilo(tecnica) → Rasgos Fisicos→ vestuarios→ Poses → Expresiones → Complementos(loras/LyCORIS/StyleReferences)
+![vista de Logica de medio o tecnica](assets/screenshots/medio_tecnica.png)
+![vista de Logica de idioma visual](assets/screenshots/medio_fisico.png)
+![vista de Logica de vestuarios](assets/screenshots/medio_vestuario.png)
+![vista de Logica de poses](assets/screenshots/medio_poses.png)
+![vista de Logica de expresiones](assets/screenshots/medio_expresiones.png)
+![vista de Logica de complementos](assets/screenshots/medio_complementos.png)
 - **Validación de inputs** y limpieza automática
+
+### PromptCapture
+Sistema inteligente de clasificación de prompts mediante Embeddings e IA Local.
+- **Análisis Semántico**: Entiende el contexto de tus tags (ej. sabe que "red dress" es Vestuario y "blue eyes" es Rasgo Físico).
+- **Clasificación Automática**: Pega un prompt largo o desordenado y el sistema lo distribuirá automáticamente en las tarjetas correspondientes.
+- **Privacidad Local**: Utiliza el modelo `bge-large-en` optimizado para correr 100% en tu equipo sin necesidad de internet y sin censura.
 
 ### Gestión de Datos
 - **Persistencia local** de configuraciones y datos
@@ -36,28 +48,50 @@ Generador/organizador de prompts, diseñado específicamente para la generación
 - pyperclip
 
 
-## 📦 Instalación
+## 🛠️ Guía de Instalación (Para Principiantes)
 
-1. **Clonar el repositorio**:
+Sigue estos pasos si estás instalando la aplicación desde cero en Windows.
 
-git clone <repository-url>
-cd AppPrompts
+### 1. Instalar Python
+Necesitas Python 3.10 o superior.
+1. Ve a [python.org/downloads](https://www.python.org/downloads/).
+2. Descarga e instala la última versión.
+3. **MUY IMPORTANTE**: En el instalador, marca la casilla **"Add Python to PATH"** antes de dar clic en Install.
 
-2. **Crear entorno virtual**:
+### 2. Descargar el Código
+1. Descarga este repositorio (botón verde "Code" -> "Download ZIP") y descomprímelo.
+2. Abre la carpeta descomprimida.
+3. Haz clic derecho en un espacio vacío de la carpeta y selecciona "Abrir en Terminal" (o abre CMD y navega a la carpeta).
 
+### 3. Crear Entorno Virtual (Recomendado)
+Para mantener tu sistema limpio, crearemos un entorno aislado:
+
+```bash
 python -m venv appPrompt
+```
 
-3. **Activar el entorno virtual**:
+### 4. Activar el Entorno
+Activa el entorno para empezar a trabajar en él:
 
+```bash
 appPrompt\Scripts\activate
+```
+*(Deberías ver `(appPrompt)` al principio de tu línea de comandos)*.
 
-4. **Instalar dependencias**:
+### 5. Instalar Dependencias
+Instala todas las librerías necesarias (Interfaz, IA, herramientas) automáticamente:
 
-pip install PyQt6 pillow pyperclip
+```bash
+pip install -r requirements.txt
+```
+*Nota: La primera vez puede tardar unos minutos ya que descargará librerías de IA como PyTorch y SentenceTransformers.*
 
-5. **Ejecutar la aplicación**:
+### 6. Ejecutar la Aplicación
+Una vez instalado todo, inicia el programa con:
 
+```bash
 python main.py
+```
 
 
 ## Uso de la Aplicación
@@ -80,16 +114,18 @@ AppPrompts/
 │---appPrompt               # carpeta del entorno virtual del proyecto
 │   └── activate.bat        # Activación del entorno virtual
 ├── main.py                 # Punto de entrada de la aplicación
+├── requirements.txt        # Lista de dependencias
 ├── ui/                     # Componentes de interfaz
 │   ├── main_window.py      # Ventana principal
 │   ├── sidebar.py          # Panel lateral
 │   ├── category_grid.py    # Grid de categorías
 │   ├── prompt_section.py   # Sección de prompt
-│   └── ui_elements.py      # Elementos UI personalizados
+│   ├── ui_elements.py      # Elementos UI personalizados
+│   └── embeddings/         # Motor de IA (PromptCapture)
 ├── logic/                 
 │   └── prompt_generator.py # Generador de prompts
 ├── config/                 # Configuración
-│   └── settings.py         # Gestión de datos y configuraciones(Implementacion con otro sistema(TODO))
+│   └── settings.py         # Gestión de datos y configuraciones
 ├── data/                   # Datos persistentes 
 │   ├── settings.json       # Configuraciones de la app
 │   ├── characters          # Personajes guardados

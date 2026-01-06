@@ -1,0 +1,28 @@
+{
+  "presets": {
+    "bedroom_side_sitting_edge": {
+      "name": "Bedroom Side Sitting Edge",
+      "categories": {
+        "Angulo": "side view from profile, eye level,",
+        "Fondo": "bed edge with white curtains behind, morning sunlight soft on side body,",
+        "Postura cabeza": "head turned toward viewer,",
+        "Direccion mirada personaje": "looking directly over shoulder or side,",
+        "Pose actitud global": "sitting side tease, leg over edge, body twisted provocatively,",
+        "Pose brazos": "one hand on bed support, other touching thigh or self,",
+        "Pose piernas": "sitting on bed edge sideways, one leg dangling, other bent,",
+        "Orientacion personaje": "side profile facing viewer direction,",
+        "Actitud emocion": "",
+        "Nsfw": "highly explicit, side exposure of genitals and breasts, ((pubic hair)),",
+        "Objetos interaccion": "bed mattress edge,",
+        "Objetos escenario": "white curtains blurred, morning light rays on curves,",
+        "Mirada espectador": "side direct gaze, slutty and inviting,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2026-01-05T14:34:14.706748"
+    }
+  }
+}

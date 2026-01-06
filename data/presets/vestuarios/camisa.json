@@ -1,0 +1,20 @@
+{
+  "presets": {
+    "camisa": {
+      "name": "camisa",
+      "categories": {
+        "Vestuario general": "SajunaShirt, white shirt, oversized shirt, short sleeves,",
+        "Vestuario superior": "",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "collarbone,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "micro thong, minithong,panties,",
+        "Ropa interior accesorios": "",
+        "Rasgo fisico piernas": "white thighhighs, thick thighs,"
+      },
+      "images": [],
+      "created_at": "2025-12-05T16:48:39.342793"
+    }
+  }
+}

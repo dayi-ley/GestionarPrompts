@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "dress_gala_black": {
+      "name": "dress gala black",
+      "categories": {
+        "Loras personaje": "<lora:patchouli:0.2>,<lora:riosk_agmin_ragrrar_eevvys_esuned24:0.6>,",
+        "Vestuario general": "black dress, clothing cutout,dress, lace-trimmed dress, cross-laced dress, shrug clothing, cross-laced clothes,",
+        "Vestuario superior": "lace, lace-up chest, plunging neckline,halterneck, long sleeves, see-through sleeves, floral print, covered navel,",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "black choker, lace choker,black ribbon,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "side slit, high slit on left leg, sideboob, backless outfit, backless dress, bare back, back cutout,",
+        "Ropa interior accesorios": "thigh strap, lace trim,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-02T00:24:10.477693"
+    }
+  }
+}

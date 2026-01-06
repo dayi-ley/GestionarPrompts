@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "kindergarte_uniform_pink18": {
+      "name": "kindergarte_uniform_pink(+18)",
+      "categories": {
+        "Vestuario general": "kindergarten uniform, collared shirt,partially clothed, small clothes,",
+        "Vestuario superior": "long sleeves, pink shirt, shirt,",
+        "Vestuario inferior": "black microskirt, miniskirt, school skirt,",
+        "Vestuario accesorios": "puckered lips, seductive look, yellow hat,red Japanese garden backpack,school hat,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "panties, panties around one leg, underwear, white pantie,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2025-12-25T16:49:08.530437"
+    }
+  }
+}

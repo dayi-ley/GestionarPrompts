@@ -1,19 +1,22 @@
 {
   "angulo": [
-    "lateral angle",
     "((high angle)),((from above))",
     "((low angle)),((from below))",
-    "frontal view",
     "cowboy shot",
+    "frontal view",
+    "extreme low-angle shot",
+    "low-angle shot",
+    "((cowboy shot)),((medium angle))",
+    "normal angle",
+    "lateral angle",
     "medium angle",
     "from behind",
     "dutch angle",
     "Cenital angle",
-    "((cowboy shot)),((medium angle))",
-    "low-angle shot",
-    "extreme low-angle shot",
     "worm's-eye view",
-    "eye-level shot"
+    "eye-level shot",
+    "Wide angle lens",
+    "vanishing points close togethe"
   ],
   "calidad_tecnica": [
     "newest",
@@ -90,7 +93,8 @@
     "pointed bangs",
     "side-swept bangs",
     "bangs, hair between eyes",
-    "cute goth girl, short black bob haircut, straight black bangs"
+    "cute goth girl, short black bob haircut, straight black bangs",
+    "sidelocks"
   ],
   "cabello_color": [
     "white hair",
@@ -122,7 +126,8 @@
     "almond shaped eyes",
     "heterochromia",
     "cat eyes",
-    "tongue out"
+    "tongue out",
+    "blue eyes,half-closed eyes,"
   ],
   "expresion_facial_ojos": [
     "half-lidded seductive gaze",
@@ -142,7 +147,10 @@
     "surprised",
     "blowjob gesture",
     "seductive smile",
-    "tongue out"
+    "tongue out",
+    "embarrassed",
+    "expressionless",
+    "inminent blowjob,  open mouth, smirk"
   ],
   "postura_cabeza": [
     "head tilted slightly",
@@ -154,7 +162,8 @@
     "looking at viewer",
     "looking away",
     "looking up",
-    "looking down"
+    "looking down",
+    "looking back"
   ],
   "vestuario_general": [
     "lingerie, crotch-less panties, cupless bra, cupless lingerie",
@@ -233,7 +242,8 @@
     "open black lingerie, sheer lingeries, cupless lingerie, open bra, no cup bra, cupless bra",
     "triangle lingerie, triangle bralette, triangular cup lingerie, triangle shaped top, triangle bra",
     "bodycon puff sleeve crop top, form-fitting torso with short puffed sleeves, square neckline, white semi-transparent fabric with red trim edges, waist-length tight top",
-    "camisole top"
+    "camisole top",
+    "backless dress"
   ],
   "vestuario_inferior": [
     "silver skirt",
@@ -248,7 +258,8 @@
     "thigh-highs hosiery",
     "garterbelts hosiery,stockings with suspenders",
     "full blue brief",
-    "g-string"
+    "g-string",
+    "black microskirt, miniskirt, school skirt,"
   ],
   "vestuario_accesorios": [
     "gloves",
@@ -322,25 +333,31 @@
     "latex harness"
   ],
   "tipo_de_cuerpo": [
+    "shortstack,petite, ((loli)), young girl, ((dwarfs body)), ((young dwarfs body))",
     "wide hips",
     "loli",
     "small body",
     "petite female"
   ],
   "rasgo_fisico_cuerpo": [
+    "sagging breasts, big breasts, breasts, large breasts, nipples, huge breasts,shirt covering the breasts",
     "large breasts,(big breasts), huge breast,",
+    "small breasts, nipples, plump breasts,",
     "slender body",
     "athletic build",
     "curvy figure",
     "muscular physique",
     "sagging breasts",
-    "rounded breasts"
+    "rounded breasts",
+    "chubby body",
+    "wide hips, thick thighs,fat thighs"
   ],
   "rasgo_fisico_piernas": [
     "long legs",
     "short legs",
     "toned legs",
-    "slender legs"
+    "slender legs",
+    "thick thighs, wide hips"
   ],
   "pose_actitud_global": [
     "standing",
@@ -348,13 +365,15 @@
     "sitting",
     "kneeling",
     "squatting",
-    "Crouching",
+    "crouching forward",
     "Reclining",
     "Leaning",
     "bent over",
     "sitting, squatting"
   ],
   "pose_brazos": [
+    "right hand on waist",
+    "hand holding lollipop",
     "arms crossed",
     "hands on hips",
     "arms raised",
@@ -371,15 +390,19 @@
     "knees together",
     "legs slightly apart",
     "spreading legs",
-    "(spreading legs),knees bent, pointed toes,((perspective from the feet)),POV from the ground,"
+    "(spreading legs),knees bent, pointed toes,((perspective from the feet)),POV from the ground,",
+    "teasing with foot",
+    "One leg raised towards the camera"
   ],
   "orientacion_personaje": [
     "facing forward",
+    "arched back",
     "Diagonal back view",
     "Full back view",
     "turned to the side",
     "looking back",
-    "angled pose"
+    "angled pose",
+    "leaning back"
   ],
   "actitud_emocion": [
     "confident",
@@ -398,7 +421,9 @@
     "nude",
     "completely nude",
     "pussy",
-    "tight clothing"
+    "tight clothing",
+    "pee, peeing, peeing in bottle,precum,pussy,",
+    "Black heart-shaped nipple stickers"
   ],
   "objetos_interaccion": [
     "holding a pokeball",

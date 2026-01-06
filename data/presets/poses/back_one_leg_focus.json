@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "back_one_leg_focus": {
+      "name": "back one leg focus",
+      "categories": {
+        "Angulo": "(((waist back view))),Wide angle lens, ((low angle)),((from below)),",
+        "Postura cabeza": "back of head visible, facing away from camera, looking ahead, looking at the horizon,",
+        "Direccion mirada personaje": "",
+        "Pose actitud global": "Leaning against a wall,",
+        "Pose brazos": "All fours",
+        "Pose piernas": "One leg raised towards the camera,",
+        "Orientacion personaje": "from behind, back view, rear view, facing away,Centered back view,",
+        "Actitud emocion": "",
+        "Nsfw": "ass,",
+        "Objetos interaccion": "circular taborut,Royal French Tabouret red , Ottoman,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png"
+      ],
+      "created_at": "2025-12-29T18:22:29.617422"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "lying_on_back": {
+      "name": "lying on back",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking up, looking at viewer,",
+        "Pose actitud global": "lying on back,POV from headboard, dramatic angle, hair dangling,head hanging off edge of bed, upside down head,",
+        "Pose brazos": "",
+        "Pose piernas": "teasing with foot,",
+        "Orientacion personaje": "upside down, center opening,",
+        "Actitud emocion": "expressive face,",
+        "Nsfw": "((embarrassed)),solo focus, sex,foot focus, focus pov, ",
+        "Objetos interaccion": "on bed,missionary,",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-04T18:40:27.028715"
+    }
+  }
+}

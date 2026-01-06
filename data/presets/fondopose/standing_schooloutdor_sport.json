@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "standing_schooloutdor_sport": {
+      "name": "Standing schoolOutdor sport",
+      "categories": {
+        "Angulo": "three-quarter view from side,",
+        "Fondo": "school outdoor sports field blurred, volleyball game in progress distant,",
+        "Postura cabeza": "head turned toward viewer,",
+        "Direccion mirada personaje": "looking over shoulder at viewer,",
+        "Pose actitud global": "catching breath after workout, body glistening with sweat,",
+        "Pose brazos": "arms relaxed at sides or one hand on hip,",
+        "Pose piernas": "standing with weight shifted to one leg,",
+        "Orientacion personaje": "slight turn toward viewer,",
+        "Actitud emocion": "",
+        "Nsfw": "highly suggestive, wet transparent clothing effect, erect nipples visible, marked cameltoe,",
+        "Objetos interaccion": "water bottle optional in hand,",
+        "Objetos escenario": "blurred volleyball court, school building in distance,",
+        "Mirada espectador": "tired over-shoulder glance, subtly aroused,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T12:12:19.318256"
+    }
+  }
+}

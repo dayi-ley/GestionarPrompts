@@ -1,44 +1,36 @@
-# Ignorar el entorno virtual
-appPrompt/
+# Entorno virtual y dependencias
+__pycache__/
+*.pyc
 venv/
 env/
-.venv/
-
-# Archivos de Python que no deben subirse
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Configuración o archivos locales
 .env
-.DS_Store
-*.log
-*.sqlite3
+appPrompt/
 
-# IDEs
+# Modelos pesados (Embeddings)
+models/
+ui/embeddings/model/
+ui/embeddings/cache/
+cache/
+.cache/
+*.pt
+*.bin
+*.onnx
+*.safetensors
+*.tfevents
+
+# Archivos de construcción y distribución
+build/
+dist/
+*.spec
+installer/
+
+# IDEs y configuración local
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
 
-# Sistema operativo
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+# Logs y datos temporales
+logs/
+*.log
+bridge/
 
-# Archivos temporales
-*.tmp
-*.temp
-*.bak
-*.backup

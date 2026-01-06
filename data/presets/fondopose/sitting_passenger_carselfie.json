@@ -1,0 +1,29 @@
+{
+  "presets": {
+    "sitting_passenger_carselfie": {
+      "name": "sitting passenger carSelfie",
+      "categories": {
+        "Angulo": "((high angle)),((from above)), (Wide angle lens),",
+        "Fondo": "blurred car interior, dashboard visible, seats and steering wheel in background, blurred window view outside,",
+        "Postura cabeza": "head slightly turned toward viewer,",
+        "Direccion mirada personaje": "looking directly at viewer with seductive desire,",
+        "Pose actitud global": "highly provocative, aroused, shameless exhibitionist, begging for attention,",
+        "Pose brazos": "one hand lifting blouse to fully expose breasts, other hand between thighs on crotch,",
+        "Pose piernas": "sitting on passenger seat, legs slightly spread,",
+        "Orientacion personaje": "(facing forward), Leaning,",
+        "Actitud emocion": "",
+        "Nsfw": "explicit, exposed breasts, hand on crotch,",
+        "Objetos interaccion": "(selfie),",
+        "Objetos escenario": "passenger car seat, seatbelt, car door panel blurred,",
+        "Mirada espectador": "direct eye contact, inviting,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2026-01-05T00:03:34.618345"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "presets": {
+    "bedroom_side_profile_arch": {
+      "name": "Bedroom Side Profile Arch",
+      "categories": {
+        "Angulo": "side profile view, medium shot from left or right,",
+        "Fondo": "bedroom interior, white curtains with bright morning sunlight filtering through, soft glow on skin,",
+        "Postura cabeza": "head turned slightly toward viewer or tilted back,",
+        "Direccion mirada personaje": "glancing sideways at viewer with lust,",
+        "Pose actitud global": "side arch provocative, body curved sensually, highly erotic side pose,",
+        "Pose brazos": "one arm supporting body, other hand between thighs or on breast,",
+        "Pose piernas": "lying on side, top leg bent and raised slightly,",
+        "Orientacion personaje": "side profile to viewer, hips thrust forward,",
+        "Actitud emocion": "",
+        "Nsfw": "extremely explicit, side view of penetration or masturbation implied, curves emphasized,",
+        "Objetos interaccion": "bed sheets clutched,",
+        "Objetos escenario": "pillows along side, white curtains morning light,",
+        "Mirada espectador": "sideways lustful glance, teasing and filthy,"
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T14:06:15.252864"
+    }
+  }
+}

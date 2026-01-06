@@ -1,0 +1,15 @@
+{
+  "presets": {
+    "sorprendida_nerviosa": {
+      "name": "sorprendida nerviosa",
+      "categories": {
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "((shy)),",
+        "Expresion facial boca": "mouth open in shock,surprised,",
+        "Postura cabeza": "head tilted forward,"
+      },
+      "images": [],
+      "created_at": "2025-12-04T18:13:14.313062"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "dress_reveling": {
+      "name": "dress reveling",
+      "categories": {
+        "Vestuario general": "jewelry, navel,",
+        "Vestuario superior": "halterneck, bare shoulders, plunging_neckline,",
+        "Vestuario inferior": "",
+        "Vestuario accesorios": "((sleeveless)),",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-02T00:37:24.294988"
+    }
+  }
+}

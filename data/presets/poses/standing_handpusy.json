@@ -1,0 +1,21 @@
+{
+  "presets": {
+    "standing_handpusy": {
+      "name": "standing handPusy",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Postura cabeza": "",
+        "Direccion mirada personaje": "looking at viewer,",
+        "Pose actitud global": "standing, crouching forward, bent over,",
+        "Pose brazos": "both hands on the crotch,right hand on the crotch,both arms to the crotch,",
+        "Pose piernas": "between legs, hand between legs, knees together feet apart,",
+        "Orientacion personaje": "",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Mirada espectador": "looking at viewer,"
+      },
+      "images": [],
+      "created_at": "2025-12-25T17:15:12.767177"
+    }
+  }
+}

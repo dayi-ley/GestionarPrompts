@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "nursecapwhitecapeletthong": {
+      "name": "NurseCap+WhiteCapelet+thong",
+      "categories": {
+        "Vestuario general": "nurse cap,white capelet,short sleeve capelet,",
+        "Vestuario superior": "black micro bikini,elbow-length gloves, ",
+        "Vestuario inferior": "black g-string,silk stockings, stockings with garters,",
+        "Vestuario accesorios": "bonnet,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-11T19:14:53.089114"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "back_sex1300x800": {
+      "name": "back sex(1300x800)",
+      "categories": {
+        "Angulo": "((low angle)),((from below)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "(looking back),",
+        "Pose actitud global": "((kneeling)),sitting,",
+        "Pose brazos": "hands up,",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "from behind,",
+        "Actitud emocion": "cowgirl position, reverse upright straddle",
+        "Nsfw": "nude, ((embarrassed)),focus ass, bottomless,sex, male pov, focus pov, ((focus back)),",
+        "Objetos interaccion": "",
+        "Objetos escenario": "top-down bottom-up,",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-04T17:37:20.498657"
+    }
+  }
+}

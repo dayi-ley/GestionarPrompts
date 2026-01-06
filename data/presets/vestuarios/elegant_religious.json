@@ -1,0 +1,22 @@
+{
+  "presets": {
+    "elegant_religious": {
+      "name": "elegant religious",
+      "categories": {
+        "Vestuario general": "elegant religious modest clothing, Jehovah's Witness style,",
+        "Vestuario superior": "long-sleeve white blouse buttoned high, modest collar,",
+        "Vestuario inferior": "long straight navy blue or black skirt below knees, conservative pencil skirt,",
+        "Vestuario accesorios": "small cross necklace optional hidden, brochure or bible in hand optional,",
+        "Vestuariospies": "black flat closed shoes or low heels,",
+        "Ropa interior superior": "modest bra,",
+        "Ropa interior inferior": "full coverage panties,",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png"
+      ],
+      "created_at": "2026-01-05T15:22:12.657570"
+    }
+  }
+}

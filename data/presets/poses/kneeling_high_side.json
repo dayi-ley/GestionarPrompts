@@ -1,0 +1,23 @@
+{
+  "presets": {
+    "kneeling_high_side": {
+      "name": "kneeling high side",
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking at viewer,looking straight ahead,",
+        "Pose actitud global": "((kneeling)),",
+        "Pose brazos": "on all fours,hands resting on the floor , looking at viewer, kneeling position,",
+        "Pose piernas": "feet close together,",
+        "Orientacion personaje": "facing viewer, face focus, face front,",
+        "Actitud emocion": "",
+        "Nsfw": "",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": ""
+      },
+      "images": [],
+      "created_at": "2025-12-03T18:07:03.616118"
+    }
+  }
+}

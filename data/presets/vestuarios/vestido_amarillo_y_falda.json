@@ -1,0 +1,19 @@
+{
+  "presets": {
+    "vestido_amarillo_y_falda": {
+      "name": "vestido amarillo y falda",
+      "categories": {
+        "Vestuario general": "official style, mht casual, casual,",
+        "Vestuario superior": "frilled shirt collar, shirt, shirt tucked in, yellow shirt, long sleeves, plaid, puffy sleeves, frilled shirt, puffy long sleeves,",
+        "Vestuario inferior": "black skirt, skirt, long skirt, plaid skirt,",
+        "Vestuario accesorios": "belt, belt buckle, buckle, earrings, jewelry, single earring, black belt, collar,",
+        "Vestuariospies": "black footwear, foot focus, ",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [],
+      "created_at": "2025-12-08T14:20:24.039410"
+    }
+  }
+}

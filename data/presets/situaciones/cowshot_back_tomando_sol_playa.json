@@ -1,0 +1,32 @@
+{
+  "presets": {
+    "cowshot_back_tomando_sol_playa": {
+      "name": "CowShot Back tomando sol playa",
+      "categories": {
+        "Angulo": "((cowboy shot)),",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "",
+        "Expresion facial boca": "",
+        "Postura cabeza": "head turned to side, cheek on towel,",
+        "Direccion mirada personaje": "face turned to side, not visible,",
+        "Vestuario general": "",
+        "Vestuario superior": "triangle bra,",
+        "Vestuario inferior": "White an blue striped panties, white and blue striped thighhighs,",
+        "Vestuario accesorios": "white choker,sunglasses,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Pose actitud global": "lying face down, sunbathing on stomach,",
+        "Pose brazos": "arms at sides, relaxed along body,",
+        "Pose piernas": "((foot focus)), one leg up,",
+        "Orientacion personaje": "viewed from above, back visible,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "umbrella shadow,beach towel,",
+        "Mirada espectador": "back visible, shoulder blades, spine line,visible nape, the back of the head,"
+      },
+      "images": [],
+      "created_at": "2025-12-18T18:11:56.990331"
+    }
+  }
+}

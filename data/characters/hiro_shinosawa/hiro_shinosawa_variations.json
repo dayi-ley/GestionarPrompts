@@ -1,0 +1,62 @@
+{
+  "character_name": "hiro_shinosawa",
+  "variations": {
+    "hiro_shinosawa_var1": {
+      "name": "hiro_shinosawa_var1",
+      "description": "Variación hiro_shinosawa_var1 para hiro_shinosawa",
+      "tags": [],
+      "categories": {
+        "Angulo": "((high angle)),((from above)),",
+        "Calidad tecnica": "masterpiece, best quality, amazing quality, absurdres, newest,",
+        "Estilo artistico": "Pachu illustration Style, realistic:0.3,",
+        "Composicion": "posing, scenery, face focus shot, eye close-up, face highlight view, focused gaze, face centered shot,",
+        "Atmosfera vibe": "very aesthetic, sexy, sharp lineart,((oily shine skin)),",
+        "Loras estilos artistico": "<lora:WagashiDagashiyaきしわがし_Style_LoRA__SDXL__Pony__v2:1>,<lora:odanon-lora-v1-128dim-10ep-novae:0.2>, <lora:LFashionIXL:0.2>, <lora:saegarantr:0.45>, <lora:flat_sdxl:0.5>,<lora:mamimi_mamamimi_style_illustrious_goofy:0.7>,",
+        "Loras detalles mejoras": "<lora:add_detail:1>, <lora:DetailedEyes_XL:1>,",
+        "Loras modelos especificos": "<lora:96YOTTEA-WAI:0.5>, <lora:748cmSDXL:0.4>, <lora:USNR STYLE_XL_loha:0.5>,",
+        "Loras personaje": "<lora:shinosawa_hiro_illust_scarxzys:1>,",
+        "Fondo": "simple background, blurred bedroom, bedroom blur, (soft room background), (white room), indoor soft focus,",
+        "Personaje": "1girl,hiro,",
+        "Cabello forma": "long hair, crossed_bangs, long_sleeves,",
+        "Cabello color": "blonde hair, light brown hair,",
+        "Cabello accesorios": "hair ornament,hairclip,",
+        "Rostro accesorios": "glasses, ",
+        "Ojos": "perfect eyes, seductive eyes, eyes details, detailed eyes, full detail eyes, wide open eyes,orange eyes, slit pupils",
+        "Expresion facial ojos": "",
+        "Expresion facial mejillas": "((shy)),",
+        "Expresion facial boca": "(serious expression),",
+        "Postura cabeza": "head tilted forward,",
+        "Direccion mirada personaje": "looking back,",
+        "Vestuario general": "christmas outfit,dress,garter belt,santa costume,santa dress,",
+        "Vestuario superior": "",
+        "Vestuario inferior": " lingerie,stockings,teenager,",
+        "Vestuario accesorios": "santa hat,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": "",
+        "Tipo de cuerpo": "shortstack,loli, young girl, ((dwarfs body)), ((young dwarfs body)),",
+        "Rasgo fisico cuerpo": "large breasts,(big breasts), huge breast,",
+        "Rasgo fisico piernas": "thick thighs,wide hips,",
+        "Pose actitud global": "standing,",
+        "Pose brazos": "sign of peace with the hand, hands raised,",
+        "Pose piernas": "feet close together, toes turned inward,",
+        "Orientacion personaje": "facing forward,",
+        "Actitud emocion": "",
+        "Nsfw": "((ass focus)), spread, ass, anus slip, thong,",
+        "Objetos interaccion": "",
+        "Objetos escenario": "",
+        "Mirada espectador": "view from behind,back view,rear view,rear view of a person, back facing the viewer,"
+      },
+      "negative_prompt": "",
+      "created_date": "2025-12-12T19:56:17.991664",
+      "rating": 0,
+      "notes": "Creada desde la aplicación"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-12T19:56:16.415019",
+    "last_modified": "2025-12-12T19:56:17.991664"
+  }
+}

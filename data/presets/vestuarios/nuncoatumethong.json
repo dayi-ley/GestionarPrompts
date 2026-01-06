@@ -1,0 +1,24 @@
+{
+  "presets": {
+    "nuncoatumethong": {
+      "name": "nunCoatume+thong",
+      "categories": {
+        "Vestuario general": "nun robes, sexy tunic nun,nun outfit, nun costume,",
+        "Vestuario superior": "",
+        "Vestuario inferior": "black g-string,silk stockings, stockings with garters,",
+        "Vestuario accesorios": " rosary necklace,nun hat,white and black veil,",
+        "Vestuariospies": "",
+        "Ropa interior superior": "",
+        "Ropa interior inferior": "",
+        "Ropa interior accesorios": ""
+      },
+      "images": [
+        "image_1.png",
+        "image_2.png",
+        "image_3.png",
+        "image_4.png"
+      ],
+      "created_at": "2025-12-11T19:25:43.254429"
+    }
+  }
+}
