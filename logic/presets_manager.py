@@ -4,6 +4,7 @@ import re
 import shutil
 from typing import Dict, Any
 from datetime import datetime
+from PIL import Image
 
 class PresetsManager:
     """Gestor de presets organizados por categorías"""
@@ -71,6 +72,47 @@ class PresetsManager:
         
         return all_presets
     
+    def _optimize_image(self, source_path, dest_path, max_size=(512, 512), quality=85):
+        """Optimiza una imagen: redimensiona y comprime"""
+        try:
+            with Image.open(source_path) as img:
+                # Corregir orientación EXIF si existe
+                try:
+                    from PIL import ExifTags, ImageOps
+                    img = ImageOps.exif_transpose(img)
+                except Exception:
+                    pass
+
+                # Calcular nuevo tamaño manteniendo ratio
+                img.thumbnail(max_size, Image.Resampling.LANCZOS)
+                
+                file_ext = os.path.splitext(dest_path)[1].lower()
+                
+                if file_ext in ['.jpg', '.jpeg']:
+                    # Convertir a RGB si es necesario
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        img = img.convert('RGB')
+                    img.save(dest_path, 'JPEG', quality=quality, optimize=True)
+                    
+                elif file_ext == '.png':
+                    # Para PNG, intentar optimizar
+                    # Si no tiene transparencia, convertir a JPG podría ser mejor, pero mantendremos formato
+                    img.save(dest_path, 'PNG', optimize=True)
+                    
+                elif file_ext == '.webp':
+                    img.save(dest_path, 'WEBP', quality=quality)
+                    
+                else:
+                    img.save(dest_path)
+                    
+        except Exception as e:
+            print(f"Error optimizando imagen {source_path}: {e}")
+            # Fallback: copia simple si falla la optimización
+            try:
+                shutil.copy2(source_path, dest_path)
+            except shutil.SameFileError:
+                pass
+
     def save_preset(self, preset_type, preset_name, preset_data):
         """Guarda un preset con las categorías seleccionadas y las imágenes"""
         category_dir = os.path.join(self.presets_dir, preset_type)
@@ -96,10 +138,12 @@ class PresetsManager:
                 new_image_name = f"image_{i+1}{file_extension}"
                 new_image_path = os.path.join(images_dir, new_image_name)
 
-                try:
-                    if os.path.abspath(image_path) != os.path.abspath(new_image_path):
-                        shutil.copy2(image_path, new_image_path)
-                except shutil.SameFileError:
+                # Optimizar imagen al guardar
+                if os.path.abspath(image_path) != os.path.abspath(new_image_path):
+                    self._optimize_image(image_path, new_image_path)
+                else:
+                    # Si es el mismo archivo (re-guardado), podríamos intentar re-optimizar 
+                    # si es muy grande, pero por ahora asumimos que ya está bien o se optimizará con el script global
                     pass
 
                 desired_names.append(new_image_name)
@@ -133,6 +177,55 @@ class PresetsManager:
             json.dump(preset_structure, f, indent=2, ensure_ascii=False)
         
         return True
+
+    def optimize_all_existing_images(self):
+        """Recorre todos los presets y optimiza sus imágenes existentes"""
+        count = 0
+        total_saved_bytes = 0
+        
+        if not os.path.exists(self.presets_dir):
+            return 0, 0
+            
+        # Recorrer categorías
+        for category in os.listdir(self.presets_dir):
+            category_path = os.path.join(self.presets_dir, category)
+            if not os.path.isdir(category_path):
+                continue
+                
+            # Buscar carpetas de imágenes
+            for item in os.listdir(category_path):
+                if item.endswith('_images') and os.path.isdir(os.path.join(category_path, item)):
+                    images_dir = os.path.join(category_path, item)
+                    
+                    for img_file in os.listdir(images_dir):
+                        if img_file.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+                            img_path = os.path.join(images_dir, img_file)
+                            
+                            try:
+                                initial_size = os.path.getsize(img_path)
+                                # Si la imagen es pequeña (< 200KB), saltar
+                                if initial_size < 200 * 1024:
+                                    continue
+                                    
+                                # Optimizar sobreescribiendo
+                                # Usamos un archivo temporal para evitar corrupción
+                                temp_path = img_path + ".tmp"
+                                self._optimize_image(img_path, temp_path)
+                                
+                                if os.path.exists(temp_path):
+                                    final_size = os.path.getsize(temp_path)
+                                    if final_size < initial_size:
+                                        os.replace(temp_path, img_path)
+                                        saved = initial_size - final_size
+                                        total_saved_bytes += saved
+                                        count += 1
+                                        print(f"Optimizado: {img_file} ({initial_size/1024:.1f}KB -> {final_size/1024:.1f}KB)")
+                                    else:
+                                        os.remove(temp_path)
+                            except Exception as e:
+                                print(f"Error procesando {img_file}: {e}")
+                                
+        return count, total_saved_bytes
     
     def get_all_preset_folders(self):
         """Obtiene todas las carpetas de presets (solo personalizadas)"""

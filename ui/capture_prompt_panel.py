@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QStackedW
 from PyQt6.QtCore import Qt, QTimer
 import logging
 
-class SugePromptPanel(QWidget):
+class CapturePromptPanel(QWidget):
     """
     Panel contenedor para 'Capturar Prompt'.
     Carga diferida del módulo de embeddings para optimizar el arranque.
@@ -16,12 +16,8 @@ class SugePromptPanel(QWidget):
     def setup_ui(self):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        
-        # Stack para alternar entre botón de inicio y la app cargada
         self.stack = QStackedWidget()
         self.layout.addWidget(self.stack)
-        
-        # Pagina 1: Botón de arranque
         self.start_page = QWidget()
         start_layout = QVBoxLayout(self.start_page)
         start_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
