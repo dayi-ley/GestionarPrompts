@@ -10,7 +10,6 @@ class AddCategoryCard(QFrame):
         self.setup_styles()
 
     def setup_ui(self):
-        # Mismo tamaño que las CategoryCard
         self.setMinimumSize(300, 100)
         
         layout = QVBoxLayout(self)
@@ -18,19 +17,16 @@ class AddCategoryCard(QFrame):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(8)
         
-        # Ícono de más grande y centrado
         add_icon = QLabel("+")
         add_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
         add_icon.setFont(QFont("Segoe UI", 24, QFont.Weight.Bold))
         layout.addWidget(add_icon)
         
-        # Texto descriptivo
         label = QLabel("Añadir categoría")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         label.setFont(QFont("Segoe UI", 12))
         layout.addWidget(label)
         
-        # Hacer toda la tarjeta clickeable
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
     def mousePressEvent(self, event):

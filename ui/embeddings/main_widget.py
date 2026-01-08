@@ -77,20 +77,15 @@ class ResultsWindow(QWidget):
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
-        
-        # Barra superior con estado
         self.status_label = QLabel("Categorías")
         layout.addWidget(self.status_label)
-        
-        # Barra de filtros
+
         self._filter_bar = QWidget()
         self._filter_bar_layout = QHBoxLayout()
         self._filter_bar_layout.setContentsMargins(6, 6, 6, 6)
         self._filter_bar_layout.setSpacing(6)
         self._filter_bar.setLayout(self._filter_bar_layout)
         layout.addWidget(self._filter_bar)
-        
-        # Area de scroll para resultados
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.sections = QWidget()
@@ -103,12 +98,11 @@ class ResultsWindow(QWidget):
         layout.addWidget(self.scroll)
 
     def render_categories(self, mapping, engine_ref):
-        self.engine_ref = engine_ref # Referencia para callbacks si es necesario
+        self.engine_ref = engine_ref 
         self._create_filter_buttons()
         self._render_grid(mapping)
 
     def _create_filter_buttons(self):
-        # Limpiar botones anteriores
         while self._filter_bar_layout.count():
             item = self._filter_bar_layout.takeAt(0)
             if item.widget(): item.widget().deleteLater()
@@ -151,20 +145,13 @@ class ResultsWindow(QWidget):
             n = name.strip().rstrip(":")
             if n == "pose_actitud_global": return "pose_global"
             return n
-
-        # Identificar qué categorías pertenecen a qué grupo visible
-        # Si el filtro es "Todos", mostramos todo.
-        # Si hay filtro específico, solo mostramos categorías de ese grupo.
         
         target_group = self._group_filter if self._group_filter in self._groups else "Todos"
         
-        # Recopilar todas las categorías que deben mostrarse
         cats_to_show = []
         
-        # Mapeo de categoría -> Grupo al que pertenece (para asignar color si es "Todos")
         cat_group_map = {}
         
-        # Construir mapa basado en la definición actual de grupos
         for gname, info in self._groups.items():
             if gname == "Todos": continue
             for cname in info["names"]:
@@ -175,10 +162,8 @@ class ResultsWindow(QWidget):
             if not items: continue
             c_canon = _canon(cat)
             
-            # Determinar a qué grupo pertenece realmente esta categoría
             actual_group = cat_group_map.get(c_canon, "Otros")
 
-            # Filtrado
             if target_group == "Todos" or target_group == actual_group:
                 cats_to_show.append((cat, items, actual_group))
 
@@ -189,10 +174,9 @@ class ResultsWindow(QWidget):
         self.status_label.setText(f"Categorías mostradas: {len(cats_to_show)}")
         
         for cat, items, group_name in cats_to_show:
-            # Obtener color del grupo al que pertenece
+         
             color = self._groups[group_name]["color"] if group_name in self._groups else "#888"
             
-            # Generar fondos basados en ese color
             bg = self._get_color_alpha(color, 80)
             bg_text = self._get_color_alpha(color, 48)
             
@@ -246,7 +230,7 @@ class ResultsWindow(QWidget):
                 }}
             """)
             btn_send.setProperty("default_style", btn_send.styleSheet())
-            # Usamos una referencia débil o pasamos el botón para cambiar su estado
+        
             btn_send.clicked.connect(lambda _, c=cat, i=items, b=btn_send: self._send_category(c, i, b))
             
             inner.setContentsMargins(6, 2, 6, 2)
@@ -281,7 +265,6 @@ class ResultsWindow(QWidget):
     def _send_category(self, category, items, btn):
         success = False
         try:
-            # Buscar MainWindow en topLevelWidgets
             main_window = None
             for w in QApplication.topLevelWidgets():
                 if hasattr(w, 'category_grid') and w.__class__.__name__ == 'MainWindow':
@@ -290,21 +273,17 @@ class ResultsWindow(QWidget):
             
             if main_window:
                 value = ", ".join(items) if items else ""
-                # Asegurar coma final si hay valores
                 if value and not value.strip().endswith(','):
                     value += ","
-
-                # set_category_value retorna True si éxito, False si falló (bloqueado/no encontrado)
                 success = main_window.category_grid.set_category_value(category, value)
             else:
-                # Fallback a bridge si no encontramos la ventana
+        
                 success = send_update(category, items)
         except Exception as e:
             logging.error(f"Error enviando categoría: {e}")
             success = False
 
         if success:
-            # Feedback visual de éxito
             btn.setText("✓")
             btn.setStyleSheet(f"""
                 QToolButton {{
@@ -316,9 +295,8 @@ class ResultsWindow(QWidget):
                 }}
             """)
             btn.setToolTip("Enviado correctamente")
-            # El botón se mantiene en estado de éxito para referencia del usuario
         else:
-            # Feedback de error
+            
             btn.setText("✕")
             btn.setStyleSheet(f"""
                 QToolButton {{
@@ -334,7 +312,7 @@ class ResultsWindow(QWidget):
     
     def _restore_send_btn(self, btn):
         try:
-            # Verificar si el objeto C++ ha sido eliminado
+        
             if not btn or not hasattr(btn, "setText"):
                 return
             btn.setText("→")
@@ -343,7 +321,7 @@ class ResultsWindow(QWidget):
                 btn.setStyleSheet(style)
             btn.setToolTip("Enviar a tarjeta principal")
         except RuntimeError:
-            # Objeto eliminado (C++ deleted), ignorar
+            
             pass
         except Exception:
             pass
@@ -356,7 +334,6 @@ class EmbeddingsMainWidget(QWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Panel de entrada (Texto + Botón)
         self.input_text = QTextEdit()
         self.input_text.setPlaceholderText("Ingresa texto, prompt o tags...")
         main_layout.addWidget(self.input_text)
@@ -387,7 +364,6 @@ class EmbeddingsMainWidget(QWidget):
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(self.status_label)
 
-        # Inicialización del motor
         self.engine = EmbeddingsEngine()
         self.init_engine()
         
@@ -407,7 +383,6 @@ class EmbeddingsMainWidget(QWidget):
             self.engine._ensure()
             logging.info("Motor cargado correctamente.")
             self.status_label.setText("Modelo IA cargado correctamente")
-            # Warmup
             try:
                 logging.info("Realizando warmup...")
                 self.engine.embed(["warmup"])
@@ -424,7 +399,6 @@ class EmbeddingsMainWidget(QWidget):
             self.process_button.setEnabled(False)
             self.process_button.setText("Error de carga")
             
-            # Mostrar error visible al usuario
             QMessageBox.critical(
                 self, 
                 "Error de Inicialización", 
@@ -441,10 +415,9 @@ class EmbeddingsMainWidget(QWidget):
         self.process_button.setEnabled(False)
         self.process_button.setText("Procesando... 0.0s")
         self.elapsed_time = 0
-        self.timer.start(100) # Actualizar cada 100ms
+        self.timer.start(100)
         self.status_label.setText("Analizando semánticamente...")
         
-        # Procesamiento en hilo secundario
         items = [x.strip() for x in re.split(r'[,\n]', text) if x.strip()]
         logging.info(f"Items detectados: {len(items)}")
         

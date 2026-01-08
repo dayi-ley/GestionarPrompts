@@ -1,15 +1,17 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QPushButton, QComboBox, QFrame, QSizePolicy, QTabWidget,
-                             QListWidget, QListWidgetItem, QLineEdit)
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QFont, QPalette, QColor
-from ui.variations_panel import VariationsPanel
-from ui.presets_panel import PresetsPanel
-from ui.sugeprompt_panel import SugePromptPanel  # ← NUEVA IMPORTACIÓN
-from logic.variations_manager import VariationsManager
+                             QListWidget, QListWidgetItem, QLineEdit, QMenu, QDialog, QTextEdit, QMessageBox)
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize
+from PyQt6.QtGui import QFont, QPalette, QColor, QIcon, QPixmap, QAction
+import shutil
 import os
 import json
 from datetime import datetime
+from ui.variations_panel import VariationsPanel
+from ui.ui_elements import PasteImageWidget
+from ui.presets_panel import PresetsPanel
+from ui.sugeprompt_panel import SugePromptPanel
+from logic.variations_manager import VariationsManager
 
 class SidebarFrame(QFrame):
     character_defaults_selected = pyqtSignal(dict)
@@ -146,6 +148,9 @@ class SidebarFrame(QFrame):
         
         # Lista de personajes
         self.character_list = QListWidget()
+        self.character_list.setIconSize(QSize(40, 40))  # Tamaño de iconos más grande
+        self.character_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.character_list.customContextMenuRequested.connect(self.show_context_menu)
         self.character_list.itemClicked.connect(self.on_character_selected)
         self.character_list.itemDoubleClicked.connect(self.on_character_double_clicked)
         layout.addWidget(self.character_list)
@@ -374,6 +379,10 @@ class SidebarFrame(QFrame):
                 json_filename = f"{item}.json"
                 json_path = os.path.join(item_path, json_filename)
                 
+                # Buscar imagen
+                image_path = os.path.join(item_path, "image.png")
+                has_image = os.path.exists(image_path)
+                
                 if os.path.exists(json_path):
                     try:
                         # Leer el archivo JSON para obtener metadatos
@@ -418,7 +427,8 @@ class SidebarFrame(QFrame):
                         self.all_characters.append({
                             'name': character_name,
                             'display_text': display_text,
-                            'created_ts': created_ts
+                            'created_ts': created_ts,
+                            'image_path': image_path if has_image else None
                         })
                         
                     except (json.JSONDecodeError, FileNotFoundError) as e:
@@ -538,11 +548,27 @@ class SidebarFrame(QFrame):
         for character_data in self.all_characters:
             character_name = character_data['name']
             display_text = character_data['display_text']
+            image_path = character_data.get('image_path')
             
             # Filtrar por nombre (case insensitive)
             if text.lower() in character_name.lower():
                 item = QListWidgetItem(display_text)
                 item.setData(Qt.ItemDataRole.UserRole, character_name)
+                
+                # Asignar icono si existe imagen
+                if image_path and os.path.exists(image_path):
+                    # Intentar carga directa y escalado
+                    pixmap = QPixmap(image_path)
+                    if not pixmap.isNull():
+                        scaled_pixmap = pixmap.scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
+                        icon = QIcon(scaled_pixmap)
+                        item.setIcon(icon)
+                        
+                        # Configurar tooltip con imagen más grande
+                        html_image_path = image_path.replace("\\", "/")
+                        tooltip_html = f"<img src='{html_image_path}' height='150'>"
+                        item.setToolTip(tooltip_html)
+                
                 self.character_list.addItem(item)
     
     def on_character_selected(self, item):
@@ -555,4 +581,164 @@ class SidebarFrame(QFrame):
         character_name = item.data(Qt.ItemDataRole.UserRole)
         if character_name:
             self.on_character_change(character_name)
+
+    def show_context_menu(self, position):
+        """Muestra el menú contextual para los personajes"""
+        item = self.character_list.itemAt(position)
+        if not item:
+            return
+            
+        character_name = item.data(Qt.ItemDataRole.UserRole)
+        
+        menu = QMenu()
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #2b2b2b;
+                color: #e0e0e0;
+                border: 1px solid #404040;
+            }
+            QMenu::item {
+                padding: 5px 20px;
+            }
+            QMenu::item:selected {
+                background-color: #404040;
+            }
+        """)
+        
+        change_img_action = QAction("Cambiar Imagen", self)
+        change_img_action.triggered.connect(lambda: self.change_character_image(character_name))
+        menu.addAction(change_img_action)
+        
+        view_values_action = QAction("Ver Valores", self)
+        view_values_action.triggered.connect(lambda: self.view_character_values(character_name))
+        menu.addAction(view_values_action)
+        
+        menu.exec(self.character_list.mapToGlobal(position))
+
+    def change_character_image(self, character_name):
+        """Abre un diálogo para cambiar la imagen del personaje"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Cambiar imagen de {character_name}")
+        dialog.setFixedSize(300, 250)
+        dialog.setStyleSheet("background-color: #2b2b2b; color: white;")
+        
+        layout = QVBoxLayout(dialog)
+        
+        label = QLabel("Pega una nueva imagen (Ctrl+V):")
+        layout.addWidget(label)
+        
+        paste_widget = PasteImageWidget()
+        layout.addWidget(paste_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+        
+        btn_layout = QHBoxLayout()
+        save_btn = QPushButton("Guardar")
+        save_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 6px 12px;
+            }
+            QPushButton:hover { background-color: #45a049; }
+        """)
+        save_btn.clicked.connect(dialog.accept)
+        btn_layout.addStretch()
+        btn_layout.addWidget(save_btn)
+        btn_layout.addStretch()
+        
+        layout.addLayout(btn_layout)
+        
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            image = paste_widget.get_image()
+            if image:
+                # Rutas base
+                characters_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "characters")
+                normalized_name = character_name.lower().replace(" ", "_")
+                character_folder = os.path.join(characters_dir, normalized_name)
+                
+                # Ruta del posible JSON antiguo
+                old_json_path = os.path.join(characters_dir, f"{normalized_name}.json")
+                
+                # Crear carpeta si no existe
+                if not os.path.exists(character_folder):
+                    os.makedirs(character_folder, exist_ok=True)
+                
+                # MIGRACIÓN: Si existe el JSON antiguo fuera, moverlo adentro
+                if os.path.exists(old_json_path):
+                    new_json_path = os.path.join(character_folder, f"{normalized_name}.json")
+                    try:
+                        shutil.move(old_json_path, new_json_path)
+                        print(f"Migrado {old_json_path} a {new_json_path}")
+                    except Exception as e:
+                        QMessageBox.warning(self, "Advertencia", f"Error al migrar archivo de datos: {str(e)}")
+                
+                # Guardar imagen
+                image_path = os.path.join(character_folder, "image.png")
+                try:
+                    image.save(image_path, "PNG")
+                    # Refrescar lista
+                    self.refresh_characters()
+                except Exception as e:
+                    QMessageBox.critical(self, "Error", f"No se pudo guardar la imagen: {str(e)}")
+            else:
+                QMessageBox.warning(self, "Advertencia", "No se ha pegado ninguna imagen.")
+
+    def view_character_values(self, character_name):
+        """Muestra los valores JSON del personaje"""
+        # Buscar el archivo
+        characters_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "characters")
+        character_folder = os.path.join(characters_dir, character_name.lower().replace(' ', '_'))
+        json_path = os.path.join(character_folder, f"{character_name.lower().replace(' ', '_')}.json")
+        
+        if not os.path.exists(json_path):
+            # Intentar ruta antigua
+            json_path = os.path.join(characters_dir, f"{character_name.lower().replace(' ', '_')}.json")
+            
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                dialog = QDialog(self)
+                dialog.setWindowTitle(f"Valores de {character_name}")
+                dialog.resize(500, 400)
+                dialog.setStyleSheet("background-color: #2b2b2b; color: white;")
+                
+                layout = QVBoxLayout(dialog)
+                
+                text_edit = QTextEdit()
+                text_edit.setReadOnly(True)
+                text_edit.setPlainText(json.dumps(data, indent=4, ensure_ascii=False))
+                text_edit.setStyleSheet("""
+                    QTextEdit {
+                        background-color: #1a1a1a;
+                        border: 1px solid #404040;
+                        font-family: Consolas, monospace;
+                        font-size: 12px;
+                        color: #dcdcdc;
+                    }
+                """)
+                layout.addWidget(text_edit)
+                
+                close_btn = QPushButton("Cerrar")
+                close_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #555;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 6px 12px;
+                    }
+                    QPushButton:hover { background-color: #666; }
+                """)
+                close_btn.clicked.connect(dialog.accept)
+                layout.addWidget(close_btn, alignment=Qt.AlignmentFlag.AlignRight)
+                
+                dialog.exec()
+                
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"No se pudo leer el archivo: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Error", "No se encontró el archivo de datos del personaje.")
             

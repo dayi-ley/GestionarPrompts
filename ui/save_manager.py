@@ -8,7 +8,6 @@ from PyQt6.QtGui import QFont
 import os
 import json
 from .new_character_dialog import NewCharacterDialog
-from .variation_changes_widget import VariationChangesWidget
 
 class SaveOptionsDialog(QDialog):
     """Diálogo para seleccionar el tipo de guardado"""
@@ -18,7 +17,7 @@ class SaveOptionsDialog(QDialog):
         self.category_grid = category_grid
         self.setWindowTitle("Guardar Configuración")
         self.setModal(True)
-        self.setFixedSize(450, 200)
+        self.setFixedSize(450, 170)
         self.selected_option = None
         self.setup_ui()
     
@@ -94,31 +93,6 @@ class SaveOptionsDialog(QDialog):
         
         layout.addLayout(buttons_layout)
         layout.addStretch()
-        
-        # Botón cancelar
-        cancel_layout = QHBoxLayout()
-        cancel_layout.addStretch()
-        
-        self.cancel_btn = QPushButton("Cancelar")
-        self.cancel_btn.setFixedSize(80, 30)
-        self.cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                color: #666;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 11px;
-            }
-            QPushButton:hover {
-                background-color: #f5f5f5;
-                color: #333;
-                border-color: #bbb;
-            }
-        """)
-        self.cancel_btn.clicked.connect(self.reject)
-        cancel_layout.addWidget(self.cancel_btn)
-        
-        layout.addLayout(cancel_layout)
     
     def select_new_character(self):
         """Abre la ventana para crear nuevo personaje"""
@@ -141,12 +115,6 @@ class SaveOptionsDialog(QDialog):
         sidebar = None
         if hasattr(self.parent, 'sidebar'):
             sidebar = self.parent.sidebar
-            
-            # IMPORTANTE: Establecer snapshot de valores actuales antes de abrir la ventana
-            if hasattr(self.parent, 'category_grid'):
-                current_values = self.parent.category_grid.get_current_values()
-                sidebar.original_values_snapshot = current_values.copy()
-                sidebar.changes_tracker = {}  # Limpiar tracker de cambios
         
         # Línea 147 - Correcto
         dialog = VariationDialog(self, sidebar, self.category_grid)#Pasar sidebar y category_grid
@@ -172,22 +140,11 @@ class VariationDialog(QDialog):
         self.category_grid = category_grid  # Añadir referencia
         self.setWindowTitle("Crear Variación de Personaje")
         self.setModal(True)
-        self.setFixedSize(500, 550)
+        self.setFixedSize(500, 300)
         self.selected_character = None
         self.variation_name = None
         self.setup_ui()
         self.load_available_characters()
-        
-        # Establecer snapshot de valores actuales al abrir la ventana
-        self.capture_current_state()
-    
-    def capture_current_state(self):
-        """Captura el estado actual de las categorías como punto de referencia"""
-        if self.sidebar and hasattr(self.parent, 'category_grid'):
-            current_values = self.parent.category_grid.get_current_values()
-            self.sidebar.original_values_snapshot = current_values.copy()
-            self.sidebar.changes_tracker = {}  # Limpiar tracker de cambios
-            print(f"Snapshot capturado: {len(current_values)} categorías")
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -289,36 +246,9 @@ class VariationDialog(QDialog):
         
         layout.addLayout(variation_layout)
         
-        # Sección de cambios detectados
-        self.changes_widget = VariationChangesWidget(self, self.sidebar, self.category_grid)  # Usar self.sidebar y self.category_grid
-        layout.addWidget(self.changes_widget)
-        
-        # Conectar señal para cuando se actualicen los cambios
-        self.changes_widget.changes_updated.connect(self.on_changes_updated)
-        
         # Botones
         buttons_layout = QHBoxLayout()
         buttons_layout.setSpacing(10)
-        
-        # Botón Cancelar
-        self.cancel_btn = QPushButton("Cancelar")
-        self.cancel_btn.setFixedSize(100, 35)
-        self.cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                color: #888;
-                border: 2px solid #555;
-                border-radius: 6px;
-                font-size: 12px;
-                font-weight: 600;
-            }
-            QPushButton:hover {
-                background-color: #444;
-                border-color: #666;
-                color: #fff;
-            }
-        """)
-        self.cancel_btn.clicked.connect(self.reject)
         
         # Botón Crear
         self.create_btn = QPushButton("Crear Variación")
@@ -347,7 +277,6 @@ class VariationDialog(QDialog):
         self.create_btn.setEnabled(False)
         
         buttons_layout.addStretch()
-        buttons_layout.addWidget(self.cancel_btn)
         buttons_layout.addWidget(self.create_btn)
         
         layout.addLayout(buttons_layout)
@@ -472,18 +401,6 @@ class VariationDialog(QDialog):
             self.variation_input.setText(f"{character_name}_var1")
             print(f"Error generando nombre de variación: {e}")
     
-    def on_changes_updated(self):
-        """Maneja cuando se actualizan los cambios detectados"""
-        print("Cambios actualizados en VariationDialog")
-        
-        # Opcional: habilitar el botón de crear variación si hay cambios
-        try:
-            changes_data = self.changes_widget.get_changes_data()
-            if changes_data:
-                print(f"Se detectaron cambios en {len(changes_data)} categorías")
-        except Exception as e:
-            print(f"Error obteniendo cambios: {e}")
-
     def create_variation(self):
         """Crea la variación y cierra el diálogo"""
         character = self.selected_character

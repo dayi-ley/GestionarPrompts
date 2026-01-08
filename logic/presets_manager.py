@@ -1,9 +1,9 @@
 import json
 import os
 import re
-import shutil  # ← AGREGAR ESTE IMPORT
+import shutil
 from typing import Dict, Any
-from datetime import datetime  # ← AGREGAR ESTE IMPORT
+from datetime import datetime
 
 class PresetsManager:
     """Gestor de presets organizados por categorías"""
@@ -11,11 +11,10 @@ class PresetsManager:
     def __init__(self):
         current_dir = os.path.dirname(os.path.dirname(__file__))
         self.presets_dir = os.path.join(current_dir, "data", "presets")
-        self.ensure_base_directory()  # ← Cambiar nombre del método
+        self.ensure_base_directory() 
     
     def ensure_base_directory(self):
         """Asegura que existe el directorio base de presets"""
-        # Solo crear el directorio base, no las subcarpetas
         os.makedirs(self.presets_dir, exist_ok=True)
     
     def create_example_preset(self, category, file_path):
@@ -46,7 +45,6 @@ class PresetsManager:
                     }
                 }
             }
-            # ... más ejemplos para otras categorías
         }
         
         example_data = examples.get(category, {"presets": {}})
@@ -75,15 +73,14 @@ class PresetsManager:
     
     def save_preset(self, preset_type, preset_name, preset_data):
         """Guarda un preset con las categorías seleccionadas y las imágenes"""
-        # Crear directorio si no existe
         category_dir = os.path.join(self.presets_dir, preset_type)
         os.makedirs(category_dir, exist_ok=True)
         
-        # Generar nombre de archivo seguro
+        # Sanitizar nombre de archivo
         safe_filename = re.sub(r'[^\w\s-]', '', preset_name).strip()
         safe_filename = re.sub(r'[-\s]+', '_', safe_filename).lower()
         
-        # Sincronizar carpeta de imágenes con la selección actual
+        # Gestionar imágenes
         images_data = []
         images_dir = os.path.join(category_dir, f"{safe_filename}_images")
         selected_images = preset_data.get('images') or []
@@ -99,19 +96,16 @@ class PresetsManager:
                 new_image_name = f"image_{i+1}{file_extension}"
                 new_image_path = os.path.join(images_dir, new_image_name)
 
-                # Evitar SameFileError cuando el origen y el destino son iguales
                 try:
                     if os.path.abspath(image_path) != os.path.abspath(new_image_path):
                         shutil.copy2(image_path, new_image_path)
-                    # Si son iguales, no copiamos; ya está en el lugar correcto
                 except shutil.SameFileError:
-                    # Ya es el mismo archivo; no hacer nada
                     pass
 
                 desired_names.append(new_image_name)
                 images_data.append(new_image_name)
 
-            # Eliminar archivos sobrantes que no están en la nueva selección
+            # Limpiar imágenes obsoletas
             if os.path.isdir(images_dir):
                 for fname in os.listdir(images_dir):
                     if fname not in set(desired_names):
@@ -120,11 +114,9 @@ class PresetsManager:
                         except Exception:
                             pass
         else:
-            # No hay imágenes seleccionadas: borrar la carpeta de imágenes si existe
             if os.path.isdir(images_dir):
                 shutil.rmtree(images_dir, ignore_errors=True)
         
-        # Crear estructura del preset
         preset_structure = {
             "presets": {
                 safe_filename: {
@@ -136,7 +128,6 @@ class PresetsManager:
             }
         }
         
-        # Guardar archivo JSON
         file_path = os.path.join(category_dir, f"{safe_filename}.json")
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(preset_structure, f, indent=2, ensure_ascii=False)
@@ -145,13 +136,11 @@ class PresetsManager:
     
     def get_all_preset_folders(self):
         """Obtiene todas las carpetas de presets (solo personalizadas)"""
-        # Solo buscar carpetas personalizadas que realmente existen
         custom_folders = {}
         if os.path.exists(self.presets_dir):
             for item in os.listdir(self.presets_dir):
                 item_path = os.path.join(self.presets_dir, item)
                 if os.path.isdir(item_path):
-                    # Todas las carpetas son personalizadas ahora
                     display_name = item.replace('_', ' ').title()
                     custom_folders[item] = {
                         "display_name": f"📂 {display_name}",
@@ -163,20 +152,13 @@ class PresetsManager:
     def create_custom_folder(self, folder_name):
         """Crea una nueva carpeta personalizada de presets"""
         try:
-            # Convertir nombre a formato de carpeta (sin espacios, minúsculas)
             folder_id = self.sanitize_folder_name(folder_name)
             folder_path = os.path.join(self.presets_dir, folder_id)
             
-            # Verificar que no exista
             if os.path.exists(folder_path):
                 return False
             
-            # Crear la carpeta
             os.makedirs(folder_path, exist_ok=True)
-            
-            # NO crear archivo de información automáticamente
-            # Solo crear la carpeta vacía
-            
             return True
             
         except Exception as e:
@@ -185,16 +167,14 @@ class PresetsManager:
     
     def sanitize_folder_name(self, name):
         """Convierte un nombre de carpeta a formato válido para sistema de archivos"""
-        # Convertir a minúsculas y reemplazar espacios con guiones bajos
         sanitized = name.lower().strip()
-        sanitized = re.sub(r'[^a-z0-9\s\-_]', '', sanitized)  # Solo letras, números, espacios, guiones
-        sanitized = re.sub(r'\s+', '_', sanitized)  # Espacios a guiones bajos
-        sanitized = re.sub(r'_+', '_', sanitized)  # Múltiples guiones bajos a uno solo
-        return sanitized.strip('_')  # Quitar guiones bajos al inicio/final
+        sanitized = re.sub(r'[^a-z0-9\s\-_]', '', sanitized)
+        sanitized = re.sub(r'\s+', '_', sanitized)
+        sanitized = re.sub(r'_+', '_', sanitized)
+        return sanitized.strip('_')
     
     def load_preset(self, preset_type, preset_name):
         """Carga un preset específico"""
-        # Generar nombre de archivo seguro
         safe_filename = re.sub(r'[^\w\s-]', '', preset_name).strip()
         safe_filename = re.sub(r'[-\s]+', '_', safe_filename).lower()
         
@@ -209,7 +189,6 @@ class PresetsManager:
                 
             preset_data = data.get('presets', {}).get(safe_filename, {})
             
-            # Cargar rutas completas de imágenes
             if preset_data.get('images'):
                 images_dir = os.path.join(self.presets_dir, preset_type, f"{safe_filename}_images")
                 full_image_paths = []
@@ -226,17 +205,8 @@ class PresetsManager:
             return None
 
     def delete_preset(self, preset_type: str, preset_name: str) -> bool:
-        """Elimina el archivo JSON del preset y su carpeta de imágenes asociada.
-
-        Args:
-            preset_type: Carpeta/categoría del preset.
-            preset_name: Nombre visible del preset.
-
-        Returns:
-            True si se eliminó alguna pieza relevante; False si no existía nada que eliminar.
-        """
+        """Elimina el archivo JSON del preset y su carpeta de imágenes asociada"""
         try:
-            # Nombre de archivo seguro
             safe_filename = re.sub(r'[^\w\s-]', '', preset_name).strip()
             safe_filename = re.sub(r'[-\s]+', '_', safe_filename).lower()
 
@@ -260,14 +230,7 @@ class PresetsManager:
             return False
 
     def delete_folder(self, folder_id: str) -> bool:
-        """Elimina por completo una carpeta de presets (incluye JSON e imágenes).
-
-        Args:
-            folder_id: Identificador de la carpeta (nombre de directorio).
-
-        Returns:
-            True si la carpeta existía y fue eliminada; False en caso contrario o error.
-        """
+        """Elimina por completo una carpeta de presets (incluye JSON e imágenes)"""
         try:
             folder_path = os.path.join(self.presets_dir, folder_id)
             if os.path.isdir(folder_path):
@@ -279,15 +242,7 @@ class PresetsManager:
             return False
 
     def rename_folder(self, old_folder_id: str, new_display_name: str) -> tuple[bool, str]:
-        """Renombra una carpeta de presets moviendo el directorio.
-
-        Args:
-            old_folder_id: Nombre actual del directorio.
-            new_display_name: Nuevo nombre visible; se sanitiza a id de carpeta.
-
-        Returns:
-            (success, new_folder_id) donde new_folder_id es el id sanitizado si success.
-        """
+        """Renombra una carpeta de presets moviendo el directorio"""
         try:
             new_folder_id = self.sanitize_folder_name(new_display_name)
             if not new_folder_id:
@@ -299,7 +254,6 @@ class PresetsManager:
             if not os.path.isdir(old_path):
                 return (False, "")
             if os.path.exists(new_path):
-                # Ya existe una carpeta con ese nombre
                 return (False, "")
 
             os.rename(old_path, new_path)

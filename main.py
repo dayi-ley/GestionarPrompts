@@ -2,7 +2,7 @@ import sys
 import os
 from pathlib import Path
 
-# Limpiar sys.path de rutas conflictivas externas
+# Limpiar sys.path
 sys.path = [p for p in sys.path if "appPrompt" not in p]
 
 def setup_runtime():
@@ -27,7 +27,6 @@ def setup_runtime():
             os.environ["PATH"] = str(torch_lib_path) + os.pathsep + os.environ["PATH"]
             
     except Exception:
-        # Intentar método alternativo si falla el import directo
         try:
             import importlib.util
             torch_spec = importlib.util.find_spec("torch")

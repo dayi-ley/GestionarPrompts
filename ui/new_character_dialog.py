@@ -1,26 +1,29 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, 
-    QLabel, QLineEdit, QMessageBox
+    QLabel, QLineEdit, QMessageBox, QApplication
 )
-from PyQt6.QtCore import Qt, pyqtSignal  # Agregar pyqtSignal aquí
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QFont, QPixmap, QImage, QKeySequence, QShortcut
 import os
 import json
 import re
 from datetime import datetime
+from PIL import Image
+from io import BytesIO
+from ui.ui_elements import PasteImageWidget
 
 class NewCharacterDialog(QDialog):
     """Diálogo para crear un nuevo personaje"""
     
-    character_saved = pyqtSignal(str)  # Agregar esta línea - señal que emite el nombre del personaje
+    character_saved = pyqtSignal(str)
     
     def __init__(self, parent=None, category_grid=None):
         super().__init__(parent)
         self.setWindowTitle("Nuevo Personaje")
         self.setModal(True)
-        self.setFixedSize(400, 220)
+        self.setFixedSize(500, 220)
         self.character_name = None
-        self.category_grid = category_grid  # Referencia al grid de categorías
+        self.category_grid = category_grid 
         self.setStyleSheet("""
             QDialog {
                 background-color: #2b2b2b;
@@ -29,26 +32,27 @@ class NewCharacterDialog(QDialog):
         self.setup_ui()
     
     def setup_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(20)
-        layout.setContentsMargins(30, 30, 30, 25)
-        
-        # Título
+        main_layout = QHBoxLayout(self)
+        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(25, 25, 25, 25)
+        image_layout = QVBoxLayout()
+        self.image_widget = PasteImageWidget()
+        self.image_widget.image_pasted.connect(self.check_validity)
+        image_layout.addWidget(self.image_widget)
+        image_layout.addStretch()
+        main_layout.addLayout(image_layout)
+        form_layout = QVBoxLayout()
+        form_layout.setSpacing(15)
         title_label = QLabel("Crear Nuevo Personaje")
         title_label.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title_label.setStyleSheet("color: white;")
-        layout.addWidget(title_label)
-        
-        # Instrucción
-        instruction_label = QLabel("Ingresa un nombre para tu personaje:")
+        form_layout.addWidget(title_label)
+        instruction_label = QLabel("Ingresa un nombre:")
         instruction_label.setFont(QFont("Segoe UI", 11))
-        instruction_label.setStyleSheet("color: white; margin-bottom: px;")
-        layout.addWidget(instruction_label)
-        
-        # Campo de texto
+        instruction_label.setStyleSheet("color: #ccc;")
+        form_layout.addWidget(instruction_label)
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Ejemplo: Aria, Kobayashi, etc.")
+        self.name_input.setPlaceholderText("Nombre del personaje")
         self.name_input.setFont(QFont("Segoe UI", 11))
         self.name_input.setStyleSheet("""
             QLineEdit {
@@ -67,40 +71,14 @@ class NewCharacterDialog(QDialog):
                 color: #aaa;
             }
         """)
+        self.name_input.textChanged.connect(self.check_validity)
         self.name_input.returnPressed.connect(self.save_character)
-        layout.addWidget(self.name_input)
-        
-        # Espacio flexible
-        layout.addStretch()
-        
-        # Botones
+        form_layout.addWidget(self.name_input)
+        form_layout.addStretch()
         buttons_layout = QHBoxLayout()
-        buttons_layout.setSpacing(15)
-        
-        # Botón Cancelar
-        self.cancel_btn = QPushButton("Cancelar")
-        self.cancel_btn.setFixedSize(100, 35)
-        self.cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #555;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                font-size: 11px;
-                font-weight: 600;
-            }
-            QPushButton:hover {
-                background-color: #666;
-            }
-            QPushButton:pressed {
-                background-color: #444;
-            }
-        """)
-        self.cancel_btn.clicked.connect(self.reject)
-        
-        # Botón Guardar Personaje
         self.save_btn = QPushButton("Guardar Personaje")
         self.save_btn.setFixedSize(140, 35)
+        self.save_btn.setEnabled(False)
         self.save_btn.setStyleSheet("""
             QPushButton {
                 background-color: #4CAF50;
@@ -117,26 +95,31 @@ class NewCharacterDialog(QDialog):
                 background-color: #3d8b40;
             }
             QPushButton:disabled {
-                background-color: #666;
-                color: #aaa;
+                background-color: #444;
+                color: #888;
+                border: 1px solid #555;
             }
         """)
         self.save_btn.clicked.connect(self.save_character)
-        
-        buttons_layout.addWidget(self.cancel_btn)
         buttons_layout.addStretch()
         buttons_layout.addWidget(self.save_btn)
-        
-        layout.addLayout(buttons_layout)
-        
-        # Enfocar el campo de texto al abrir
+        form_layout.addLayout(buttons_layout)
+        main_layout.addLayout(form_layout)
         self.name_input.setFocus()
-    
+
+    def check_validity(self):
+        """Habilita el botón guardar solo si hay nombre e imagen"""
+        name = self.name_input.text().strip()
+        has_image = self.image_widget.get_image() is not None
+        
+        self.save_btn.setEnabled(bool(name and has_image))
+
     def save_character(self):
         """Valida y guarda el nuevo personaje"""
+        if not self.save_btn.isEnabled():
+            return
         name = self.name_input.text().strip()
-        
-        # Validaciones existentes
+
         if not name:
             QMessageBox.warning(self, "Error", "Por favor ingresa un nombre para el personaje.")
             self.name_input.setFocus()
@@ -152,21 +135,18 @@ class NewCharacterDialog(QDialog):
             self.name_input.setFocus()
             return
         
-        # Guardar el personaje
+
         try:
-            self.save_character_data(name)
-            # ELIMINAR ESTA LÍNEA: QMessageBox.information(self, "Éxito", f"Personaje '{name}' guardado exitosamente.")
+            image = self.image_widget.get_image()
+            self.save_character_data(name, image)
             self.character_name = name
-            
-            # Emitir la señal para actualizar la lista de personajes
             self.character_saved.emit(name)
-            
             self.accept()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al guardar el personaje: {str(e)}")
     
-    def save_character_data(self, name):
-        """Guarda los datos del personaje en el archivo JSON"""
+    def save_character_data(self, name, image=None):
+        """Guarda los datos del personaje en el archivo JSON e imagen"""
         # Crear directorio de personajes si no existe
         characters_dir = os.path.join("data", "characters")
         os.makedirs(characters_dir, exist_ok=True)
@@ -177,21 +157,20 @@ class NewCharacterDialog(QDialog):
         
         # Crear carpeta del personaje
         os.makedirs(character_folder, exist_ok=True)
+
+        if image:
+            image_path = os.path.join(character_folder, "image.png")
+            image.save(image_path, "PNG")
         
-        # Obtener valores actuales de las categorías
+ 
         if self.category_grid:
             current_values = self.category_grid.get_current_values()
-            
-            # Convertir nombres de categorías al formato snake_case
             category_data = {}
             for display_name, value in current_values.items():
-                # Convertir "Cabello forma" -> "cabello_forma"
                 snake_case_name = display_name.lower().replace(" ", "_")
                 category_data[snake_case_name] = value
         else:
             category_data = {}
-        
-        # Crear estructura de datos con metadatos
         character_data = {
             "metadata": {
                 "character_name": name,
@@ -205,7 +184,6 @@ class NewCharacterDialog(QDialog):
             "categories": category_data
         }
         
-        # Guardar archivo JSON en la carpeta del personaje
         json_file_path = os.path.join(character_folder, f"{normalized_name}.json")
         
         with open(json_file_path, 'w', encoding='utf-8') as f:
@@ -218,8 +196,6 @@ class NewCharacterDialog(QDialog):
         characters_dir = os.path.join("data", "characters")
         if not os.path.exists(characters_dir):
             return False
-        
-        # Normalizar nombre para comparación
         normalized_name = name.lower().replace(" ", "_")
         character_folder = os.path.join(characters_dir, normalized_name)
         

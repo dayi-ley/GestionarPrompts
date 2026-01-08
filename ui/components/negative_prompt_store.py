@@ -4,7 +4,7 @@ from typing import Dict, List, Any
 from datetime import datetime
 
 class NegativePromptStore:
-    """Maneja la configuración y persistencia de datos de la aplicación."""
+    """Gestor de configuración y persistencia."""
     
     def __init__(self):
         self.config_dir = "data"
@@ -13,10 +13,8 @@ class NegativePromptStore:
         self.scenes_file = os.path.join(self.config_dir, "scenes.json")
         self.history_file = os.path.join(self.config_dir, "prompt_history.json")
         
-        # Crear directorio de datos si no existe
         os.makedirs(self.config_dir, exist_ok=True)
         
-        # Configuraciones por defecto
         self.default_settings = {
             "theme": "dark",
             "window_size": "1400x900",
@@ -27,17 +25,15 @@ class NegativePromptStore:
             "saved_negative_prompts": []
         }
         
-        # Cargar configuraciones
         self.settings = self.load_settings()
     
     def load_settings(self) -> Dict[str, Any]:
-        """Carga las configuraciones desde el archivo."""
+        """Carga configuraciones."""
         try:
             if os.path.exists(self.config_file):
                 with open(self.config_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             else:
-                # Crear archivo con configuraciones por defecto
                 self.save_settings(self.default_settings)
                 return self.default_settings
         except Exception as e:
@@ -45,7 +41,7 @@ class NegativePromptStore:
             return self.default_settings
     
     def save_settings(self, settings: Dict[str, Any]):
-        """Guarda las configuraciones en el archivo."""
+        """Guarda configuraciones."""
         try:
             with open(self.config_file, 'w', encoding='utf-8') as f:
                 json.dump(settings, f, indent=2, ensure_ascii=False)
@@ -53,16 +49,16 @@ class NegativePromptStore:
             print(f"Error guardando configuraciones: {e}")
     
     def get_setting(self, key: str, default=None):
-        """Obtiene una configuración específica."""
+        """Obtiene configuración."""
         return self.settings.get(key, default)
     
     def set_setting(self, key: str, value: Any):
-        """Establece una configuración específica."""
+        """Establece configuración."""
         self.settings[key] = value
         self.save_settings(self.settings)
     
     def load_characters(self) -> List[Dict[str, Any]]:
-        """Carga la lista de personajes guardados."""
+        """Carga personajes."""
         try:
             if os.path.exists(self.characters_file):
                 with open(self.characters_file, 'r', encoding='utf-8') as f:
@@ -73,7 +69,7 @@ class NegativePromptStore:
             return []
     
     def save_characters(self, characters: List[Dict[str, Any]]):
-        """Guarda la lista de personajes."""
+        """Guarda personajes."""
         try:
             with open(self.characters_file, 'w', encoding='utf-8') as f:
                 json.dump(characters, f, indent=2, ensure_ascii=False)
@@ -81,7 +77,7 @@ class NegativePromptStore:
             print(f"Error guardando personajes: {e}")
     
     def load_scenes(self) -> List[Dict[str, Any]]:
-        """Carga la lista de escenas guardadas."""
+        """Carga escenas."""
         try:
             if os.path.exists(self.scenes_file):
                 with open(self.scenes_file, 'r', encoding='utf-8') as f:
@@ -92,7 +88,7 @@ class NegativePromptStore:
             return []
     
     def save_scenes(self, scenes: List[Dict[str, Any]]):
-        """Guarda la lista de escenas."""
+        """Guarda escenas."""
         try:
             with open(self.scenes_file, 'w', encoding='utf-8') as f:
                 json.dump(scenes, f, indent=2, ensure_ascii=False)
@@ -100,12 +96,11 @@ class NegativePromptStore:
             print(f"Error guardando escenas: {e}")
     
     def load_prompt_history(self) -> List[Dict[str, Any]]:
-        """Carga el historial de prompts."""
+        """Carga historial."""
         try:
             if os.path.exists(self.history_file):
                 with open(self.history_file, 'r', encoding='utf-8') as f:
                     history = json.load(f)
-                    # Limitar el historial al máximo configurado
                     max_history = self.get_setting("max_history", 100)
                     return history[-max_history:] if len(history) > max_history else history
             return []
@@ -114,9 +109,8 @@ class NegativePromptStore:
             return []
     
     def save_prompt_history(self, history: List[Dict[str, Any]]):
-        """Guarda el historial de prompts."""
+        """Guarda historial."""
         try:
-            # Limitar el historial al máximo configurado
             max_history = self.get_setting("max_history", 100)
             if len(history) > max_history:
                 history = history[-max_history:]
@@ -127,7 +121,7 @@ class NegativePromptStore:
             print(f"Error guardando historial: {e}")
     
     def add_prompt_to_history(self, prompt: str, negative_prompt: str = ""):
-        """Añade un prompt al historial."""
+        """Añade prompt al historial."""
         history = self.load_prompt_history()
         
         new_entry = {
@@ -140,7 +134,7 @@ class NegativePromptStore:
         self.save_prompt_history(history)
     
     def export_prompt(self, prompt: str, negative_prompt: str = "", format: str = "json") -> str:
-        """Exporta un prompt en el formato especificado."""
+        """Exporta prompt."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         if format.lower() == "json":
@@ -165,30 +159,27 @@ class NegativePromptStore:
             raise ValueError(f"Formato no soportado: {format}")
         
         return filename 
-
-    # -----------------------------
-    # Negative Prompt guardados
-    # -----------------------------
+    
     def get_saved_negative_prompts(self) -> List[str]:
-        """Obtiene la lista de negative prompts guardados."""
+        """Obtiene negative prompts guardados."""
         return self.settings.get("saved_negative_prompts", [])
 
     def add_saved_negative_prompt(self, text: str) -> int:
-        """Agrega un negative prompt a la lista y devuelve su índice (1-based)."""
+        """Agrega negative prompt."""
         prompts = self.get_saved_negative_prompts()
         prompts.append(text)
         self.set_setting("saved_negative_prompts", prompts)
-        return len(prompts)  # índice 1-based
+        return len(prompts)
 
     def update_saved_negative_prompt(self, index: int, new_text: str):
-        """Actualiza el negative prompt en el índice dado (1-based)."""
+        """Actualiza negative prompt."""
         prompts = self.get_saved_negative_prompts()
         if 1 <= index <= len(prompts):
             prompts[index - 1] = new_text
             self.set_setting("saved_negative_prompts", prompts)
 
     def delete_saved_negative_prompt(self, index: int):
-        """Elimina el negative prompt en el índice dado (1-based)."""
+        """Elimina negative prompt."""
         prompts = self.get_saved_negative_prompts()
         if 1 <= index <= len(prompts):
             del prompts[index - 1]

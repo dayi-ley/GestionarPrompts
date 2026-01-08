@@ -1,12 +1,12 @@
 {
   "presets": {
-    "small_body_v2": {
-      "name": "small body v2",
+    "cuerpopequeño": {
+      "name": "CuerpoPequeño",
       "categories": {
         "Tipo de cuerpo": "loli, young girl, ((dwarfs body)), ((young dwarfs body)), corps d'enfants,"
       },
       "images": [],
-      "created_at": "2025-08-05T17:05:23.740691"
+      "created_at": "2026-01-06T14:41:33.995631"
     }
   }
 }

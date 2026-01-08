@@ -4,10 +4,10 @@ import re
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, 
     QLineEdit, QScrollArea, QPushButton, QToolButton, QInputDialog, QMessageBox,
-    QDialog, QLabel, QTextEdit
+    QDialog, QLabel, QTextEdit, QMenu
 )
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, pyqtSignal, QSize
+from PyQt6.QtGui import QFont, QIcon, QPixmap, QColor,QAction
 from .components import CategoryCard, AddCategoryCard
 from .utils.category_utils import (
     load_categories_and_tags, 
@@ -47,11 +47,9 @@ class CategoryGridFrame(QWidget):
         self.main_layout.setContentsMargins(16, 0, 16, 16)
         self.main_layout.setSpacing(0)
         
-        # --- Layout horizontal para buscador y botones ---
         search_layout = QHBoxLayout()
         search_layout.setSpacing(8)
         
-        # Botón/ícono para limpiar todas las categorías (a la izquierda del filtro)
         self.clear_btn = QToolButton()
         self.clear_btn.setText("🧹")
         self.clear_btn.setToolTip("Limpiar todas las categorías")
@@ -71,11 +69,11 @@ class CategoryGridFrame(QWidget):
             """
         )
         self.clear_btn.clicked.connect(self.clear_all_values)
+        self.clear_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.clear_btn.customContextMenuRequested.connect(self.show_clear_menu)
         search_layout.addWidget(self.clear_btn)
-        # Separación extra para evitar clics accidentales entre limpieza y buscador
         search_layout.addSpacing(10)
         
-        # Botón Reordenar al lado izquierdo del buscador
         self.reorder_btn = QToolButton()
         self.reorder_btn.setText("↕️")
         self.reorder_btn.setToolTip("Activar modo reordenar categorías")
@@ -93,27 +91,21 @@ class CategoryGridFrame(QWidget):
         search_layout.addWidget(self.reorder_btn)
         search_layout.addSpacing(10)
         
-        # Buscador
         self.search_box = QLineEdit()
         self.search_box.setPlaceholderText("Buscar categoría...")
-        # Hacer el buscador más ancho pero controlado
         self.search_box.setMinimumWidth(360)
         self.search_box.setMaximumWidth(600)
         self.search_box.textChanged.connect(self.filter_cards)
         search_layout.addWidget(self.search_box)
-        # Empujar los botones a la derecha
         search_layout.addStretch(1)
         
-        # Botón para importar datos
         self.import_data_btn = QPushButton("Importar Datos")
         from PyQt6.QtWidgets import QSizePolicy
         self.import_data_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.import_data_btn.clicked.connect(self.import_data_dialog)
-        # Reducir padding para que sea más angosto
         self.import_data_btn.setStyleSheet("QPushButton { padding: 4px 12px; }")
         search_layout.addWidget(self.import_data_btn)
         
-        # Nuevo botón para guardar
         self.save_btn = QPushButton("Guardar")
         self.save_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.save_btn.clicked.connect(self.show_save_options)
@@ -137,18 +129,15 @@ class CategoryGridFrame(QWidget):
         
         self.main_layout.addLayout(search_layout)
 
-        # Scroll area
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         
-        # Widget contenedor para el grid
         self.grid_widget = QWidget()
         self.grid_layout = QGridLayout(self.grid_widget)
         self.grid_layout.setSpacing(8)
         
-        # Hacer el grid responsivo
         self.grid_layout.setColumnStretch(0, 1)
         self.grid_layout.setColumnStretch(1, 1)
         self.grid_layout.setColumnStretch(2, 1)
@@ -194,7 +183,6 @@ class CategoryGridFrame(QWidget):
         rules = [
             (['loras estilos artistico', 'loras detalles mejoras', 'loras modelos especificos', 'loras personaje', 'loras '], '#4c0027'),
             (['personaje'], '#d09305'),
-            (['cabello forma', 'cabello color', 'cabello accesorios', 'cabello '], '#4e635a'),
             (['vestuario', 'ropa interior', 'lenceria', 'lencería', 'prendas superiores', 'prendas inferiores'], '#553c9a'),
             (['pose actitud global', 'pose brazos', 'pose piernas', 'pose ', 'orientacion personaje', 'orientación personaje'], '#38a169'),
             (['expresion facial', 'expresión facial'], '#38a169'),
@@ -213,10 +201,8 @@ class CategoryGridFrame(QWidget):
         colors_map = load_category_colors()
         
         row, col = 0, 0
-        # Reiniciar referencia de tarjetas antes de poblar
         self.cards = []
         for category in categories:
-            # Preferir color manual persistido sobre color grupal
             snake = category["name"].lower().replace(" ", "_")
             manual_color = colors_map.get(snake)
             group_color = manual_color or self.get_category_group_color(category["name"]) 
@@ -226,11 +212,10 @@ class CategoryGridFrame(QWidget):
                 category["icon"], 
                 category["tags"], 
                 self.prompt_generator,
-                bg_color=group_color  # ¡Agregar el color grupal!
+                bg_color=group_color
             )
             card.request_rename.connect(self.handle_category_rename)
             card.value_changed.connect(self.update_prompt)
-            # Conectar señales de reordenar hacia el grid
             if hasattr(card, 'request_move_up'):
                 card.request_move_up.connect(lambda name=category["name"]: self.move_card(name, -1))
             if hasattr(card, 'request_move_down'):
@@ -244,7 +229,6 @@ class CategoryGridFrame(QWidget):
                 col = 0
                 row += 1
         
-        # Tarjeta para añadir nueva categoría
         self.add_card = AddCategoryCard(self.add_custom_category)
         self.grid_layout.addWidget(self.add_card, row, col)
 
@@ -267,6 +251,95 @@ class CategoryGridFrame(QWidget):
         # Actualizar prompt y señales tras limpiar
         self.update_prompt()
 
+    def show_clear_menu(self, position):
+        """Muestra el menú contextual para limpiar por grupos de color (dinámico)."""
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+                border: 1px solid #404040;
+                border-radius: 6px;
+                padding: 4px;
+            }
+            QMenu::item {
+                padding: 6px 24px 6px 8px;
+                border-radius: 4px;
+            }
+            QMenu::item:selected {
+                background-color: #6366f1;
+                color: white;
+            }
+            QMenu::separator {
+                height: 1px;
+                background: #404040;
+                margin: 4px 0;
+            }
+        """)
+
+        # 1. Detectar colores únicos y contar tarjetas
+        color_counts = {}  # {hex_color: count}
+        
+        for card in self.cards:
+            if hasattr(card, 'bg_color'):
+                c = card.bg_color
+                if isinstance(c, QColor):
+                    c = c.name()
+                
+                if c:
+                    c = str(c).lower()
+                    color_counts[c] = color_counts.get(c, 0) + 1
+
+        # 2. Crear acciones para cada color
+        sorted_colors = sorted(color_counts.items(), key=lambda x: x[1], reverse=True)
+
+        for color_hex, count in sorted_colors:
+             pixmap = QPixmap(14, 14)
+             try:
+                pixmap.fill(QColor(color_hex))
+             except:
+                pixmap.fill(QColor("#252525")) # Fallback
+             
+             icon = QIcon(pixmap)
+             
+             label = f"Limpiar Grupo ({count} categorías)"
+             action = QAction(icon, label, self)
+             action.triggered.connect(lambda checked, c=color_hex: self.clear_categories_by_color(c))
+             menu.addAction(action)
+
+        if sorted_colors:
+            menu.addSeparator()
+        
+        clear_all_action = QAction("Limpiar Todo", self)
+        clear_all_action.triggered.connect(self.clear_all_values)
+        menu.addAction(clear_all_action)
+
+        menu.exec(self.clear_btn.mapToGlobal(position))
+
+    def clear_categories_by_color(self, target_color_hex):
+        """Limpia tarjetas que coincidan con el color especificado."""
+        cleaned_any = False
+        target = str(target_color_hex).lower()
+        
+        for card in self.cards:
+            if hasattr(card, 'is_locked') and card.is_locked:
+                continue
+            
+            if hasattr(card, 'bg_color'):
+                c = card.bg_color
+                if isinstance(c, QColor):
+                    c = c.name()
+                
+                if c:
+                    c = str(c).lower()
+                    if c == target:
+                        if hasattr(card, 'clear_value'):
+                            card.clear_value()
+                            cleaned_any = True
+        
+        if cleaned_any:
+            self.update_prompt()
+
     def toggle_reorder_mode(self, enabled: bool):
         """Activa o desactiva el modo reordenar mostrando controles en cada tarjeta."""
         for card in self.cards:
@@ -275,7 +348,6 @@ class CategoryGridFrame(QWidget):
 
     def move_card(self, category_display_name: str, delta: int):
         """Mueve una tarjeta arriba/abajo y reconstruye el grid. También guarda el nuevo orden."""
-        # Buscar índice actual de la tarjeta
         idx = None
         for i, card in enumerate(self.cards):
             if getattr(card, 'category_name', '') == category_display_name:
@@ -286,12 +358,12 @@ class CategoryGridFrame(QWidget):
         new_idx = max(0, min(len(self.cards) - 1, idx + delta))
         if new_idx == idx:
             return
-        # Reordenar lista interna
+        
         card = self.cards.pop(idx)
         self.cards.insert(new_idx, card)
-        # Re-flujo visual del grid
+        
         self.reflow_cards()
-        # Persistir nuevo orden en categories.json
+        
         try:
             snake_order = [c.category_name.lower().replace(" ", "_") for c in self.cards]
             save_categories_order(snake_order)
@@ -300,7 +372,6 @@ class CategoryGridFrame(QWidget):
 
     def reflow_cards(self):
         """Reconstruye la cuadrícula según el orden actual de self.cards."""
-        # Vaciar el layout sin destruir los widgets
         try:
             while self.grid_layout.count():
                 item = self.grid_layout.takeAt(0)
@@ -309,7 +380,7 @@ class CategoryGridFrame(QWidget):
                     w.setParent(self.grid_widget)
         except Exception:
             pass
-        # Reagregar según orden
+        
         row, col = 0, 0
         for card in self.cards:
             self.grid_layout.addWidget(card, row, col)
@@ -317,13 +388,12 @@ class CategoryGridFrame(QWidget):
             if col >= 3:
                 col = 0
                 row += 1
-        # Agregar la tarjeta de añadir al final
+        
         if hasattr(self, 'add_card') and self.add_card is not None:
             self.grid_layout.addWidget(self.add_card, row, col)
 
     def update_prompt(self):
         """Actualiza el prompt cuando cambian los valores de las tarjetas"""
-        # Crear mapeo inverso: formato capitalizado -> formato snake_case
         with open("c:\\Users\\LENOVO\\Desktop\\AppPrompts\\data\\categories.json", "r", encoding="utf-8") as f:
             original_categories = json.load(f)["categorias"]
         
@@ -332,24 +402,19 @@ class CategoryGridFrame(QWidget):
             formatted_cat = orig_cat.replace("_", " ").capitalize()
             category_reverse_mapping[formatted_cat] = orig_cat
         
-        # Detectar qué categoría cambió y notificar al sidebar
         current_values = self.get_current_values()
         
         for category_name, current_value in current_values.items():
             previous_value = self.previous_values.get(category_name, "")
             if previous_value != current_value:
-                # Emitir señal de cambio específico
                 self.category_value_changed.emit(category_name, previous_value, current_value)
                 
-                # Actualizar el prompt_generator con el nombre correcto
                 snake_case_name = category_reverse_mapping.get(category_name, category_name.lower().replace(" ", "_"))
                 if self.prompt_generator:
                     self.prompt_generator.update_category(snake_case_name, current_value)
         
-        # Actualizar valores anteriores
         self.previous_values = current_values.copy()
         
-        # Usar el prompt_generator en lugar de generar el prompt manualmente
         prompt = self.prompt_generator.generate_prompt()
         self.prompt_updated.emit(prompt)
     
@@ -370,7 +435,6 @@ class CategoryGridFrame(QWidget):
         """Maneja el renombrado de categorías"""
         try:
             rename_category_in_files(old_name, new_name)
-            # Migrar color si existe en el almacenamiento
             try:
                 rename_category_color_key(old_name, new_name)
             except Exception:
@@ -388,7 +452,6 @@ class CategoryGridFrame(QWidget):
                 update_categories_json(normalized_name)
                 update_tags_json(normalized_name, [])
                 
-                # Recrear las tarjetas
                 self.clear_grid()
                 self.create_cards()
                 
@@ -402,7 +465,6 @@ class CategoryGridFrame(QWidget):
             card.setParent(None)
         self.cards.clear()
         
-        # Limpiar el grid layout
         while self.grid_layout.count():
             item = self.grid_layout.takeAt(0)
             if item.widget():
@@ -410,16 +472,13 @@ class CategoryGridFrame(QWidget):
 
     def show_save_options(self):
         """Muestra las opciones de guardado"""
-        # Verificar que hay datos para guardar
         current_values = self.get_current_values()
         
-        # Contar cuántas categorías tienen datos
         categories_with_data = 0
         for category_name, value in current_values.items():
             if value and value.strip():  # Si el valor no está vacío
                 categories_with_data += 1
         
-        # Si no hay datos en ninguna categoría, mostrar mensaje de advertencia
         if categories_with_data == 0:
             QMessageBox.warning(
                 self, 
@@ -429,14 +488,12 @@ class CategoryGridFrame(QWidget):
             )
             return
         
-        # Si hay al menos una categoría con datos, proceder con el guardado
         self.save_manager.show_save_options()
 
     
     
     def save_as_new_character(self, variation_data):
         """Guarda los valores actuales como un nuevo personaje"""
-        # Solicitar nombre del personaje
         name, ok = QInputDialog.getText(
             self, 
             "Nuevo Personaje", 
@@ -448,7 +505,6 @@ class CategoryGridFrame(QWidget):
         
         name = name.strip()
         
-        # Verificar si ya existe
         characters_dir = "data/characters"
         if not os.path.exists(characters_dir):
             os.makedirs(characters_dir)
@@ -465,11 +521,9 @@ class CategoryGridFrame(QWidget):
                 return
         
         try:
-            # Guardar archivo del personaje
             with open(character_file, "w", encoding="utf-8") as f:
                 json.dump(variation_data, f, ensure_ascii=False, indent=2)
             
-            # Emitir señal para actualizar el dropdown de personajes
             self.character_saved.emit(name)
             
             QMessageBox.information(
@@ -592,69 +646,43 @@ class CategoryGridFrame(QWidget):
         if not preset_data:
             return
         
-        # Verificar si preset_data ya contiene las categorías directamente
-        # o si tiene la estructura anidada
         if 'categories' in preset_data:
-            # preset_data tiene estructura anidada
             preset_categories = preset_data.get('categories', {})
             preset_name = preset_data.get('name', preset_data.get('preset_display_name', '.'))
         else:
-            # Las categorías están directamente en preset_data
             preset_categories = preset_data
-            # Usar el nombre pasado desde presets_panel o el del preset_data
             preset_name = preset_data.get('preset_display_name', preset_data.get('name', 'Preset'))
-        
-        print(f"DEBUG: preset_categories = {preset_categories}")  # DEBUG
         
         if not preset_categories:
             QMessageBox.information(self, "Preset vacío", "El preset no contiene categorías.")
             return
         
-        print(f"DEBUG: Número de cards disponibles: {len(self.cards)}")  # DEBUG
-        
         applied_count = 0
         
-        # Aplicar valores del preset a las categorías correspondientes
         for i, card in enumerate(self.cards):
             if hasattr(card, 'category_name') and hasattr(card, 'input_field'):
-                # Respetar bloqueo de tarjeta
                 if hasattr(card, 'is_locked') and card.is_locked:
                     continue
                     
                 card_name = card.category_name
-                print(f"DEBUG: Card {i} - nombre: '{card_name}'")  # DEBUG
                 
-                # Buscar coincidencia exacta primero
                 if card_name in preset_categories:
                     preset_value = preset_categories[card_name]
-                    print(f"DEBUG: Coincidencia exacta encontrada para '{card_name}' -> '{preset_value}'")  # DEBUG
                     card.input_field.setText(preset_value)
                     applied_count += 1
                 else:
-                    # Buscar coincidencia normalizada (sin espacios, minúsculas)
                     card_normalized = card_name.lower().replace(" ", "_")
-                    print(f"DEBUG: Buscando coincidencia normalizada para '{card_name}' -> '{card_normalized}'")  # DEBUG
                     
                     found_match = False
                     for preset_key, preset_value in preset_categories.items():
                         preset_normalized = preset_key.lower().replace(" ", "_")
-                        print(f"DEBUG: Comparando '{card_normalized}' con '{preset_normalized}'")  # DEBUG
                         
                         if card_normalized == preset_normalized:
-                            print(f"DEBUG: Coincidencia normalizada encontrada: '{card_name}' -> '{preset_value}'")  # DEBUG
                             card.input_field.setText(preset_value)
                             applied_count += 1
                             found_match = True
                             break
-                    
-                    if not found_match:
-                        print(f"DEBUG: No se encontró coincidencia para '{card_name}'")  # DEBUG
-            else:
-                print(f"DEBUG: Card {i} no tiene category_name o input_field")  # DEBUG
         
-        print(f"DEBUG: Total aplicado: {applied_count} de {len(preset_categories)}")  # DEBUG
-        
-        # Actualizar el prompt después de aplicar los valores
         self.update_prompt()
         
         # Mostrar mensaje de confirmación
@@ -793,7 +821,7 @@ class ImportDataDialog(QDialog):
                 if reply == QMessageBox.StandardButton.Cancel:
                     return
             
-            # 6. Si todo está bien, proceder con la carga
+
             self.imported_data = mapped_data
             
             success_message = f"Datos validados correctamente.\n\n"

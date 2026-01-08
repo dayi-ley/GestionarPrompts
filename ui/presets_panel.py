@@ -2,27 +2,26 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTreeWidget, QTreeWidgetItem,
     QPushButton, QLineEdit, QLabel, QMessageBox, QInputDialog,
     QDialog, QComboBox, QCheckBox, QScrollArea, QTextEdit, QFileDialog, QGridLayout,
-    QToolTip, QFrame, QMenu, QSpacerItem, QSizePolicy  # Mantener QToolTip y QFrame y agregar QMenu
+    QToolTip, QFrame, QMenu, QSpacerItem, QSizePolicy
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QBuffer, QPoint, QEvent, QSize  # Remover QTimer
+from PyQt6.QtCore import Qt, pyqtSignal, QBuffer, QPoint, QEvent, QSize
 from PyQt6.QtGui import QFont, QPixmap, QCursor, QAction, QIcon
 from ui.edit_preset_dialog import EditPresetDialog
 from logic.presets_manager import PresetsManager
-from datetime import datetime  # ← AGREGAR ESTE IMPORT
-from PIL import Image  # Agregar para redimensionar imágenes
+from datetime import datetime
+from PIL import Image
 import os
 import base64
 import io
 
 class PresetsPanel(QWidget):
-    preset_loaded = pyqtSignal(dict)  # Emite cuando se carga un preset
+    preset_loaded = pyqtSignal(dict)
     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent_widget = parent
         self.presets_manager = PresetsManager()
         self._image_thumb_cache = {}
-
         self.setup_ui()
         self.load_presets()
     
@@ -31,27 +30,20 @@ class PresetsPanel(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(8)
-        
-        # Título
         title = QLabel("Presets")
         title.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
         layout.addWidget(title)
-        
-        # Buscador
         self.search_box = QLineEdit()
         self.search_box.setPlaceholderText("🔍 Buscar presets...")
         self.search_box.textChanged.connect(self.filter_presets)
         layout.addWidget(self.search_box)
-        
-        # Árbol de presets (organizado por carpetas)
         self.presets_tree = QTreeWidget()
         self.presets_tree.setHeaderHidden(True)
-        # Asegurar tamaño de icono visible
         self.presets_tree.setIconSize(QSize(24, 24))
         self.presets_tree.setStyleSheet(
             "QToolTip { background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 4px; font-weight: 600; }\n"
             "QTreeWidget::item:selected { background-color: #ffeb3b; color: #000000; }"
-            "QTreeWidget::item { height: 28px; }" # Dar altura suficiente a los items
+            "QTreeWidget::item { height: 28px; }"
         )
         self._tooltip_label = None
         self._tooltip_item = None
@@ -181,17 +173,6 @@ class PresetsPanel(QWidget):
                 # Si es una lista de nombres de archivo (nuevo formato)
                 if isinstance(images_list, list) and images_list:
                     # Construir ruta a la carpeta de imágenes del preset
-                    # La estructura es: data/presets/<categoria>/<preset_name>_images/<imagen>
-                    # Pero el nombre de la carpeta de imágenes puede ser diferente al ID si se sanitizó diferente
-                    # Sin embargo, PresetsManager.save_preset usa el mismo método de sanitización.
-                    # Asumimos que la carpeta está en el mismo directorio que el JSON
-                    
-                    # Intentamos deducir la ruta
-                    # El json_path lo construimos antes para el timestamp:
-                    # json_path = os.path.join(self.presets_manager.presets_dir, folder_id, f"{preset_id}.json")
-                    
-                    # La carpeta de imágenes suele ser: <preset_id>_images
-                    # Pero cuidado, preset_id es el nombre del archivo sin extensión.
                     images_folder_name = f"{preset_id}_images"
                     images_dir = os.path.join(self.presets_manager.presets_dir, folder_id, images_folder_name)
                     

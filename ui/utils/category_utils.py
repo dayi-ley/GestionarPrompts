@@ -17,7 +17,7 @@ def load_categories_and_tags():
         categories = json.load(f)["categorias"]
     with open(TAGS_PATH, "r", encoding="utf-8") as f:
         tags = json.load(f)
-    # Relaciona cada categoría con sus tags (o lista vacía si no hay)
+
     categories_real = [
         {"name": cat.replace("_", " ").capitalize(), "icon": None, "tags": tags.get(cat, [])}
         for cat in categories
@@ -28,21 +28,16 @@ def _ensure_colors_file():
     """Create a colors file if none exists; prefer separate file for clarity."""
     try:
         if not os.path.isfile(CATEGORY_COLORS_PATH):
-            # Initialize empty mapping
+            
             with open(CATEGORY_COLORS_PATH, "w", encoding="utf-8") as f:
                 json.dump({}, f, ensure_ascii=False, indent=2)
     except Exception:
-        # Silently ignore; fallback to categories.json if needed
+       
         pass
 
 def load_category_colors():
     """Load persisted category colors.
-    Priority:
-    1) data/category_colors.json as a mapping {snake_case: "#rrggbb"}
-    2) data/categories.json under key "colors" if present
-    Returns a dict.
-    """
-    # Try dedicated colors file first
+    Priority"""
     try:
         if os.path.isfile(CATEGORY_COLORS_PATH):
             with open(CATEGORY_COLORS_PATH, "r", encoding="utf-8") as f:
@@ -51,7 +46,6 @@ def load_category_colors():
                     return data
     except Exception:
         pass
-    # Fallback to categories.json colors key
     try:
         if os.path.isfile(CATEGORIES_PATH):
             with open(CATEGORIES_PATH, "r", encoding="utf-8") as f:
@@ -68,7 +62,6 @@ def save_category_color(category_snake_case: str, color_hex: str):
     If categories.json has an embedded "colors" dict but separate file is missing,
     migrate/save to the separate file to keep data tidy.
     """
-    # Normalize hex (e.g., from QColor.name())
     if isinstance(color_hex, str) and not color_hex.startswith("#"):
         color_hex = f"#{color_hex}"
     try:
@@ -81,13 +74,13 @@ def save_category_color(category_snake_case: str, color_hex: str):
                     current = json.load(f) or {}
                 except Exception:
                     current = {}
-        # Update and save
+
         current[category_snake_case] = color_hex
         with open(CATEGORY_COLORS_PATH, "w", encoding="utf-8") as f:
             json.dump(current, f, ensure_ascii=False, indent=2)
         return True
     except Exception:
-        # As a fallback, try to write into categories.json under colors
+
         try:
             with open(CATEGORIES_PATH, "r+", encoding="utf-8") as f:
                 data = json.load(f)
@@ -105,7 +98,7 @@ def rename_category_color_key(old_name_capitalized: str, new_name_capitalized: s
     """If a color mapping exists, move it from old to new snake_case key."""
     old_key = old_name_capitalized.lower().replace(" ", "_")
     new_key = new_name_capitalized.lower().replace(" ", "_")
-    # Try dedicated colors file
+
     try:
         if os.path.isfile(CATEGORY_COLORS_PATH):
             with open(CATEGORY_COLORS_PATH, "r+", encoding="utf-8") as f:
@@ -118,7 +111,7 @@ def rename_category_color_key(old_name_capitalized: str, new_name_capitalized: s
                     return True
     except Exception:
         pass
-    # Fallback: categories.json embedded colors
+
     try:
         with open(CATEGORIES_PATH, "r+", encoding="utf-8") as f:
             data = json.load(f)
@@ -161,7 +154,6 @@ def update_tags_json(name, tags):
 
 def rename_category_in_files(old_name, new_name):
     """Renombra una categoría en todos los archivos JSON"""
-    # Actualizar categories.json
     with open(CATEGORIES_PATH, "r+", encoding="utf-8") as f:
         data = json.load(f)
         if old_name in data["categorias"]:
@@ -170,8 +162,7 @@ def rename_category_in_files(old_name, new_name):
             f.seek(0)
             json.dump(data, f, ensure_ascii=False, indent=2)
             f.truncate()
-    
-    # Actualizar tags.json
+
     old_key = old_name.lower().replace(" ", "_")
     new_key = new_name.lower().replace(" ", "_")
     
@@ -185,8 +176,7 @@ def rename_category_in_files(old_name, new_name):
 
 def save_categories_order(new_order):
     """Guarda el nuevo orden de categorías en categories.json.
-    new_order debe ser una lista de claves snake_case (p.ej. 'vestuario_superior').
-    """
+    new_order debe ser una lista de claves snake_case"""
     if not isinstance(new_order, list):
         return False
     try:
