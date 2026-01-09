@@ -1,6 +1,3 @@
-# UI Elements para PyQt6
-# Este archivo contiene widgets personalizados para PyQt6
-
 from PyQt6.QtWidgets import QLabel, QPushButton, QFrame, QLineEdit, QComboBox, QTextEdit, QApplication
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont, QPalette, QColor, QKeySequence, QPixmap, QImage
@@ -62,12 +59,11 @@ class CustomFrame(QFrame):
 class PasteImageWidget(QLabel):
     """Widget para pegar y mostrar imágenes (Ctrl+V)"""
     
-    image_pasted = pyqtSignal(bool)  # Señal: True si hay imagen, False si no
-    
+    image_pasted = pyqtSignal(bool)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setFixedSize(120, 120)  # Tamaño cuadrado fijo
+        self.setFixedSize(120, 120)
         self.setStyleSheet("""
             QLabel {
                 background-color: #333;
@@ -82,9 +78,7 @@ class PasteImageWidget(QLabel):
             }
         """)
         self.setText("Pegar imagen\n(Ctrl+V)")
-        self.current_image = None  # Almacena la QImage actual
-        
-        # Habilitar foco para capturar teclado
+        self.current_image = None 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
     def keyPressEvent(self, event):
@@ -98,8 +92,6 @@ class PasteImageWidget(QLabel):
         """Al hacer clic, intentamos pegar también si es botón izquierdo"""
         if event.button() == Qt.MouseButton.LeftButton:
             self.setFocus()
-            # Opcional: intentar pegar al hacer clic
-            # self.paste_image()
         super().mousePressEvent(event)
 
     def paste_image(self):
@@ -112,14 +104,11 @@ class PasteImageWidget(QLabel):
             if not image.isNull():
                 self.set_image(image)
         else:
-            # Feedback visual de error (opcional)
             print("No hay imagen en el portapapeles")
 
     def set_image(self, image):
         """Establece la imagen en el widget"""
         self.current_image = image
-        
-        # Escalar imagen para mostrar
         pixmap = QPixmap.fromImage(image)
         scaled_pixmap = pixmap.scaled(
             self.size(), 

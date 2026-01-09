@@ -30,12 +30,11 @@ class CategoryGridFrame(QWidget):
     def __init__(self, prompt_generator, main_window=None):
         super().__init__()
         self.prompt_generator = prompt_generator
-        self.main_window = main_window  # ← AGREGAR REFERENCIA AL MAIN_WINDOW
+        self.main_window = main_window
         self.cards = []
         self.previous_values = {}
         self.previous_values_snapshot = {}
-        
-        # Inicializar SaveManager con referencia a self
+
         self.save_manager = SaveManager(self, self)
         
         self.setup_ui()
@@ -277,8 +276,7 @@ class CategoryGridFrame(QWidget):
             }
         """)
 
-        # 1. Detectar colores únicos y contar tarjetas
-        color_counts = {}  # {hex_color: count}
+        color_counts = {}
         
         for card in self.cards:
             if hasattr(card, 'bg_color'):
@@ -290,7 +288,6 @@ class CategoryGridFrame(QWidget):
                     c = str(c).lower()
                     color_counts[c] = color_counts.get(c, 0) + 1
 
-        # 2. Crear acciones para cada color
         sorted_colors = sorted(color_counts.items(), key=lambda x: x[1], reverse=True)
 
         for color_hex, count in sorted_colors:
@@ -298,7 +295,7 @@ class CategoryGridFrame(QWidget):
              try:
                 pixmap.fill(QColor(color_hex))
              except:
-                pixmap.fill(QColor("#252525")) # Fallback
+                pixmap.fill(QColor("#252525"))
              
              icon = QIcon(pixmap)
              
@@ -476,7 +473,7 @@ class CategoryGridFrame(QWidget):
         
         categories_with_data = 0
         for category_name, value in current_values.items():
-            if value and value.strip():  # Si el valor no está vacío
+            if value and value.strip():
                 categories_with_data += 1
         
         if categories_with_data == 0:
@@ -555,7 +552,6 @@ class CategoryGridFrame(QWidget):
         loaded_count = 0
         for card in self.cards:
             if hasattr(card, 'category_name') and hasattr(card, 'input_field'):
-                # Respetar bloqueo de tarjeta
                 if hasattr(card, 'is_locked') and card.is_locked:
                     continue
                     
@@ -581,21 +577,15 @@ class CategoryGridFrame(QWidget):
         loaded_count = 0
         for card in self.cards:
             if hasattr(card, 'category_name') and hasattr(card, 'input_field'):
-                # Respetar bloqueo de tarjeta
                 if hasattr(card, 'is_locked') and card.is_locked:
                     continue
-
-                # Normalizar el nombre de la categoría para buscar en los datos
                 category_name = card.category_name.lower().replace(' ', '_')
                 
                 if category_name in character_data:
                     card.input_field.setText(character_data[category_name])
                     loaded_count += 1
-        
-        # Actualizar el prompt después de cargar los datos
+
         self.update_prompt()
-        
-        # Opcional: mostrar mensaje de confirmación
         if loaded_count > 0:
             QMessageBox.information(
                 self, 
@@ -607,8 +597,6 @@ class CategoryGridFrame(QWidget):
         """Aplica los valores de una variación a las tarjetas de categoría"""
         if not variation_data:
             return
-        
-        # Los datos de variación tienen la estructura: {'categories': {...}, 'name': '...', etc.}
         categories_data = variation_data.get('categories', {})
         
         if not categories_data:
@@ -617,22 +605,17 @@ class CategoryGridFrame(QWidget):
         loaded_count = 0
         for card in self.cards:
             if hasattr(card, 'category_name') and hasattr(card, 'input_field'):
-                # Respetar bloqueo de tarjeta
                 if hasattr(card, 'is_locked') and card.is_locked:
                     continue
 
-                # Buscar el valor de la categoría en los datos de la variación
                 category_name = card.category_name
                 
                 if category_name in categories_data:
-                    # Aplicar el valor a la tarjeta
                     card.input_field.setText(categories_data[category_name])
                     loaded_count += 1
         
-        # Actualizar el prompt después de cargar los datos
         self.update_prompt()
-        
-        # Mostrar mensaje de confirmación
+
         if loaded_count > 0:
             variation_name = variation_data.get('name', 'Variación')
             QMessageBox.information(
@@ -685,7 +668,6 @@ class CategoryGridFrame(QWidget):
         
         self.update_prompt()
         
-        # Mostrar mensaje de confirmación
         if applied_count > 0:
             QMessageBox.information(
                 self, 
@@ -713,7 +695,6 @@ class CategoryGridFrame(QWidget):
                 card_cat_normalized = card.category_name.lower().replace(" ", "_")
                 
                 if card_cat_normalized == category_normalized:
-                    # Verificar si está bloqueada
                     if hasattr(card, 'is_locked') and card.is_locked:
                         return False
                     
@@ -734,46 +715,32 @@ class ImportDataDialog(QDialog):
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
-        
-        # Instrucciones
         instructions = QLabel("Pega aquí los datos del personaje (formato: categoría: valor):")
         layout.addWidget(instructions)
-        
-        # Área de texto para pegar datos
         self.text_area = QTextEdit()
         self.text_area.setPlaceholderText('Ejemplo:\n\nangulo: ((low angle)),\ncalidad_tecnica: masterpiece, best quality,\n ...\n')
         layout.addWidget(self.text_area)
-        
-        # Botones
         button_layout = QHBoxLayout()
-        
         validate_btn = QPushButton("Validar y Cargar")
         validate_btn.clicked.connect(self.validate_and_load)
         button_layout.addWidget(validate_btn)
-        
         cancel_btn = QPushButton("Cancelar")
         cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(cancel_btn)
-        
         layout.addLayout(button_layout)
     
     def validate_and_load(self):
         """Valida y procesa los datos ingresados"""
         text = self.text_area.toPlainText().strip()
-        
-        # 1. Validar que hay contenido
         if not text:
             QMessageBox.warning(self, "Sin datos", "No hay datos para validar o cargar.\n\nPor favor ingresa algunos datos en el área de texto.")
             return
         
         try:
-            # 2. Procesar el texto línea por línea
             lines = text.split('\n')
             mapped_data = {}
             categories_with_values = []
             categories_empty = []
-            
-            # Obtener todas las categorías disponibles del sistema
             from .utils.category_utils import load_categories_and_tags
             all_categories = load_categories_and_tags()
             system_categories = [cat["name"].lower().replace(" ", "_") for cat in all_categories]
@@ -785,14 +752,11 @@ class ImportDataDialog(QDialog):
                     if len(parts) == 2:
                         category = parts[0].strip().lower().replace(" ", "_")
                         value = parts[1].strip()
-                        
-                        # 3. Validar y agregar coma al final si no la tiene
                         if value and not value.endswith(','):
                             value = value + ','
                         
                         mapped_data[category] = value
-                        
-                        # Clasificar categorías con y sin valores
+
                         if value and value.strip() and value.strip() != ',':
                             categories_with_values.append(category)
                         else:
@@ -802,14 +766,11 @@ class ImportDataDialog(QDialog):
             if not mapped_data:
                 QMessageBox.warning(self, "Error", "No se encontraron datos válidos en el formato esperado.\n\nFormato: categoria: valor")
                 return
-            
-            # 5. Mostrar información sobre categorías vacías
             if categories_empty:
                 empty_list = "\n• ".join(categories_empty)
                 message = f"Se detectaron {len(categories_empty)} categorías sin valores:\n\n• {empty_list}\n\n"
                 message += f"Categorías con datos: {len(categories_with_values)}\n"
-                message += "¿Deseas continuar con la carga?"
-                
+                message += "¿Deseas continuar con la carga?"  
                 reply = QMessageBox.question(
                     self, 
                     "Categorías vacías detectadas", 

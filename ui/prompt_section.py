@@ -15,24 +15,18 @@ class NegativePromptEditDialog(QDialog):
         self.setWindowTitle("Editar Negative Prompt")
         self.setModal(True)
         self.setMinimumSize(420, 300)
-
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(8)
-
-        # Editor de texto con ajuste a la ventana
         self.text_edit = QTextEdit(self)
         self.text_edit.setPlainText(initial_text)
         self.text_edit.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
-        # En PyQt6 las enumeraciones están anidadas en WrapMode
         self.text_edit.setWordWrapMode(QTextOption.WrapMode.WrapAtWordBoundaryOrAnywhere)
         self.text_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.text_edit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.text_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.text_edit.setFont(QFont("Courier New", 10))
         layout.addWidget(self.text_edit)
-
-        # Barra de acciones: solo Guardar (sin Cancelar)
         actions = QHBoxLayout()
         actions.addStretch()
         save_btn = QPushButton("Guardar", self)
@@ -40,8 +34,6 @@ class NegativePromptEditDialog(QDialog):
         save_btn.clicked.connect(self.accept)
         actions.addWidget(save_btn)
         layout.addLayout(actions)
-
-        # Estilo del diálogo
         self.setStyleSheet("""
             QDialog {
                 background-color: #2d2d2d;
@@ -75,8 +67,6 @@ class PromptSectionFrame(QFrame):
         super().__init__()
         self.prompt_generator = prompt_generator
         self.neg_store = NegativePromptStore()
-        
-        # Inicializar popup de configuración
         self.config_popup = None
         
         self.setup_ui()
@@ -88,21 +78,15 @@ class PromptSectionFrame(QFrame):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 12, 16, 12)  # Reducido de 16 a 12
-        layout.setSpacing(8)  # Reducido de 10 a 8
-        
-        # === SECCIÓN POSITIVE PROMPT ===
+        layout.setContentsMargins(16, 12, 16, 12)
+        layout.setSpacing(8)
         self.positive_frame = QFrame()
         positive_layout = QVBoxLayout(self.positive_frame)
         positive_layout.setContentsMargins(0, 0, 0, 0)
         positive_layout.setSpacing(4)
-
-        # Header: Toggle a la izquierda, Botones a la derecha
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 6, 0)
         header_layout.setSpacing(8)
-
-        # Botón toggle para positive prompt
         self.positive_toggle = QPushButton("Prompt generado ▼")
         self.positive_toggle.setStyleSheet("""
             QPushButton {
@@ -121,30 +105,22 @@ class PromptSectionFrame(QFrame):
         """)
         self.positive_toggle.clicked.connect(self.toggle_positive)
         header_layout.addWidget(self.positive_toggle)
-        
         header_layout.addStretch()
-
-        # Botones de acción (ahora en el header)
         self.positive_buttons_container = QWidget()
         buttons_layout = QHBoxLayout(self.positive_buttons_container)
         buttons_layout.setContentsMargins(0, 0, 0, 0)
         buttons_layout.setSpacing(8)
-        
         self.copy_btn = QPushButton("Copiar")
         self.copy_btn.setFixedSize(100, 28)
         self.copy_btn.clicked.connect(self.copy_prompt)
-        # Configurar menú contextual para opciones avanzadas de copia
         self.copy_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.copy_btn.customContextMenuRequested.connect(self.show_copy_menu)
         self.copy_btn.setToolTip("Click para copiar todo\nClick derecho para más opciones")
         buttons_layout.addWidget(self.copy_btn)
-        
         self.export_btn = QPushButton("Exportar")
         self.export_btn.setFixedSize(100, 28)
         self.export_btn.clicked.connect(self.export_prompt)
         buttons_layout.addWidget(self.export_btn)
-        
-        # Botón de configuración
         self.config_btn = QPushButton()
         self.config_btn.setFixedSize(28, 28)
         self.config_btn.setToolTip("Configuración")
@@ -174,33 +150,23 @@ class PromptSectionFrame(QFrame):
                 """)
         except Exception:
             self.config_btn.setText("⚙")
-        
         buttons_layout.addWidget(self.config_btn)
-        
         header_layout.addWidget(self.positive_buttons_container)
         positive_layout.addLayout(header_layout)
-
-        # Textarea para el prompt
         self.prompt_text = QTextEdit()
-        self.prompt_text.setFixedHeight(80)  # Reducido de 120 a 80
-        self.prompt_text.setFont(QFont("Courier New", 10))  # Reducido de 11 a 10
+        self.prompt_text.setFixedHeight(80)
+        self.prompt_text.setFont(QFont("Courier New", 10))
         self.prompt_text.setPlaceholderText("Aquí aparecerá el prompt generado...")
-        self.prompt_text.setReadOnly(False)  # Permitir edición manual
+        self.prompt_text.setReadOnly(False)
         positive_layout.addWidget(self.prompt_text)
-        
-        self.positive_expanded = True  # Estado inicial
-        
+        self.positive_expanded = True
         layout.addWidget(self.positive_frame)
-        
-        # Sección de negative prompt
         self.setup_negative_prompt(layout)
 
     def toggle_positive(self):
         """Alterna la visibilidad del prompt positivo"""
         self.positive_expanded = not self.positive_expanded
         self.prompt_text.setVisible(self.positive_expanded)
-        # Los botones se mantienen visibles en el header
-        
         arrow = "▼" if self.positive_expanded else "▶"
         self.positive_toggle.setText(f"Prompt generado {arrow}")
 
@@ -211,13 +177,9 @@ class PromptSectionFrame(QFrame):
         negative_layout = QVBoxLayout(self.negative_frame)
         negative_layout.setContentsMargins(0, 0, 0, 0)
         negative_layout.setSpacing(4)  # Reducido de 6 a 4
-        
-        # Barra de cabecera: botones guardados (izquierda) + toggle + guardar (derecha)
         header_bar = QHBoxLayout()
         header_bar.setContentsMargins(6, 4, 6, 0)
         header_bar.setSpacing(6)
-
-        # Botón para expandir/contraer
         self.negative_toggle = QPushButton("Negative Prompt ►")
         self.negative_toggle.setStyleSheet("""
             QPushButton {
@@ -235,20 +197,13 @@ class PromptSectionFrame(QFrame):
             }
         """)
         self.negative_toggle.clicked.connect(self.toggle_negative)
-        # Colocar el título primero, sin stretch, para que los botones queden justo a su derecha
         header_bar.addWidget(self.negative_toggle)
-
-        # Contenedor de botones guardados: se coloca a la derecha del título
         self.saved_neg_container = QWidget()
         self.saved_neg_layout = QHBoxLayout(self.saved_neg_container)
         self.saved_neg_layout.setContentsMargins(0, 0, 0, 0)
         self.saved_neg_layout.setSpacing(4)
         header_bar.addWidget(self.saved_neg_container)
-
-        # Luego un stretch para empujar el botón de guardar a la esquina derecha
         header_bar.addStretch()
-
-        # Botón de guardar Negative Prompt (esquina superior derecha)
         self.negative_save_btn = QPushButton()
         self.negative_save_btn.setToolTip("Guardar Negative Prompt")
         self.negative_save_btn.setFixedSize(24, 24)
@@ -262,23 +217,16 @@ class PromptSectionFrame(QFrame):
             self.negative_save_btn.setText("💾")
         self.negative_save_btn.clicked.connect(self.save_current_negative_prompt)
         header_bar.addWidget(self.negative_save_btn)
-
         negative_layout.addLayout(header_bar)
-        
-        # Textarea para negative prompt - altura reducida
         self.negative_text = QTextEdit()
-        self.negative_text.setFixedHeight(60)  # Reducido de 80 a 60
-        self.negative_text.setFont(QFont("Courier New", 9))  # Reducido de 10 a 9
+        self.negative_text.setFixedHeight(60)
+        self.negative_text.setFont(QFont("Courier New", 9))
         default_negative = self.neg_store.get_setting("default_negative_prompt", 
                                                    "blurry, low quality, distorted, deformed, ugly, bad anatomy")
         self.negative_text.setPlainText(default_negative)
         negative_layout.addWidget(self.negative_text)
-        
-        # Inicialmente oculto
         self.negative_text.hide()
         self.negative_expanded = False
-        
-        # Cargar y renderizar botones guardados
         self.refresh_saved_negative_buttons()
 
         layout.addWidget(self.negative_frame)
@@ -322,12 +270,8 @@ class PromptSectionFrame(QFrame):
 
     def setup_shortcuts(self):
         """Configura los atajos de teclado"""
-        # Ctrl+C para copiar
         copy_shortcut = QShortcut(QKeySequence("Ctrl+C"), self)
         copy_shortcut.activated.connect(self.copy_prompt)
-        
-        
-        # Ctrl+E para exportar
         export_shortcut = QShortcut(QKeySequence("Ctrl+E"), self)
         export_shortcut.activated.connect(self.export_prompt)
 
@@ -384,16 +328,15 @@ class PromptSectionFrame(QFrame):
         """Copia el prompt al portapapeles excluyendo los Loras"""
         prompt_content = self.prompt_text.toPlainText()
         if prompt_content and prompt_content != "Aquí aparecerá el prompt generado...":
-            # 1. Eliminar bloques <lora:...>
             text_no_lora = re.sub(r'<lora:[^>]+>', '', prompt_content)
             
-            # 2. Dividir por comas y limpiar espacios
+            # Dividir por comas y limpiar espacios
             parts = [p.strip() for p in text_no_lora.split(',')]
             
-            # 3. Filtrar partes vacías
+            # Filtrar partes vacías
             clean_parts = [p for p in parts if p]
             
-            # 4. Unir con coma y espacio
+            # Unir con coma y espacio
             clean_text = ', '.join(clean_parts)
             
             pyperclip.copy(clean_text)
@@ -416,8 +359,7 @@ class PromptSectionFrame(QFrame):
             "vestuario", "ropa", "lenceria", "lencería", 
             "prendas", "calzado", "medias", "zapatos", "botas"
         ]
-        
-        # Obtener todas las categorías disponibles para filtrar
+
         target_categories = []
         main_window = self.window()
         if hasattr(main_window, 'category_grid'):
@@ -437,15 +379,11 @@ class PromptSectionFrame(QFrame):
 
         current_values = main_window.category_grid.get_current_values()
         collected_values = []
-
-        # Normalizar targets para comparación
         targets_normalized = [t.lower() for t in target_categories]
 
         for cat_name, value in current_values.items():
             if not value.strip():
                 continue
-            
-            # Limpiar valor individual de comas extra al inicio/final si las tuviera
             cleaned_value = value.strip().strip(',')
             if not cleaned_value:
                 continue
@@ -464,15 +402,9 @@ class PromptSectionFrame(QFrame):
                 collected_values.append(cleaned_value)
 
         if collected_values:
-            # Unir con coma y espacio, asegurando limpieza
             final_text = ", ".join(collected_values)
-            
-            # Limpieza final extra por seguridad (como en copy_prompt_no_lora)
-            # 1. Dividir por comas
             parts = [p.strip() for p in final_text.split(',')]
-            # 2. Filtrar vacíos
             clean_parts = [p for p in parts if p]
-            # 3. Unir
             final_clean_text = ', '.join(clean_parts)
             
             pyperclip.copy(final_clean_text)
@@ -489,26 +421,21 @@ class PromptSectionFrame(QFrame):
         
         if prompt_content and prompt_content != "Aquí aparecerá el prompt generado...":
             try:
-                # Obtener el personaje seleccionado desde el main window
-                main_window = self.window()  # Obtiene la ventana principal
+                main_window = self.window()
                 current_character = None
-                
-                # Intentar obtener el personaje actual desde el sidebar
                 if hasattr(main_window, 'sidebar'):
                     if hasattr(main_window.sidebar, 'character_list') and main_window.sidebar.character_list.currentItem():
                         current_character = main_window.sidebar.character_list.currentItem().data(Qt.ItemDataRole.UserRole)
-                
-                # Generar nombre de archivo por defecto
+
                 if current_character:
-                    # Usar el nombre del personaje
+                    
                     safe_character_name = current_character.replace(' ', '_').replace('/', '_').replace('\\', '_')
                     default_filename = f"{safe_character_name}_prompt.txt"
                 else:
-                    # Fallback al timestamp si no hay personaje seleccionado
+                    
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     default_filename = f"prompt_export_{timestamp}.txt"
-                
-                # Mostrar diálogo de guardado
+
                 filename, _ = QFileDialog.getSaveFileName(
                     self,
                     "Exportar Prompt",
@@ -516,12 +443,11 @@ class PromptSectionFrame(QFrame):
                     "Archivos de texto (*.txt);;Todos los archivos (*.*)"
                 )
                 
-                if filename:  # Si el usuario no canceló
-                    # Asegurar que tenga extensión .txt
+                if filename: 
+                    
                     if not filename.lower().endswith('.txt'):
                         filename += '.txt'
-                    
-                    # Escribir el archivo
+
                     with open(filename, 'w', encoding='utf-8') as f:
                         f.write(f"Prompt: {prompt_content}\n\n")
                         if negative_content:
@@ -564,8 +490,6 @@ class PromptSectionFrame(QFrame):
             """)
         
         button.setText(text)
-        
-        # Restaurar después de 2 segundos
         QTimer.singleShot(2000, lambda: self.restore_button(button, original_text, original_style))
 
     def restore_button(self, button, text, style):
@@ -583,13 +507,8 @@ class PromptSectionFrame(QFrame):
     def get_negative_prompt(self):
         """Obtiene el contenido del negative prompt"""
         return self.negative_text.toPlainText()
-
-    # -----------------------------
-    # Gestión de Negative Prompts guardados
-    # -----------------------------
     def refresh_saved_negative_buttons(self):
         """Reconstruye los botones numerados según los negative prompts guardados."""
-        # Limpiar layout existente
         while self.saved_neg_layout.count():
             item = self.saved_neg_layout.takeAt(0)
             if item.widget():
@@ -615,11 +534,8 @@ class PromptSectionFrame(QFrame):
                     background-color: #2a2a2a;
                 }
             """)
-            # Sin tooltip al pasar el mouse
             btn.setToolTip("")
-            # Clic izquierdo: cargar prompt
             btn.clicked.connect(lambda checked=False, idx=i: self.on_saved_button_clicked(idx))
-            # Right-click: menú contextual para editar/eliminar
             btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             btn.customContextMenuRequested.connect(lambda pos, idx=i, button=btn: self.show_saved_menu(idx, button))
             self.saved_neg_layout.addWidget(btn)
@@ -647,8 +563,6 @@ class PromptSectionFrame(QFrame):
         copy_action = menu.addAction("Copiar")
         edit_action = menu.addAction("Editar")
         delete_action = menu.addAction("Eliminar")
-        
-        # Estilo para el menú
         menu.setStyleSheet("""
             QMenu {
                 background-color: #2d2d2d;
@@ -678,8 +592,6 @@ class PromptSectionFrame(QFrame):
         if 1 <= index <= len(prompts):
             text = prompts[index - 1]
             pyperclip.copy(text)
-            
-            # Feedback visual en el botón
             original_text = button.text()
             original_style = button.styleSheet()
             
@@ -718,9 +630,8 @@ class PromptSectionFrame(QFrame):
         confirm.setText("¿Eliminar este Negative Prompt guardado?")
         confirm.setInformativeText("Esta acción no se puede deshacer.")
         confirm.setIcon(QMessageBox.Icon.Warning)
-        # Solo botón de confirmación, cancelar con la "X" de la ventana
         confirm.setStandardButtons(QMessageBox.StandardButton.Yes)
-        # Localizar el texto del botón
+
         try:
             confirm.setButtonText(QMessageBox.StandardButton.Yes, "Sí")
         except Exception:
@@ -735,18 +646,11 @@ class PromptSectionFrame(QFrame):
     def open_config(self):
         """Abre el popup de configuración al lado del botón"""
         if self.config_popup and self.config_popup.isVisible():
-            # Si ya está abierto, cerrarlo
             self.config_popup.hide()
             return
-        
-        # Crear el popup si no existe
         if not self.config_popup:
             self.create_config_popup()
-        
-        # Posicionar el popup al lado del botón
         self.position_config_popup()
-        
-        # Mostrar el popup
         self.config_popup.show()
         self.config_popup.raise_()
     
@@ -755,23 +659,15 @@ class PromptSectionFrame(QFrame):
         self.config_popup = QFrame(self)
         self.config_popup.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
         self.config_popup.setFixedSize(200, 150)
-        
-        # Layout del popup
         popup_layout = QVBoxLayout(self.config_popup)
         popup_layout.setContentsMargins(8, 8, 8, 8)
         popup_layout.setSpacing(4)
-        
-        # Título del popup
         title_label = QLabel("Configuración")
         title_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         popup_layout.addWidget(title_label)
-        
-        # Lista de opciones con scroll
         self.config_list = QListWidget()
         self.config_list.setMaximumHeight(100)
-        
-        # Agregar opciones
         options = [
             "Copiar Categorías",
             "Copiar Vestuario",
@@ -781,13 +677,8 @@ class PromptSectionFrame(QFrame):
         ]
         for option in options:
             self.config_list.addItem(option)
-        
-        # Conectar señal de selección
         self.config_list.itemClicked.connect(self.on_config_option_selected)
-        
         popup_layout.addWidget(self.config_list)
-        
-        # Estilo del popup
         self.config_popup.setStyleSheet("""
             QFrame {
                 background-color: #2d2d2d;
@@ -821,15 +712,9 @@ class PromptSectionFrame(QFrame):
         """Posiciona el popup al lado del botón de configuración"""
         if not self.config_popup:
             return
-        
-        # Obtener la posición del botón de configuración
         button_pos = self.config_btn.mapToGlobal(self.config_btn.rect().topRight())
-        
-        # Ajustar posición para que aparezca al lado derecho del botón
         popup_x = button_pos.x() - self.config_popup.width() + 10
         popup_y = button_pos.y()
-        
-        # Asegurar que el popup no se salga de la pantalla
         screen_geometry = self.screen().geometry()
         if popup_x + self.config_popup.width() > screen_geometry.right():
             popup_x = button_pos.x() - self.config_popup.width() - 10
@@ -890,7 +775,6 @@ class PromptSectionFrame(QFrame):
                 "ropa_interior_accesorios"
             ]
             
-            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
             outfit_targets_norm = [t.lower().replace(" ", "_").strip() for t in outfit_targets]
             
             all_categories = self.load_categories_from_json()
@@ -921,20 +805,16 @@ class PromptSectionFrame(QFrame):
                 "angulo",
                 "postura_cabeza",
                 "direccion mirada personaje",
-                "vestuariospies", # Usuario lo incluyó en poses también
+                "vestuariospies",
                 "pose_actitud_global",
                 "pose_brazos",
                 "pose_piernas",
                 "orientación personaje",
                 "mirada espectador"
             ]
-            
-            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
             pose_targets_norm = [t.lower().replace(" ", "_").strip() for t in pose_targets]
-            
             all_categories = self.load_categories_from_json()
             pose_categories = []
-            
             for cat in all_categories:
                 cat_clean = cat.lower().replace(" ", "_").strip()
                 if cat_clean in pose_targets_norm:
@@ -962,12 +842,10 @@ class PromptSectionFrame(QFrame):
                 "actitud emoción"
             ]
             
-            # Normalizar para comparación (reemplazar espacios por _ y minúsculas)
+            # Normalizar para comparación
             expression_targets_norm = [t.lower().replace(" ", "_").strip() for t in expression_targets]
-            
             all_categories = self.load_categories_from_json()
             expression_categories = []
-            
             for cat in all_categories:
                 cat_clean = cat.lower().replace(" ", "_").strip()
                 if cat_clean in expression_targets_norm:
@@ -994,8 +872,6 @@ class PromptSectionFrame(QFrame):
 
             current_values = main_window.category_grid.get_current_values()
             formatted_lines = []
-
-            # Ordenar por nombre de categoría para consistencia
             for category, value in sorted(current_values.items()):
                 clean_value = value.strip().strip(',')
                 formatted_lines.append(f"{category}: {clean_value}")
@@ -1015,11 +891,7 @@ class PromptSectionFrame(QFrame):
         """Maneja la selección de una opción de configuración"""
         option_text = item.text()
         print(f"Opción seleccionada: {option_text}")
-        
-        # Cerrar el popup después de seleccionar
         self.config_popup.hide()
-        
-        # Implementar acciones específicas para cada opción
         if option_text == "Copiar Categorías":
             self.copy_categories()
         elif option_text == "Copiar Vestuario":
@@ -1032,9 +904,6 @@ class PromptSectionFrame(QFrame):
             self.copy_all_categories_with_values()
         else:
             self.show_feedback(self.config_btn, "✓", error=False)
-
-        # Aquí se implementará la lógica específica para cada opción
-        # TODO: Implementar acciones específicas para cada opción
     def mousePressEvent(self, event):
         """Cierra el popup si se hace clic fuera de él"""
         if self.config_popup and self.config_popup.isVisible():

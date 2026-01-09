@@ -55,19 +55,12 @@ class PresetsPanel(QWidget):
                 self.parent_widget.installEventFilter(self)
             except Exception:
                 pass
-        # Configurar clic derecho para menú contextual con opciones
         self.presets_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.presets_tree.customContextMenuRequested.connect(self.show_context_menu)
-        # Conectar doble clic para cargar preset
         self.presets_tree.itemDoubleClicked.connect(self.load_selected_preset)
-        # Conectar clic simple para alternar expansión de carpetas
         self.presets_tree.itemClicked.connect(self.toggle_folder_on_click)
         layout.addWidget(self.presets_tree)
-        
-        # Botones
         buttons_layout = QHBoxLayout()
-        
-        # Botón Nueva Carpeta - estilizado y más pequeño
         new_folder_btn = QPushButton("📁Crear Set")
         new_folder_btn.clicked.connect(self.create_new_folder)
         new_folder_btn.setStyleSheet("""
@@ -89,8 +82,6 @@ class PresetsPanel(QWidget):
             }
         """)
         buttons_layout.addWidget(new_folder_btn)
-        
-        # Botón Guardar Preset - estilizado y más pequeño
         save_btn = QPushButton("💾 Capturar un Preset")
         save_btn.clicked.connect(self.save_current_as_preset)
         save_btn.setStyleSheet("""
@@ -113,19 +104,15 @@ class PresetsPanel(QWidget):
         """)
         buttons_layout.addWidget(save_btn)
         
-        # QUITAR EL BOTÓN "+" - ya no se incluye
-        
         layout.addLayout(buttons_layout)
     
     def load_presets(self):
         """Carga los presets en el árbol"""
         self.presets_tree.clear()
-        
-        # Obtener todas las carpetas disponibles (predefinidas + personalizadas)
         all_folders = self.presets_manager.get_all_preset_folders()
         
         for folder_id, folder_info in all_folders.items():
-            # Crear nodo padre
+            
             category_item = QTreeWidgetItem(self.presets_tree)
             category_item.setText(0, folder_info['display_name'])
             category_item.setData(0, Qt.ItemDataRole.UserRole, {
@@ -133,7 +120,6 @@ class PresetsPanel(QWidget):
                 'category_id': folder_id,
                 'is_custom': folder_info.get('is_custom', False)
             })
-            # Tooltip con opciones disponibles
             category_item.setToolTip(0, "Opciones: Renombrar carpeta • Eliminar carpeta")
             
             # Cargar presets de esta categoría
@@ -150,7 +136,6 @@ class PresetsPanel(QWidget):
                     except Exception:
                         ts = 0
                 if ts == 0:
-                    # Respaldo: usar mtime del archivo JSON del preset
                     json_path = os.path.join(self.presets_manager.presets_dir, folder_id, f"{preset_id}.json")
                     if os.path.exists(json_path):
                         try:
@@ -158,19 +143,13 @@ class PresetsPanel(QWidget):
                         except Exception:
                             ts = 0
                 sortable.append((preset_id, preset_data, ts))
-            # Ordenar: primero por timestamp desc, luego por nombre para desempate estable
             sortable.sort(key=lambda x: (x[2], (x[1].get('name', x[0]) or "").lower()), reverse=True)
-            # Pintar en orden
             for preset_id, preset_data, _ts in sortable:
                 preset_item = QTreeWidgetItem(category_item)
                 preset_name = preset_data.get('name', preset_id)
                 preset_item.setText(0, preset_name)
-                
-                # Asignar icono si hay imagen(es)
                 image_paths = []
                 images_list = preset_data.get('images', [])
-                
-                # Si es una lista de nombres de archivo (nuevo formato)
                 if isinstance(images_list, list) and images_list:
                     # Construir ruta a la carpeta de imágenes del preset
                     images_folder_name = f"{preset_id}_images"
@@ -181,8 +160,7 @@ class PresetsPanel(QWidget):
                             full_path = os.path.join(images_dir, img_name)
                             if os.path.exists(full_path):
                                 image_paths.append(full_path)
-                
-                # Si tenemos imágenes, usar la primera como icono
+
                 if image_paths:
                     try:
                         pixmap = QPixmap(image_paths[0])
@@ -192,8 +170,7 @@ class PresetsPanel(QWidget):
                             preset_item.setIcon(0, icon)
                     except Exception as e:
                         print(f"Error cargando icono desde archivo para preset {preset_id}: {e}")
-                
-                # Soporte legacy para base64 'image' field (si existiera)
+
                 elif preset_data.get('image'):
                      try:
                         image_data = preset_data.get('image')
@@ -204,7 +181,7 @@ class PresetsPanel(QWidget):
                         icon = QIcon(pixmap)
                         preset_item.setIcon(0, icon)
                         # Convertir a lista ficticia para el preview
-                        image_paths = [image_data] # Marcador de que es data raw
+                        image_paths = [image_data]
                      except Exception:
                         pass
 
@@ -213,10 +190,9 @@ class PresetsPanel(QWidget):
                     'category_id': folder_id,
                     'preset_id': preset_id,
                     'preset_data': preset_data,
-                    'image_paths': image_paths  # Guardar rutas para el preview
+                    'image_paths': image_paths
                 })
         
-        # Colapsar todos los nodos por defecto
         self.presets_tree.collapseAll()
 
     def toggle_folder_on_click(self, item, column):
@@ -227,76 +203,34 @@ class PresetsPanel(QWidget):
         if item_data.get('type') == 'category' and item.parent() is None:
             item.setExpanded(not item.isExpanded())
         elif item_data.get('type') == 'preset':
-            # Detectar si el clic fue en el icono
-            # QTreeWidget no tiene un evento "clickedIcon", así que usamos una heurística
-            # Si el clic es en la columna 0, podría ser texto o icono.
-            # Sin embargo, si queremos ser muy precisos, necesitamos coordenadas.
-            # Pero una aproximación es usar mouseReleaseEvent o comprobar si hay imágenes
-            # y si el usuario hizo clic en la zona izquierda.
-            
-            # Como el usuario pidió "al presionar un click en el icono de la imagen aparesca la vista previa"
-            # y "al presionar en otro lado de la opcion del present es para seleccionar",
-            # la forma más robusta es detectar la posición del ratón relativa al item.
-            # Pero `itemClicked` no da posición exacta del mouse.
-            
-            # Vamos a usar una lógica basada en el evento del mouse que ya tenemos filtrado en eventFilter? No.
-            # Usaremos el cursor actual.
-            
             tree = self.presets_tree
             pos = tree.viewport().mapFromGlobal(QCursor.pos())
             rect = tree.visualItemRect(item)
-            
-            # Asumimos que el icono está a la izquierda.
-            # El indentado depende del nivel. Preset es hijo de categoría, nivel 1.
             indent = tree.indentation()
-            # Margen izquierdo aproximado: indent (por la flecha de root) + indent (nivel 1)
-            # En realidad el icono empieza después de la indentación.
-            # Un icono de 24px.
-            
-            # Vamos a simplificar: Si hay icono, asumimos que los primeros 40-50 pixeles del item son la "zona activa" del icono.
-            # Ajustaremos este valor según sea necesario.
-            icon_width = 32 # 24px icono + padding
-            
-            # Calculamos la X relativa al inicio del item visual
-            # visualItemRect devuelve el rectangulo de toda la fila en la columna 0.
-            # Pero ojo, en un árbol indentado, rect.x() ya tiene el desplazamiento.
-            
+            icon_width = 32 
             relative_x = pos.x() - rect.x()
-            
-            # Si el clic está dentro del ancho del icono (aprox)
             if 0 <= relative_x <= icon_width:
                  image_paths = item_data.get('image_paths')
                  if image_paths:
                      self.show_preview_dialog(item.text(0), image_paths)
-                     # Importante: podríamos querer detener la propagación para que no seleccione/cargue
-                     # Pero load_selected_preset es con doble clic.
-                     # Y la selección simple está bien que ocurra.
+
             
 
     def show_preview_dialog(self, title, image_paths):
         """Muestra un diálogo modal tipo Popup con la galería de imágenes en Grid 2x2"""
         if not image_paths:
-            return
-            
+            return   
         dialog = QDialog(self)
-        # Configurar como Popup para que no tenga bordes ni botones y se cierre al hacer click fuera
         dialog.setWindowFlags(Qt.WindowType.Popup)
         dialog.setModal(True)
-        
         layout = QVBoxLayout(dialog)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        
-        # Contenedor para el grid
         content_widget = QWidget()
         grid_layout = QGridLayout(content_widget)
         grid_layout.setSpacing(0)
         grid_layout.setContentsMargins(0, 0, 0, 0)
-        
-        # Tamaño fijo para las imágenes (150px)
         MAX_IMG_SIZE = 150
-        
-        # Contadores para calcular el tamaño final
         max_row = 0
         max_col = 0
         has_images = False
@@ -308,7 +242,7 @@ class PresetsPanel(QWidget):
             # Verificar si es ruta de archivo o data base64
             if isinstance(img_source, str) and os.path.exists(img_source):
                 pixmap.load(img_source)
-            elif isinstance(img_source, str): # Asumir base64 legacy
+            elif isinstance(img_source, str):
                  try:
                     img_bytes = base64.b64decode(img_source.split(',')[1] if ',' in img_source else img_source)
                     pixmap.loadFromData(img_bytes)
@@ -318,22 +252,17 @@ class PresetsPanel(QWidget):
             if not pixmap.isNull():
                 has_images = True
                 # Escalar manteniendo relación de aspecto
-                # Usamos KeepAspectRatio para que encaje en 100x100 sin deformarse
                 pixmap = pixmap.scaled(MAX_IMG_SIZE, MAX_IMG_SIZE, 
                                      Qt.AspectRatioMode.KeepAspectRatio, 
                                      Qt.TransformationMode.SmoothTransformation)
                 
                 label.setPixmap(pixmap)
                 label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Estilo sin bordes ni padding
                 label.setStyleSheet("border: none; background-color: #222; margin: 0px; padding: 0px;")
                 label.setFixedSize(MAX_IMG_SIZE, MAX_IMG_SIZE)
-                
-                # Calcular posición en grid (row, col)
                 row = i // 2
                 col = i % 2
                 grid_layout.addWidget(label, row, col)
-                
                 max_row = max(max_row, row)
                 max_col = max(max_col, col)
         
@@ -341,16 +270,10 @@ class PresetsPanel(QWidget):
             return
 
         layout.addWidget(content_widget)
-        
-        # Ajustar tamaño del diálogo al contenido exacto
-        # max_row y max_col son índices, así que sumamos 1 para la cuenta
         total_width = (max_col + 1) * MAX_IMG_SIZE
         total_height = (max_row + 1) * MAX_IMG_SIZE
         dialog.setFixedSize(total_width, total_height)
-        
-        # Mover el diálogo cerca del cursor
         dialog.move(QCursor.pos())
-        
         dialog.exec()
 
     def show_persistent_tooltip(self, item, text):
@@ -439,21 +362,16 @@ class PresetsPanel(QWidget):
                 item = self.presets_tree.itemAt(event.pos())
                 if self._tooltip_label and (item is None or item != self._tooltip_item):
                     self.hide_persistent_tooltip()
-                # Ya no necesitamos ocultar preview overlay porque ahora es un diálogo modal
             elif obj == self.parent_widget:
                 pass
         return super().eventFilter(obj, event)
     
     def load_selected_preset(self, item, column):
         """Carga el preset seleccionado al hacer doble clic con confirmación"""
-        # Verificar que es un preset (no una carpeta)
         if item.parent() is None:
-            return  # Es una carpeta, no un preset
-            
+            return 
         preset_name = item.text(0)
         folder_name = item.parent().text(0).replace('📂 ', '')
-        
-        # Mostrar diálogo de confirmación
         reply = QMessageBox.question(
             self, 
             "Cargar Preset", 
@@ -475,7 +393,6 @@ class PresetsPanel(QWidget):
             if preset_data:
                 # Agregar el nombre del preset a los datos antes de emitir la señal
                 preset_data['preset_display_name'] = preset_name
-                # Emitir señal con los datos del preset
                 self.preset_loaded.emit(preset_data)
 
             else:
@@ -487,11 +404,8 @@ class PresetsPanel(QWidget):
     
     def save_current_as_preset(self):
         """Guarda los valores actuales como un nuevo preset con selección manual de categorías"""
-        # Buscar el MainWindow navegando por la jerarquía de widgets
         main_window = None
         parent = self.parent_widget
-        
-        # Navegar hacia arriba hasta encontrar el MainWindow
         while parent:
             if hasattr(parent, 'category_grid'):
                 main_window = parent
@@ -501,42 +415,26 @@ class PresetsPanel(QWidget):
         if not main_window or not hasattr(main_window, 'category_grid'):
             QMessageBox.warning(self, "Error", "No se puede acceder a los valores de categorías.")
             return
-        
-        # Obtener todos los valores actuales (incluye vacíos)
         all_values = main_window.category_grid.get_current_values()
-        
-        # Crear diálogo personalizado más compacto
         dialog = QDialog(self)
         dialog.setWindowTitle("Guardar Preset")
         dialog.setModal(True)
-        dialog.resize(700, 650)  # Reducir ancho de 900 a 700
-        
-        # Layout principal horizontal
+        dialog.resize(700, 650)
         main_layout = QHBoxLayout(dialog)
-        
-        # ===== COLUMNA IZQUIERDA: CATEGORÍAS (75% del ancho) =====
         left_section = QVBoxLayout()
-        
-        # Título de categorías (mostrar todas, incluidas vacías)
         categories_title = QLabel(f"Seleccionar Categorías ({len(all_values)} disponibles):")
         categories_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 5px;")
         left_section.addWidget(categories_title)
-        
-        # Botones de selección rápida compactos
-        # Botones de selección rápida con colores
         quick_select_layout = QHBoxLayout()
         toggle_all_btn = QPushButton("")
         toggle_all_btn.setFixedSize(20, 20)
         toggle_all_btn.setStyleSheet("QPushButton { background-color: transparent; border: 2px solid white; border-radius: 10px; } QPushButton:hover { background-color: rgba(255,255,255,0.1); }")
-        
         select_vestuario_btn = QPushButton("👗 Vestuario")
         select_vestuario_btn.setMaximumHeight(25)
         select_vestuario_btn.setStyleSheet("background-color: #553c9a; color: white; font-weight: bold;")
-        
         select_poses_btn = QPushButton("🤸 Poses")
         select_poses_btn.setMaximumHeight(25)
         select_poses_btn.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold;")
-        
         select_expresiones_btn = QPushButton("Expresiones")
         select_expresiones_btn.setMaximumHeight(25)
         select_expresiones_btn.setStyleSheet("background-color: #FF9800; color: white; font-weight: bold;")
@@ -549,7 +447,6 @@ class PresetsPanel(QWidget):
         select_otros_btn = QPushButton("Otros")
         select_otros_btn.setMaximumHeight(25)
         select_otros_btn.setStyleSheet("background-color: #757575; color: white; font-weight: bold;")
-        
         quick_select_layout.addWidget(toggle_all_btn)
         quick_select_layout.addWidget(select_vestuario_btn)
         quick_select_layout.addWidget(select_poses_btn)
@@ -559,23 +456,15 @@ class PresetsPanel(QWidget):
         quick_select_layout.addWidget(select_otros_btn)
         quick_select_layout.addStretch()
         left_section.addLayout(quick_select_layout)
-        
-        # Área de scroll para categorías (OCUPA TODA LA ALTURA)
         scroll_area = QScrollArea()
         scroll_widget = QWidget()
         scroll_layout = QVBoxLayout(scroll_widget)
-        scroll_layout.setSpacing(2)  # Menos espacio entre elementos
-        
-        # Variable para almacenar imagen comprimida
+        scroll_layout.setSpacing(2)
         compressed_image_data = None
-        
-        # Crear checkboxes para cada categoría (incluye vacías) con LETRA MÁS GRANDE Y COLORES
         checkboxes = {}
         for category, value in all_values.items():
             checkbox = QCheckBox(f"{category}: {value[:45]}{'...' if len(value) > 45 else ''}")
             checkbox.setChecked(False)
-            
-            # LETRA MÁS GRANDE (12px) y colores por tipo de categoría
             category_lower = category.lower()
             if any(word in category_lower for word in ['vestuario', 'ropa', 'outfit', 'clothing']):
                 # Vestuario - Azul
@@ -610,13 +499,9 @@ class PresetsPanel(QWidget):
             
             checkboxes[category] = checkbox
             scroll_layout.addWidget(checkbox)
-        
-        # ESTAS LÍNEAS DEBEN ESTAR FUERA DEL BUCLE:
         scroll_widget.setLayout(scroll_layout)
         scroll_area.setWidget(scroll_widget)
         left_section.addWidget(scroll_area)
-        
-        # ===== FUNCIONES PARA BOTONES DE SELECCIÓN RÁPIDA =====
         def select_all():
             """Selecciona todos los checkboxes"""
             for checkbox in checkboxes.values():
@@ -705,24 +590,17 @@ class PresetsPanel(QWidget):
                 toggle_all_btn.setStyleSheet("QPushButton { background-color: transparent; border: 2px solid white; border-radius: 10px; } QPushButton:hover { background-color: rgba(255,255,255,0.1); }")
                 all_toggle_state = False
         toggle_all_btn.clicked.connect(toggle_all)
-        
-        # ===== CONECTAR BOTONES A SUS FUNCIONES =====
         select_vestuario_btn.clicked.connect(select_vestuario)
         select_poses_btn.clicked.connect(select_poses)
         select_expresiones_btn.clicked.connect(select_expresiones)
         select_rasgo_btn.clicked.connect(select_rasgos)
         select_fondos_btn.clicked.connect(select_fondos)
         select_otros_btn.clicked.connect(select_otros)
-        
-        # ===== COLUMNA DERECHA: CONTROLES (30% del ancho) =====
         right_section = QVBoxLayout()
         right_section.setSpacing(15)
-        
-        # Carpeta
         right_section.addWidget(QLabel("Carpeta:"))
         type_combo = QComboBox()
-        type_combo.setMaximumWidth(200)  # Limitar ancho del combo
-        # Obtener todas las carpetas disponibles
+        type_combo.setMaximumWidth(200)
         all_folders = self.presets_manager.get_all_preset_folders()
         for folder_id, folder_info in all_folders.items():
             type_combo.addItem(folder_info['display_name'], folder_id)
@@ -743,59 +621,40 @@ class PresetsPanel(QWidget):
         name_input = QLineEdit()
         name_input.setMaximumWidth(200)  # Limitar ancho del input
         right_section.addWidget(name_input)
-        
-        
-        # Separador
         separator = QLabel()
         separator.setStyleSheet("border-bottom: 1px solid #ccc; margin: 2px 0;")  # Reducir margen
         right_section.addWidget(separator)
-        
-        # Sección de imágenes de referencia (hasta 4)
-        right_section.addWidget(QLabel("Imágenes de Referencia:"))
-        
+        # Sección de imágenes de referencia
+        right_section.addWidget(QLabel("Imágenes de Referencia:"))        
         # Container para las 4 imágenes en grid 2x2 más compacto
         images_container = QWidget()
-        images_container.setMaximumWidth(210)  # Limitar ancho del contenedor de imágenes
+        images_container.setMaximumWidth(210)
         images_grid = QGridLayout(images_container)
         images_grid.setHorizontalSpacing(0)
         images_grid.setVerticalSpacing(0)
-        images_grid.setContentsMargins(0, 0, 0, 0)  # Sin márgenes
-        
-        # Crear 4 espacios para imágenes
+        images_grid.setContentsMargins(0, 0, 0, 0) 
         self.image_previews = []
         for i in range(4):
             image_preview = QLabel(f"Imagen {i+1}\nNo seleccionada")
             image_preview.setFixedSize(100, 140)
-            image_preview.setStyleSheet("border: 1px solid #ccc; background-color: #383b40; font-size: 10px;")  # Border más sutil
+            image_preview.setStyleSheet("border: 1px solid #ccc; background-color: #383b40; font-size: 10px;")
             image_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            
-            # Posicionar en grid 2x2
             row = i // 2
             col = i % 2
             images_grid.addWidget(image_preview, row, col)
             self.image_previews.append(image_preview)
         
         right_section.addWidget(images_container)
-        
-        # Botones para manejo de imágenes
         images_buttons_layout = QHBoxLayout()
-        
         select_images_btn = QPushButton("Agregar Imágenes ")
         select_images_btn.setMaximumHeight(25)
         images_buttons_layout.addWidget(select_images_btn)
-        
         clear_images_btn = QPushButton("🗑️")
         clear_images_btn.setMaximumHeight(25)
         images_buttons_layout.addWidget(clear_images_btn)
-        
-        # AGREGAR ESTA LÍNEA QUE FALTA:
         right_section.addLayout(images_buttons_layout)
-        
-        # Inicializar lista de imágenes seleccionadas
         if not hasattr(self, 'selected_images'):
             self.selected_images = []
-        
-        # Funciones para manejo de imágenes
         def select_image():
             """Selecciona múltiples imágenes y las agrega a la lista"""
             remaining_slots = 4 - len(self.selected_images)
@@ -803,7 +662,7 @@ class PresetsPanel(QWidget):
                 QMessageBox.information(dialog, "Límite alcanzado", "Ya has seleccionado el máximo de 4 imágenes.")
                 return
             
-            file_paths, _ = QFileDialog.getOpenFileNames(  # Cambiar a getOpenFileNames para múltiple selección
+            file_paths, _ = QFileDialog.getOpenFileNames( 
                 dialog,
                 f"Seleccionar imágenes de referencia (máximo {remaining_slots})",
                 "",
@@ -811,7 +670,6 @@ class PresetsPanel(QWidget):
             )
             
             if file_paths:
-                # Limitar a los espacios disponibles
                 files_to_process = file_paths[:remaining_slots]
                 
                 for file_path in files_to_process:
@@ -841,7 +699,6 @@ class PresetsPanel(QWidget):
                         QMessageBox.warning(dialog, "Error", f"No se pudo cargar la imagen {os.path.basename(file_path)}: {str(e)}")
                         continue
                 
-                # Mostrar mensaje informativo
                 loaded_count = len(files_to_process)
                 if loaded_count > 0:
                     QMessageBox.information(dialog, "Imágenes cargadas", f"Se cargaron {loaded_count} imagen(es) correctamente.")
@@ -852,16 +709,10 @@ class PresetsPanel(QWidget):
             for i, preview in enumerate(self.image_previews):
                 preview.clear()
                 preview.setText(f"Imagen {i+1}\nNo seleccionada")
-                preview.setStyleSheet("border: 2px solid gray; background-color: #f0f0f0; border-radius: 4px; font-size: 10px;")  # Aumentar font-size
-        
-        # Conectar botones
+                preview.setStyleSheet("border: 2px solid gray; background-color: #f0f0f0; border-radius: 4px; font-size: 10px;")
         select_images_btn.clicked.connect(select_image)
         clear_images_btn.clicked.connect(clear_all_images)
-        
-        # Espaciador para empujar botones hacia abajo
         right_section.addStretch()
-        
-        # Botón de acción
         buttons_layout = QHBoxLayout()
         save_btn = QPushButton("💾 Guardar Preset")
         save_btn.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold;")
@@ -870,8 +721,8 @@ class PresetsPanel(QWidget):
         right_section.addLayout(buttons_layout)
         
         # Agregar las dos columnas al layout principal
-        main_layout.addLayout(left_section, 7)  # 70% del ancho
-        main_layout.addLayout(right_section, 3)  # 30% del ancho
+        main_layout.addLayout(left_section, 7) 
+        main_layout.addLayout(right_section, 3)
         
         # Función para guardar el preset
         def save_preset():
@@ -887,7 +738,7 @@ class PresetsPanel(QWidget):
                 QMessageBox.warning(dialog, "Error", "Por favor selecciona una carpeta.")
                 return
 
-            # Obtener las categorías seleccionadas (guardar aunque estén vacías)
+            # Obtener las categorías seleccionadas
             selected_categories = {}
             for category, checkbox in checkboxes.items():
                 if checkbox.isChecked():
@@ -940,11 +791,6 @@ class PresetsPanel(QWidget):
         if item_type == 'preset' and item.parent() is not None:
             preset_name = item.text(0)
             category_id = item_data.get('category_id')
-            # image_paths = item_data.get('image_paths', []) # Ya no se usa en el menú
-            
-            # La acción de ver imágenes ahora se hace con clic en el icono,
-            # así que la quitamos del menú contextual para simplificar.
-
             delete_action = QAction("🗑️ Eliminar Preset", self)
             def do_delete():
                 dlg = QDialog(self)
@@ -983,11 +829,6 @@ class PresetsPanel(QWidget):
             edit_action = QAction("✏️ Editar Preset", self)
             edit_action.triggered.connect(lambda: self.open_edit_preset_dialog(item))
             context_menu.addAction(edit_action)
-
-            # Ya no necesitamos la acción de Vista Previa en el menú contextual
-            # preview_action = QAction("👁️ Vista Previa", self)
-            # preview_action.triggered.connect(lambda: self.show_preset_preview(position))
-            # context_menu.addAction(preview_action)
 
         elif item_type == 'category' and item.parent() is None:
             # Menú para carpetas
@@ -1191,7 +1032,6 @@ class PresetsPanel(QWidget):
                 else:
                     preset_item.setHidden(True)
             
-            # Mostrar/ocultar carpeta basado en si tiene presets visibles
             folder_item.setHidden(not folder_visible)
             
             # Expandir carpeta si hay coincidencias y texto de búsqueda
@@ -1222,7 +1062,7 @@ class PresetsPanel(QWidget):
             try:
                 success = self.presets_manager.create_custom_folder(folder_name.strip())
                 if success:
-                    self.load_presets()  # Recargar para mostrar la nueva carpeta
+                    self.load_presets()
                     QMessageBox.information(
                         self, "Éxito", f"Carpeta '{folder_name}' creada exitosamente."
                     )

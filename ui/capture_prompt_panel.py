@@ -46,8 +46,6 @@ class CapturePromptPanel(QWidget):
         self.btn_capture.clicked.connect(self.load_embeddings_app)
         
         start_layout.addWidget(self.btn_capture)
-        
-        # Añadir página de inicio al stack
         self.stack.addWidget(self.start_page)
         
     def load_embeddings_app(self):
@@ -56,21 +54,15 @@ class CapturePromptPanel(QWidget):
             self.stack.setCurrentWidget(self.embeddings_widget)
             return
             
-        # UI Feedback inmediato
         self.btn_capture.setText("Cargando motor IA...")
         self.btn_capture.setEnabled(False)
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-        
-        # Inactivar la ventana principal para evitar clicks
         if self.window():
             self.window().setEnabled(False)
-
-        # Dar tiempo al event loop para pintar los cambios (100ms)
         QTimer.singleShot(100, self._perform_load)
 
     def _perform_load(self):
         try:
-            # Importación diferida
             from ui.embeddings.main_widget import EmbeddingsMainWidget
             
             self.embeddings_widget = EmbeddingsMainWidget(self)
@@ -86,7 +78,6 @@ class CapturePromptPanel(QWidget):
             error_label.setStyleSheet("color: red;")
             self.start_page.layout().addWidget(error_label)
         finally:
-            # Restaurar estado UI
             QApplication.restoreOverrideCursor()
             if self.window():
                 self.window().setEnabled(True)

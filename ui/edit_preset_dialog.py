@@ -19,8 +19,8 @@ class EditPresetDialog(QDialog):
 
         self.preset_name = ""
         self.category_id = ""
-        self.category_editors = {}  # {category_name: QTextEdit}
-        self.selected_images = []   # lista de rutas absolutas
+        self.category_editors = {}
+        self.selected_images = []
 
         self._build_ui()
 
@@ -30,7 +30,6 @@ class EditPresetDialog(QDialog):
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(6)
 
-        # Estilos generales más compactos
         self.setStyleSheet("""
             QDialog { background-color: #2b2b2b; color: #e0e0e0; }
             QLabel { background: transparent; }
@@ -38,19 +37,13 @@ class EditPresetDialog(QDialog):
             QTextEdit { background-color: #2f2f2f; color: #ddd; border: 1px solid #555; border-radius: 4px; font-size: 11px; }
         """)
 
-        # Encabezado
         self.header_label = QLabel("")
         self.header_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.header_label)
-
-        # Cuerpo a dos columnas
         body = QHBoxLayout()
         body.setSpacing(8)
-
-        # === Columna Izquierda: Imágenes ===
         left_panel = QVBoxLayout()
         left_panel.setSpacing(6)
-
         img_controls = QHBoxLayout()
         add_imgs_btn = QPushButton("🖼️ Agregar imágenes")
         add_imgs_btn.setMaximumHeight(24)
@@ -62,8 +55,6 @@ class EditPresetDialog(QDialog):
         img_controls.addWidget(clear_imgs_btn)
         img_controls.addStretch()
         left_panel.addLayout(img_controls)
-
-        # Lista vertical de previsualizaciones (1x4)
         grid = QGridLayout()
         grid.setSpacing(6)
         self.image_previews = []
@@ -74,7 +65,6 @@ class EditPresetDialog(QDialog):
             lbl.setFixedSize(150, 150)
             self.image_previews.append(lbl)
             grid.addWidget(lbl, i, 0)
-        # Envolver las previsualizaciones en un área con scroll vertical
         left_scroll = QScrollArea()
         left_scroll.setWidgetResizable(True)
         left_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -88,23 +78,16 @@ class EditPresetDialog(QDialog):
         self.images_hint = QLabel("Sin imágenes seleccionadas")
         self.images_hint.setStyleSheet("color: #888; font-size: 10px;")
         left_panel.addWidget(self.images_hint)
-
-        # Limitar el ancho máximo del panel izquierdo para hacerlo más angosto
         left_container = QWidget()
         left_container.setLayout(left_panel)
         left_container.setFixedWidth(280)
         left_container.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         body.addWidget(left_container, 1)
-
-        # === Columna Derecha: Categorías ===
         right_panel = QVBoxLayout()
         right_panel.setSpacing(6)
-
-        # Campo para editar el nombre del preset
         name_row = QHBoxLayout()
         name_row.setSpacing(6)
         name_label = QLabel("Nombre del preset:")
-        # Aumentar únicamente el alto del label del nombre
         name_label.setObjectName("presetNameLabel")
         name_label.setFixedHeight(32)
         self.name_input = QLineEdit()
@@ -120,14 +103,9 @@ class EditPresetDialog(QDialog):
         scroll_content = QWidget()
         self.categories_layout = QVBoxLayout(scroll_content)
         self.categories_layout.setSpacing(4)
-        # Evitar que los elementos se distribuyan para ocupar todo el alto:
-        # alinearlos arriba del área de scroll
         self.categories_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         scroll.setWidget(scroll_content)
         right_panel.addWidget(scroll)
-
-        # Controles de categorías (debajo del scroll)
-        # Botón: añadir categoría desde tarjetas
         add_from_cards_btn = QPushButton("📋 Añadir desde tarjetas")
         add_from_cards_btn.setMaximumHeight(24)
         add_from_cards_btn.setMaximumWidth(180)
@@ -151,14 +129,11 @@ class EditPresetDialog(QDialog):
             """
         )
         add_from_cards_btn.clicked.connect(self._add_category_from_cards)
-        # Colocar el botón en una fila
         buttons_row = QHBoxLayout()
         buttons_row.setSpacing(8)
         buttons_row.addWidget(add_from_cards_btn)
         buttons_row.addStretch()
         right_panel.addLayout(buttons_row)
-
-        # Botones de acción (debajo a la derecha)
         actions = QHBoxLayout()
         actions.addStretch()
         cancel_btn = QPushButton("Cancelar")
@@ -180,23 +155,16 @@ class EditPresetDialog(QDialog):
         self.preset_name = preset_name
         self.category_id = category_id
         self.header_label.setText(f"Carpeta: {category_id}")
-        # Inicializar el campo de nombre editable
         if hasattr(self, 'name_input') and self.name_input is not None:
             self.name_input.setText(preset_name)
-
-        # Limpiar editores previos
         for i in reversed(range(self.categories_layout.count())):
             item = self.categories_layout.itemAt(i)
             w = item.widget()
             if w:
                 w.setParent(None)
         self.category_editors.clear()
-
-        # Crear un editor por categoría
         for cat_name, cat_value in categories.items():
             self._add_category_editor(cat_name, cat_value)
-
-        # Cargar imágenes existentes
         self.selected_images = list(images or [])
         self._update_images_hint()
         self._refresh_image_previews()
@@ -291,7 +259,6 @@ class EditPresetDialog(QDialog):
         """Intenta obtener el grid de categorías para listar nombres y valores actuales.
         Devuelve dict {nombre: valor_str} o {} si no disponible.
         """
-        # Navegar por padres hasta encontrar un objeto con atributo category_grid
         parent = self.parent()
         main_window = None
         while parent:
@@ -366,7 +333,6 @@ class EditPresetDialog(QDialog):
             val = source_values.get(name, "")
             preview.setPlainText(val if name else "")
 
-        # Repoblar combo según filtro
         all_names = available_names[:]
         def repopulate_combo(filter_text: str):
             text = (filter_text or "").lower()
@@ -381,7 +347,6 @@ class EditPresetDialog(QDialog):
         repopulate_combo("")
         combo.currentIndexChanged.connect(update_preview)
 
-        # Botones
         buttons = QHBoxLayout()
         buttons.addStretch()
         cancel = QPushButton("Cancelar")
@@ -400,7 +365,7 @@ class EditPresetDialog(QDialog):
             if not selected_name:
                 return
             initial_text = source_values.get(selected_name, "") if include_checkbox.isChecked() else ""
-            # Añadir editor
+            
             self._add_category_editor(selected_name, initial_text)
 
     def _select_images(self):
@@ -408,7 +373,7 @@ class EditPresetDialog(QDialog):
             self, "Seleccionar imágenes", "", "Imágenes (*.png *.jpg *.jpeg *.webp *.bmp)"
         )
         if files:
-            self.selected_images = files[:4]  # limitar a 4 para consistencia con vista previa
+            self.selected_images = files[:4]
             self._update_images_hint()
             self._refresh_image_previews()
 
@@ -429,14 +394,14 @@ class EditPresetDialog(QDialog):
         result = {}
         for cat, editor in self.category_editors.items():
             text = editor.toPlainText().strip()
-            result[cat] = text  # incluir también vacías
+            result[cat] = text 
         return result
 
     def get_selected_images(self):
         return list(self.selected_images)
 
     def _refresh_image_previews(self):
-        # Actualiza las miniaturas en el grid 2x2
+        
         for i, lbl in enumerate(self.image_previews):
             if i < len(self.selected_images) and os.path.exists(self.selected_images[i]):
                 pix = QPixmap(self.selected_images[i])

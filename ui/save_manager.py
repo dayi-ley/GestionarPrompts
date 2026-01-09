@@ -115,9 +115,7 @@ class SaveOptionsDialog(QDialog):
         sidebar = None
         if hasattr(self.parent, 'sidebar'):
             sidebar = self.parent.sidebar
-        
-        # Línea 147 - Correcto
-        dialog = VariationDialog(self, sidebar, self.category_grid)#Pasar sidebar y category_grid
+        dialog = VariationDialog(self, sidebar, self.category_grid)
         
         if dialog.exec() == QDialog.DialogCode.Accepted:
             variation_data = dialog.get_variation_data()
@@ -137,7 +135,7 @@ class VariationDialog(QDialog):
     def __init__(self, parent=None, sidebar=None, category_grid=None):
         super().__init__(parent)
         self.sidebar = sidebar
-        self.category_grid = category_grid  # Añadir referencia
+        self.category_grid = category_grid 
         self.setWindowTitle("Crear Variación de Personaje")
         self.setModal(True)
         self.setFixedSize(500, 300)
@@ -150,28 +148,19 @@ class VariationDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.setSpacing(15)
         layout.setContentsMargins(30, 30, 30, 30)
-        
-        
-        # Selector de personaje
         character_layout = QVBoxLayout()
-        
         character_label = QLabel("Seleccionar el personaje para esta variacion:")
         character_label.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
         character_label.setStyleSheet("color: #FFFFFF;")
         character_layout.addWidget(character_label)
-        
-        # ComboBox con buscador mejorado
         self.character_combo = QComboBox()
         self.character_combo.setEditable(True)
         self.character_combo.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
         self.character_combo.setFixedHeight(35)
-        
-        # Configurar el completer para búsqueda
         self.completer = QCompleter()
         self.completer.setFilterMode(Qt.MatchFlag.MatchContains)
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.character_combo.setCompleter(self.completer)
-        
         self.character_combo.setStyleSheet("""
             QComboBox {
                 background-color: #3a3a3a;
@@ -211,22 +200,15 @@ class VariationDialog(QDialog):
                 color: #ffffff;
             }
         """)
-        
-        # Conectar eventos mejorados
         self.character_combo.currentTextChanged.connect(self.on_character_text_changed)
         self.character_combo.activated.connect(self.on_character_selected)
         character_layout.addWidget(self.character_combo)
-        
         layout.addLayout(character_layout)
-        
-        # Campo de nombre de variación
         variation_layout = QVBoxLayout()
-        
         variation_label = QLabel("Nombre de variación:")
         variation_label.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
         variation_label.setStyleSheet("color: #FFFFFF;")
         variation_layout.addWidget(variation_label)
-        
         self.variation_input = QLineEdit()
         self.variation_input.setFixedHeight(35)
         self.variation_input.setStyleSheet("""
@@ -243,14 +225,9 @@ class VariationDialog(QDialog):
             }
         """)
         variation_layout.addWidget(self.variation_input)
-        
         layout.addLayout(variation_layout)
-        
-        # Botones
         buttons_layout = QHBoxLayout()
         buttons_layout.setSpacing(10)
-        
-        # Botón Crear
         self.create_btn = QPushButton("Crear Variación")
         self.create_btn.setFixedSize(130, 35)
         self.create_btn.setStyleSheet("""
@@ -284,9 +261,6 @@ class VariationDialog(QDialog):
     def detect_current_character(self):
         """Intenta detectar y preseleccionar el personaje actual"""
         try:
-            # Aquí podrías implementar lógica para detectar el personaje actual
-            # Por ejemplo, desde el sidebar o algún estado global
-            # Por ahora, simplemente no preselecciona nada
             pass
         except Exception as e:
             print(f"Error detectando personaje actual: {e}")
@@ -319,7 +293,7 @@ class VariationDialog(QDialog):
             
             characters.sort()
             
-            # Limpiar y agregar personajes (SIN texto placeholder)
+            # Limpiar y agregar personajes
             self.character_combo.clear()
             for character in characters:
                 self.character_combo.addItem(character)
@@ -342,19 +316,16 @@ class VariationDialog(QDialog):
         """Maneja cambios en el texto del selector"""
         # Solo procesar si el texto no está vacío
         if text and text.strip():
-            # Verificar si el texto coincide exactamente con un personaje
             index = self.character_combo.findText(text, Qt.MatchFlag.MatchExactly)
             if index >= 0:
                 self.handle_character_selection(text)
         else:
-            # Si está vacío, limpiar selección
             self.selected_character = None
             self.variation_input.clear()
             self.create_btn.setEnabled(False)
     
     def on_character_selected(self, index):
         """Maneja la selección de personaje por índice (desde activated signal)"""
-        # Obtener el texto del elemento seleccionado usando el índice
         character_name = self.character_combo.itemText(index)
         self.handle_character_selection(character_name)
     
@@ -364,8 +335,6 @@ class VariationDialog(QDialog):
             self.selected_character = character_name
             self.generate_variation_name(character_name)
             self.create_btn.setEnabled(True)
-            
-            # Asegurar que el texto del combo sea exactamente el nombre del personaje
             self.character_combo.setCurrentText(character_name)
         else:
             self.selected_character = None
@@ -375,13 +344,11 @@ class VariationDialog(QDialog):
     def generate_variation_name(self, character_name):
         """Genera automáticamente el nombre de la variación"""
         try:
-            # USAR la instancia del sidebar en lugar de crear una nueva
             variations_manager = None
             if self.sidebar and hasattr(self.sidebar, 'variations_manager'):
                 variations_manager = self.sidebar.variations_manager
             
             if not variations_manager:
-                # Solo como último recurso
                 from logic.variations_manager import VariationsManager
                 variations_manager = VariationsManager()
             
@@ -458,8 +425,6 @@ class VariationDialog(QDialog):
                 if self.sidebar and hasattr(self.sidebar, 'variations_panel'):
                     print("🔄 Emitiendo señal variation_saved...")
                     self.sidebar.variations_panel.variation_saved.emit(character, variation)
-                    
-                    # FORZAR actualización directa como respaldo
                     print("🔄 Forzando actualización directa...")
                     self.sidebar.variations_panel.load_variations()
                     print("✅ Actualización directa completada")
@@ -512,8 +477,6 @@ class SaveManager:
     def on_changes_updated(self):
         """Maneja cuando se actualizan los cambios detectados"""
         print("Cambios actualizados en VariationDialog")
-        
-        # Opcional: habilitar el botón de crear variación si hay cambios
         changes_data = self.changes_widget.get_changes_data()
         if changes_data:
             print(f"Se detectaron cambios en {len(changes_data)} categorías")

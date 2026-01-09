@@ -208,8 +208,10 @@ class PresetsManager:
                                     continue
                                     
                                 # Optimizar sobreescribiendo
-                                # Usamos un archivo temporal para evitar corrupción
-                                temp_path = img_path + ".tmp"
+                                # Usamos un archivo temporal con la misma extensión para que PIL detecte el formato
+                                file_name, file_ext = os.path.splitext(img_file)
+                                temp_path = os.path.join(images_dir, f"temp_{file_name}{file_ext}")
+                                
                                 self._optimize_image(img_path, temp_path)
                                 
                                 if os.path.exists(temp_path):

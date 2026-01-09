@@ -1,6 +1,3 @@
-# Category Panel - Panel de categorías
-# Este archivo está reservado para futuras funcionalidades
-
 from PyQt6.QtWidgets import QFrame
 
 class CategoryPanel(QFrame):
