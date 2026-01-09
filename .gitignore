@@ -19,7 +19,7 @@ cache/
 *.tfevents
 
 # Archivos de construcción y distribución
-build/
+build/AppPrompts/
 dist/
 *.spec
 installer/
