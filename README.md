@@ -48,7 +48,7 @@ Sistema inteligente de clasificación de prompts mediante Embeddings e IA Local.
 - pyperclip
 
 
-## 🛠️ Guía de Instalación (Para Principiantes)
+## 🛠️ Guía de Instalación
 
 Sigue estos pasos si estás instalando la aplicación desde cero en Windows.
 
